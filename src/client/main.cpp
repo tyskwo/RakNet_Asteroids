@@ -9,16 +9,21 @@
 //#include "ObjectInfo.h"
 
 
+//method declarations
+void draw(sf::RenderWindow pWindow);
+void getInput();
+
+char* getPortNumber();
+
+
 
 int main()
 {
-	// create the window
-	const float SCREEN_WIDTH = 1024.0;
+	//create the window
+	const float SCREEN_WIDTH = 1200.0;
 	const float SCREEN_HEIGHT = 768.0;
-	const float HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
-	const float HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
 
-	sf::RenderWindow window(sf::VideoMode(1200, 768), "Asteroids");
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Asteroids");
 	window.setFramerateLimit(60);
 
 
@@ -26,18 +31,13 @@ int main()
 
 //###INIT CLIENT#######################################################################################################
 	//connect to a random port
-	srand(static_cast<unsigned int>(time(NULL)));
-	int randPortNumber = rand() % (301 - 201 + 1) + 201;
-	std::stringstream converter;
-	converter << randPortNumber;
-	std::string temp_str = converter.str();
-	char* char_type = (char*)temp_str.c_str();
+	char* portNumber = getPortNumber();
 
 	//connect to external ip
 	std::string ipAddress = "";
 	std::cout << "Input server IP or \"localhost\": ";
 	std::cin >> ipAddress;
-	//Client* mpClient = new Client(char_type, ipAddress.c_str(), "200");
+	//Client* mpClient = new Client(portNumber, ipAddress.c_str(), "200");
 
 	//while trying to connect, don't update the game logic
 	//while (!mpClient->getConnected()) { mpClient->update(); }
@@ -52,18 +52,10 @@ int main()
 		//mpClient->update();
 
 //###GET INPUT########################################################################################################
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-		}
-
+		getInput();
+		
 //###DRAW#############################################################################################################
-		/**/
-
-
-
-//###CLEAR AND DRAW###################################################################################################
-		window.clear(sf::Color::White);
-		window.display();
+		draw(window);
 
 //###WINDOW CLOSE#####################################################################################################
 		sf::Event event;
@@ -76,4 +68,30 @@ int main()
 	}
 
 	return 0;
+}
+
+void draw(sf::RenderWindow pWindow)
+{
+	pWindow.clear(sf::Color::White);
+	pWindow.display();
+}
+
+void getInput()
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+	}
+}
+
+
+char* getPortNumber()
+{
+	srand(static_cast<unsigned int>(time(NULL)));
+	int randPortNumber = rand() % (401 - 201 + 1) + 201;
+
+	std::stringstream converter;
+	converter << randPortNumber;
+	std::string temp_str = converter.str();
+
+	return (char*)temp_str.c_str();
 }
