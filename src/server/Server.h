@@ -1,20 +1,11 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <assert.h>
-#include <iostream>
+//library includes
 #include <array>
-#include <time.h>
+#include <cmath>
 
-#include "BitStream.h"
-#include "Gets.h"
-#include "MessageIdentifiers.h"
-#include "PacketLogger.h"
-#include "RakNetStatistics.h"
-#include "RakNetTypes.h"
-#include "RakPeerInterface.h"
-#include "RakSleep.h"
-
+//game includes
 #include "../common/GameStructs.h"
 
 
@@ -44,13 +35,19 @@ private:
 	unsigned char GetPacketIdentifier(RakNet::Packet *p);
 
 	//arrays for the games, and info for said games
-	int mNumGames = 8;
+	int mCurrentNumberOfGames = 0;
 	std::array<std::array<RakNet::RakNetGUID, 2>, 8> mGames;
-	std::array<GameInfo, 8>							 mGameInfos;
+	std::array<GameInfo, 8>	mGameInfos;
 
+	//initialize game infos
 	void initializeGames();
+	//update game infos
 	void updateGames();
+	//reset given game info
 	void resetGame(int index);
+
+	//set the connection with a client
+	void setConnection(RakNet::Packet* p);
 };
 
 #endif

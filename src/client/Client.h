@@ -1,9 +1,14 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "RakPeerInterface.h"
-#include "../common/GameStructs.h"
+//library includes
 #include <array>
+
+//RakNet includes
+#include "Gets.h"
+
+//game includes
+#include "../common/GameStructs.h"
 
 class Client
 {
@@ -45,15 +50,9 @@ private:
 	unsigned char GetPacketIdentifier(RakNet::Packet* pPacket);
 	void getPackets();
 
-	//values for the connection values.
-	char mIPaddress[64], mServerPort[3], mClientPort[3];
-
 	//flag for if client is connected, and if so, first player
 	bool mIsConnected;
 	bool mWasFirstConnected;
-
-	//flag to send over game started packet
-	bool mSendGameStart;
 
 	//game info
 	GameInfo mGameInfo;
