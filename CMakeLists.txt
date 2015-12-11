@@ -8,8 +8,8 @@ include_directories(${CMAKE_SOURCE_DIR}/3rdParty/RakNet/source)
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/SFML/lib)
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/RakNet/lib)
 
-add_executable(Client src/client/main.cpp)
-add_executable(Server src/server/main.cpp)
+add_executable(Client src/client/main.cpp src/common/GameStructs.h src/client/Client.h)
+add_executable(Server src/server/main.cpp src/common/GameStructs.h src/server/Server.h)
 
 set(DEP_LIBS
 	sfml-system

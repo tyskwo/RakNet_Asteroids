@@ -5,8 +5,9 @@
 #include <sstream>
 #include <string>
 
-//#include "Client.h"
+#include "Client.h"
 //#include "ObjectInfo.h"
+#include "../common/GameStructs.h"
 
 
 //method declarations
@@ -20,9 +21,6 @@ char* getPortNumber();
 int main()
 {
 	//create the window
-	const float SCREEN_WIDTH = 1200.0;
-	const float SCREEN_HEIGHT = 768.0;
-
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Asteroids");
 	window.setFramerateLimit(60);
 
