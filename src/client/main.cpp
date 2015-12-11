@@ -49,6 +49,7 @@ int main()
 //###RUN PROGRAM######################################################################################################
 	while (window.isOpen())
 	{
+		//update client
 		//mpClient->update();
 
 //###GET INPUT########################################################################################################
@@ -70,12 +71,14 @@ int main()
 	return 0;
 }
 
+//draw the client's game info
 void draw(sf::RenderWindow pWindow)
 {
 	pWindow.clear(sf::Color::White);
 	pWindow.display();
 }
 
+//get keyboard/mouse input
 void getInput()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -84,6 +87,7 @@ void getInput()
 }
 
 
+//get random port number from 201 - 401
 char* getPortNumber()
 {
 	srand(static_cast<unsigned int>(time(NULL)));
