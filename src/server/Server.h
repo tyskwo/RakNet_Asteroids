@@ -4,6 +4,7 @@
 //library includes
 #include <array>
 #include <cmath>
+#include <Box2D\Box2D.h>
 
 //game includes
 #include "../common/GameStructs.h"
@@ -48,6 +49,11 @@ private:
 
 	//set the connection with a client
 	void setConnection(RakNet::Packet* p);
+
+
+	//======BOX2D STUFF=======
+	//b2World* mpB2world;
+
 };
 
 #endif

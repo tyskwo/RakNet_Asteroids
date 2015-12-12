@@ -4,9 +4,11 @@ project(Asteroids)
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdParty/SFML/include)
 include_directories(${CMAKE_SOURCE_DIR}/3rdParty/RakNet/source)
+include_directories(${CMAKE_SOURCE_DIR}/3rdParty/Box2D/source)
 
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/SFML/lib)
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/RakNet/lib)
+link_directories(${CMAKE_SOURCE_DIR}/3rdParty/Box2D/lib)
 
 add_executable(Client src/client/main.cpp src/common/GameStructs.h src/client/Client.h src/client/Client.cpp)
 add_executable(Server src/server/main.cpp src/common/GameStructs.h src/server/Server.h src/server/Server.cpp)
@@ -20,6 +22,7 @@ set(DEP_LIBS
 	sfml-graphics
 	sfml-window
 	RakNetLibStatic
+	Box2D
 	Ws2_32.lib)
 
 target_link_libraries(Client ${DEP_LIBS})
