@@ -172,30 +172,28 @@ void Server::broadcastGames()
 
 void Server::initializeGames()
 {
-	for (unsigned int i = 0; i < mGames.size(); i++)
-	{
-		resetGame(i);
-	}
+	//reset games to init values
+	for (unsigned int i = 0; i < mGames.size(); i++) { resetGame(i); }
 }
 
 void Server::resetGame(int index)
 {
 	mGameInfos[index].mID = ID_RECIEVE_GAME_INFO;
 
-
-	mGameInfos[index].firstPlayer.numLives = 3;
+	mGameInfos[index].firstPlayer.numLives  = 3;
 	mGameInfos[index].secondPlayer.numLives = 3;
 
-	mGameInfos[index].firstPlayer.velocity = velocity(0, 0, 0);
+	mGameInfos[index].firstPlayer.velocity  = velocity(0, 0, 0);
 	mGameInfos[index].secondPlayer.velocity = velocity(0, 0, 0);
 
-	mGameInfos[index].firstPlayer.position = position(0, 0);
+	mGameInfos[index].firstPlayer.position  = position(0, 0);
 	mGameInfos[index].secondPlayer.position = position(0, 0);
 
-	mGameInfos[index].finished = false;
-	mGameInfos[index].numLevel = 1;
-	mGameInfos[index].score = 0;
-	mGameInfos[index].started = false;
+	mGameInfos[index].gameNumber = index;
+	mGameInfos[index].finished   = false;
+	mGameInfos[index].numLevel   = 1;
+	mGameInfos[index].score      = 0;
+	mGameInfos[index].started    = false;
 }
 
 void Server::setConnection(RakNet::Packet* p)

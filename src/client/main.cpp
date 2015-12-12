@@ -14,6 +14,9 @@
 
 //###METHOD DECLARATIONS###############################################################################################
 
+	//init client
+	Client* initClient(int argc, char** argv);
+
 	//draw screen
 	void drawScreen(sf::RenderWindow &pWindow);
 
@@ -25,7 +28,7 @@
 
 
 
-int main()
+int main(int argc, char** argv)
 {
 	//create the window with global width/height and name in title bar
 	sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(SCREEN_WIDTH), static_cast<unsigned int>(SCREEN_HEIGHT)),
@@ -37,19 +40,11 @@ int main()
 
 
 //###INIT CLIENT#######################################################################################################
-	//connect to a random port
-	char* portNumber = getPortNumber();
-
-	//connect to external ip
-	std::string ipAddress = "";
-	std::cout << "Input server IP or \"localhost\": ";
-	std::cin >> ipAddress;
-	Client* mpClient = new Client(portNumber, ipAddress.c_str(), "200");
+	
+	Client* mpClient = initClient(argc, argv);
 
 	//while trying to connect, don't update the game logic
 	while (!mpClient->getConnected()) { mpClient->update(); }
-
-
 
 
 
@@ -69,7 +64,7 @@ int main()
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			// "close requested" event: we close the window
+			//close the window
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
@@ -77,6 +72,30 @@ int main()
 
 	return 0;
 };
+
+Client* initClient(int argc, char** argv)
+{
+	//command line arguments
+	if (argc == 4) //serverIP serverPort clientPort
+	{
+		const char* serverIP   = argv[1];
+		const char* serverPort = argv[2];
+		const char* clientPort = argv[3];
+
+		return new Client(clientPort, serverIP, serverPort);
+	}
+	else //manually get parameters
+	{
+		//connect to a random port
+		char* clientPort = getPortNumber();
+
+		//connect to external ip
+		std::string serverIP = "";
+		std::cout << "Input server IP or \"localhost\": ";
+		std::cin >> serverIP;
+		return new Client(clientPort, serverIP.c_str(), "200");
+	}
+}
 
 //draw the client's game info
 void drawScreen(sf::RenderWindow &pWindow)

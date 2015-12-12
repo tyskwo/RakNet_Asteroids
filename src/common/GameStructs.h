@@ -13,7 +13,7 @@
 
 
 //#####################################################################################################################
-//###FILE FOR COMMON STRUCTS, VALUES, AND METHODS BETWEEN THE SERVER AND CLIENT########################################
+//#  FILE FOR COMMON STRUCTS, VALUES, AND METHODS BETWEEN THE SERVER AND CLIENT  ######################################
 //#####################################################################################################################
 
 
@@ -81,6 +81,7 @@ struct Asteroid
 struct GameInfo
 {
 	unsigned char mID;
+	int gameNumber;
 	bool started  = false;
 	bool finished = false;
 

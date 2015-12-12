@@ -111,6 +111,8 @@ void Client::getPackets()
 			//get the packet's GameInfo struct and set it equal to ours
 			GameInfo gameInfo = *reinterpret_cast<GameInfo*>(mpPacket->data);
 			mGameInfo = gameInfo;
+
+			printf("%d", gameInfo.gameNumber);
 			break;
 		}
 		case ID_SECOND_CONNECTION:
@@ -122,6 +124,8 @@ void Client::getPackets()
 			//get the packet's GameInfo struct and set it equal to ours
 			GameInfo gameInfo = *reinterpret_cast<GameInfo*>(mpPacket->data);
 			mGameInfo = gameInfo;
+
+			printf("%d", gameInfo.gameNumber);
 			break;
 		}
 
