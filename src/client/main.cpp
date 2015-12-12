@@ -12,6 +12,13 @@
 #include "../common/GameStructs.h"
 
 
+//client object
+Client* mpClient;
+
+//input counter
+InputCounter mCounter;
+
+
 //###METHOD DECLARATIONS###############################################################################################
 
 	//init client
@@ -36,12 +43,9 @@ int main(int argc, char** argv)
 	//set framerate
 	window.setFramerateLimit(60);
 
-
-
-
 //###INIT CLIENT#######################################################################################################
 	
-	Client* mpClient = initClient(argc, argv);
+	mpClient = initClient(argc, argv);
 
 	//while trying to connect, don't update the game logic
 	while (!mpClient->getConnected()) { mpClient->update(); }
@@ -56,6 +60,7 @@ int main(int argc, char** argv)
 
 //###GET INPUT########################################################################################################
 		getInput();
+		printf("%d\n", mpClient->getInputCounter().counterUP);
 		
 //###DRAW#############################################################################################################
 		drawScreen(window);
@@ -101,7 +106,7 @@ Client* initClient(int argc, char** argv)
 void drawScreen(sf::RenderWindow &pWindow)
 {
 	//clear the display
-	pWindow.clear(sf::Color::White);
+	pWindow.clear(sf::Color::Black);
 
 	//update the display
 	pWindow.display();
@@ -110,10 +115,33 @@ void drawScreen(sf::RenderWindow &pWindow)
 //get keyboard/mouse input
 void getInput()
 {
-	//up arrow key is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	//up arrow key or W is pressed down
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
+		mCounter.counterUP++;
 	}
+	//down arrow key or S is pressed down
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		mCounter.counterDOWN++;
+	}
+	//left arrow key or A is pressed down
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		mCounter.counterLEFT++;
+	}
+	//right arrow key or D is pressed down
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		mCounter.counterRIGHT++;
+	}
+	//space key is pressed down
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		mCounter.counterSPACE++;
+	}
+
+	mpClient->setInputCounter(mCounter);
 };
 
 

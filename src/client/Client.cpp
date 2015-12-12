@@ -12,8 +12,7 @@ Client::Client()
 	Gets(mIPaddress, sizeof(mIPaddress));
 
 	//if garbage is entered, set to localhost
-	if (mIPaddress[0] == 0)
-		strcpy_s(mIPaddress, "127.0.0.1");
+	if (mIPaddress[0] == 0) strcpy_s(mIPaddress, "127.0.0.1");
 
 	//init with client port of 202 and entered ip address
 	init("202", mIPaddress, "200");

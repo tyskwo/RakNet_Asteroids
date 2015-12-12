@@ -24,6 +24,14 @@ const float SCREEN_HEIGHT = 768.0;
 const double PI = std::atan(1.0) * 4;
 
 
+
+//counters for keyboard input
+struct InputCounter
+{
+public:
+	unsigned short counterUP = 0, counterDOWN = 0, counterLEFT = 0, counterRIGHT = 0, counterSPACE = 0;
+};
+
 //struct for position values
 struct position
 {
@@ -60,37 +68,52 @@ struct velocity
 	}
 };
 
+//struct for bullet values
+struct Bullet
+{
+	position position;
+	velocity velocity;
+};
+
 //struct for player values
 struct Player
 {
 	position position;
 	velocity velocity;
 	int numLives;
+
+	std::array<Bullet, 32> bullets;
 };
 
-//struct for ball values
+//struct for asteroid values
 struct Asteroid
 {
 	position position;
 	velocity velocity;
-	bool collidedWith;
 };
 
 //struct to receive game state from server
 #pragma pack(push, 1)
 struct GameInfo
 {
+	//1 byte
 	unsigned char mID;
-	int gameNumber;
+
+	int  gameNumber;
+
+	//2 bytes
 	bool started  = false;
 	bool finished = false;
 
-	int numLevel = 0;
-	int score = 0;
+	//3 bytes
+	char numLevel = 0;
+	unsigned short score = 0;
+
+	//6 bytes so far.
 
 	Player firstPlayer;
 	Player secondPlayer;
-	Asteroid asteroids;
+	std::array<Asteroid, 64> asteroids;
 };
 #pragma pack(pop)
 
