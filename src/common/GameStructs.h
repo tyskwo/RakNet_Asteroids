@@ -4,6 +4,9 @@
 //so there is no redefinition errors
 #pragma once
 
+//Box2D includes
+#include <Box2D\Box2D.h>
+
 //library includes
 #include <cstdio>
 
@@ -25,11 +28,40 @@ const double PI = std::atan(1.0) * 4;
 
 
 
-//counters for keyboard input
-struct InputCounter
+//struct for physics values
+struct PHYSICS
 {
-public:
-	unsigned short counterUP = 0, counterDOWN = 0, counterLEFT = 0, counterRIGHT = 0, counterSPACE = 0;
+	//physics world
+	struct WORLD
+	{
+		static const b2Vec2  gravity()	{ return b2Vec2(0.0f, 0.0f); };
+		static const float32 timeStep()	{ return 1.0f / 60.0f; };
+
+		static const int32   velocityIterations = 8;
+		static const int32   positionIterations = 3;
+	};
+	
+	struct SHIP
+	{
+		static const float32 LinearDampening()  { return 0.025f; };
+		static const float32 AngularDampening() { return 0.1f;   };
+		static const float32 linearSpeed()		{ return 0.1f;   };
+		static const float32 rotateSpeed()		{ return 0.008f; };
+
+		static const b2FixtureDef fixture()
+		{
+			b2PolygonShape dynamicBox;
+			dynamicBox.SetAsBox(1.0f, 1.0f);
+
+			static b2FixtureDef fix;
+			fix.shape = &dynamicBox;
+			fix.density = 1.0f;
+			fix.friction = 0.3f;
+
+			return fix;
+		}
+	};
+
 };
 
 //struct for position values
@@ -88,6 +120,7 @@ struct Player
 //struct for asteroid values
 struct Asteroid
 {
+	unsigned char size;
 	position position;
 	velocity velocity;
 };

@@ -35,10 +35,6 @@ public:
 	//getter for the corresponding game info from server
 	inline GameInfo getGameInfo() { return mGameInfo; };
 
-	//getter for the input counter
-	inline InputCounter getInputCounter() { return mInputCounter; };
-	inline void setInputCounter(InputCounter temp) { mInputCounter = temp; };
-
 private:
 	//pointer to client object
 	RakNet::RakPeerInterface* mpClient;
@@ -60,8 +56,6 @@ private:
 
 	//game info
 	GameInfo mGameInfo;
-
-	InputCounter mInputCounter;
 };
 
 #endif

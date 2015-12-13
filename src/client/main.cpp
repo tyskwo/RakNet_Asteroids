@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
+//Box2D includes
 #include <Box2D\Box2D.h>
 
 //library includes
@@ -17,14 +18,21 @@
 //client object
 Client* mpClient;
 
-//input counter
-InputCounter mCounter;
+//physics world
+b2World physicsWorld(PHYSICS::WORLD::gravity());
+
+//player object
+b2Body* player;
+sf::RectangleShape playerSprite = sf::RectangleShape(sf::Vector2f(10.0f, 10.0f));
 
 
 //###METHOD DECLARATIONS###############################################################################################
 
 	//init client
 	Client* initClient(int argc, char** argv);
+
+	//update physics
+	void updatePhysics();
 
 	//draw screen
 	void drawScreen(sf::RenderWindow &pWindow);
@@ -46,105 +54,53 @@ int main(int argc, char** argv)
 	window.setFramerateLimit(60);
 
 //###INIT CLIENT#######################################################################################################
-	
 	mpClient = initClient(argc, argv);
 
-	//while trying to connect, don't update the game logic
-	while (!mpClient->getConnected()) { mpClient->update(); }
 
 
-//###BOX2D STUFF######################################################################################################
-	b2Vec2 gravity(0.0f, 0.0f);
-	b2World world(gravity);
-	world.SetAllowSleeping(true);
+//###BOX2D INIT########################################################################################################
+	//PHYSICS::SHIP::init();
+	physicsWorld.SetAllowSleeping(true);
 
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(0.0f, 4.0f);
-	b2Body* body = world.CreateBody(&bodyDef);
+	b2BodyDef bodyDefinition;
+	bodyDefinition.type = b2_dynamicBody;
+	bodyDefinition.position.Set(50.0f, 50.0f);
 
+	player = physicsWorld.CreateBody(&bodyDefinition);
+
+	//player->CreateFixture(&PHYSICS::SHIP::fixture());
 	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(1.0f, 1.0f);
 
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
+	static b2FixtureDef fix;
+	fix.shape = &dynamicBox;
+	fix.density = 1.0f;
+	fix.friction = 0.3f;
+	player->CreateFixture(&fix);
+	player->SetLinearDamping(PHYSICS::SHIP::LinearDampening());
+	player->SetAngularDamping(PHYSICS::SHIP::AngularDampening());
 
-	body->CreateFixture(&fixtureDef);
+	playerSprite.setFillColor(sf::Color::Red);
+	playerSprite.setOrigin(sf::Vector2f(playerSprite.getSize().x / 2.0f, playerSprite.getSize().y / 2.0f));
 
-	float32 timeStep = 1.0f / 60.0f;
-	int32 velocityIterations = 6;
-	int32 positionIterations = 2;
+	
 
+//###WAIT UNTIL CONNECTED TO RUN GAME LOOP###########################################################################
+	while (!mpClient->getConnected()) { mpClient->update(); }
 
-	sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(10.0f, 10.0f));
-	rect.setFillColor(sf::Color::Red);
-
-	body->SetLinearDamping(0.0025f);
-	body->SetAngularDamping(0.1f);
-
-	/* THIS CODE GOES INSIDE THE UPDATE LOOP SOMEWHERE
-	for (int32 i = 0; i < 60; i++)
-	{
-		world.Step(timeStep, velocityIterations, positionIterations);
-
-		b2Vec2 position = body->GetPosition();
-
-		if (position.x > SCREEN_WIDTH)
-		{
-			body->SetTransform(b2Vec2(-rect.getSize().x, body->GetPosition().y), body->GetAngle());
-		}
-		else if (position.x < -rect.getSize().x)
-		{
-			body->SetTransform(b2Vec2(SCREEN_WIDTH, body->GetPosition().y), body->GetAngle());
-		}
-
-		if (position.y > SCREEN_HEIGHT)
-		{
-			body->SetTransform(b2Vec2(body->GetPosition().x, -rect.getSize().y), body->GetAngle());
-		}
-		else if (position.y < -rect.getSize().y)
-		{
-			body->SetTransform(b2Vec2(body->GetPosition().x, SCREEN_HEIGHT), body->GetAngle());
-		}
-
-		float32 angle = body->GetAngle();
-		rect.setPosition(sf::Vector2f(position.x, position.y));
-		rect.setRotation(angle);
-	}
-
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x + 0.1f, body->GetLinearVelocity().y));
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x - 0.1f, body->GetLinearVelocity().y));
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y - 0.1f));
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y + 0.1f));
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		body->SetAngularVelocity(body->GetAngularVelocity() + 0.1f);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		body->SetAngularVelocity(body->GetAngularVelocity() - 0.1f);
-
-	*/
 
 
 //###RUN PROGRAM######################################################################################################
 	while (window.isOpen())
 	{
-		//update client
+//###UPDATE CLIENT####################################################################################################
 		mpClient->update();
+
+//###UPDATE PHYSICS###################################################################################################
+		updatePhysics();
 
 //###GET INPUT########################################################################################################
 		getInput();
-		printf("%d\n", mpClient->getInputCounter().counterUP);
 		
 //###DRAW#############################################################################################################
 		drawScreen(window);
@@ -186,11 +142,44 @@ Client* initClient(int argc, char** argv)
 	}
 }
 
+void updatePhysics()
+{
+	for (int32 i = 0; i < 60; i++)
+	{
+		physicsWorld.Step(PHYSICS::WORLD::timeStep(), PHYSICS::WORLD::velocityIterations, PHYSICS::WORLD::positionIterations);
+
+		b2Vec2 position = player->GetPosition();
+
+		if (position.x > SCREEN_WIDTH)
+		{
+			player->SetTransform(b2Vec2(-playerSprite.getSize().x, player->GetPosition().y), player->GetAngle());
+		}
+		else if (position.x < -playerSprite.getSize().x)
+		{
+			player->SetTransform(b2Vec2(SCREEN_WIDTH, player->GetPosition().y), player->GetAngle());
+		}
+
+		if (position.y > SCREEN_HEIGHT)
+		{
+			player->SetTransform(b2Vec2(player->GetPosition().x, -playerSprite.getSize().y), player->GetAngle());
+		}
+		else if (position.y < -playerSprite.getSize().y)
+		{
+			player->SetTransform(b2Vec2(player->GetPosition().x, SCREEN_HEIGHT), player->GetAngle());
+		}
+
+		playerSprite.setPosition(sf::Vector2f(position.x, position.y));
+		playerSprite.setRotation(player->GetAngle()*180.0f/3.14159f);
+	}
+}
+
 //draw the client's game info
 void drawScreen(sf::RenderWindow &pWindow)
 {
 	//clear the display
 	pWindow.clear(sf::Color::Black);
+
+	pWindow.draw(playerSprite);
 
 	//update the display
 	pWindow.display();
@@ -202,32 +191,30 @@ void getInput()
 	//up arrow key or W is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-		mCounter.counterUP++;
+		player->SetLinearVelocity(b2Vec2(player->GetLinearVelocity().x + PHYSICS::SHIP::linearSpeed()*cos(player->GetAngle()),
+			                             player->GetLinearVelocity().y + PHYSICS::SHIP::linearSpeed()*sin(player->GetAngle())));
 	}
+
 	//down arrow key or S is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	{
-		mCounter.counterDOWN++;
-	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {}
+
 	//left arrow key or A is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		mCounter.counterLEFT++;
+		player->SetAngularVelocity(player->GetAngularVelocity() - PHYSICS::SHIP::rotateSpeed());
+		playerSprite.setRotation(player->GetAngle() * 180.0f / 3.14159f);
 	}
+
 	//right arrow key or D is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		mCounter.counterRIGHT++;
+		player->SetAngularVelocity(player->GetAngularVelocity() + PHYSICS::SHIP::rotateSpeed());
+		playerSprite.setRotation(player->GetAngle() * 180.0f / 3.14159f);
 	}
+
 	//space key is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-	{
-		mCounter.counterSPACE++;
-	}
-
-	mpClient->setInputCounter(mCounter);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {}
 };
-
 
 //get random port number from 201 - 401
 char* getPortNumber()
