@@ -27,7 +27,7 @@
 //constants
 const float SCREEN_WIDTH  = 1200.0;
 const float SCREEN_HEIGHT = 768.0;
-const double PI = std::atan(1.0) * 4;
+const float PI = std::atan(1.0f) * 4.0f;
 
 
 
@@ -52,30 +52,38 @@ struct TEXTURES
 //struct for physics values
 struct PHYSICS
 {
+	enum category 
+	{
+		FIRST_SHIP    = 0x0001,
+		SECOND_SHIP   = 0x0002,
+		ASTEROID      = 0x0004,
+		FIRST_BULLET  = 0x0008,
+		SECOND_BULLET = 0x0010,
+	};
+
 	//physics world
 	struct WORLD
 	{
 		static const b2Vec2  gravity()	{ return b2Vec2(0.0f, 0.0f); };
 		static const float32 timeStep()	{ return 1.0f / 60.0f; };
 
-		static const int32   velocityIterations = 8;
-		static const int32   positionIterations = 3;
+		static const int32   velocityIterations = 6;
+		static const int32   positionIterations = 2;
 	};
 	
 	struct SHIP
 	{
-		static const float32 LinearDampening()  { return 0.025f; };
-		static const float32 AngularDampening() { return 0.1f;   };
-		static const float32 linearSpeed()		{ return 0.1f;   };
-		static const float32 rotateSpeed()		{ return 0.008f; };
-		static const float32 density()			{ return 1.0f;   };
-		static const float32 friction()			{ return 0.3f;	 };
+		static const float32 LinearDamping()  { return 0.025f; };
+		static const float32 AngularDamping() { return 0.1f;   };
+		static const float32 linearSpeed()	  { return 0.1f;   };
+		static const float32 rotateSpeed()	  { return 0.008f; };
+		static const float32 density()		  { return 1.0f;   };
+		static const float32 friction()		  { return 0.3f;   };
 	};
 
 	struct BULLET
 	{
-		static const float32 LinearDampening()  { return 0.025f; };
-		static const float32 linearSpeed()		{ return 1.0f;   };
+		static const float32 linearSpeed()		{ return 10.0f;   };
 		static const float32 density()			{ return 1.0f;   };
 		static const float32 friction()			{ return 0.3f;   };
 	};
@@ -83,7 +91,8 @@ struct PHYSICS
 
 struct OBJECT
 {
-
+	b2Body* body = NULL;
+	sf::Sprite sprite;
 };
 
 //struct for position values

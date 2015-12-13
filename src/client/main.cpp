@@ -30,12 +30,15 @@ sf::Font mFont;
 b2World physicsWorld(PHYSICS::WORLD::gravity());
 
 //player object
-b2Body* player;
-sf::Sprite playerSprite;
+OBJECT player;
+std::array<OBJECT*, 32> playerBullets;
 
 //textures
 sf::Texture TEXTURES::mFirstShip,   TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet, TEXTURES::mSecondBullet;
+
+
+bool isSpacePressed = false;
 
 
 //###METHOD DECLARATIONS###############################################################################################
@@ -56,7 +59,8 @@ sf::Texture TEXTURES::mFirstShip,   TEXTURES::mSecondShip,
 	void updatePhysics();
 
 	//check for screen wrap
-	void checkWrap(b2Body* object);
+	void checkWrap(OBJECT object);
+	bool checkDelete(OBJECT* object);
 
 	//draw screen
 	void drawScreen(sf::RenderWindow &pWindow);
@@ -186,35 +190,66 @@ void updatePhysics()
 	for (int32 i = 0; i < 60; i++)
 	{
 		physicsWorld.Step(PHYSICS::WORLD::timeStep(), PHYSICS::WORLD::velocityIterations, PHYSICS::WORLD::positionIterations);
-
 		checkWrap(player);
 	}
 
-	playerSprite.setPosition(sf::Vector2f(player->GetPosition().x, player->GetPosition().y));
-	playerSprite.setRotation(player->GetAngle()*180.0f / 3.14159f);
+	player.sprite.setPosition(sf::Vector2f(player.body->GetPosition().x, player.body->GetPosition().y));
+	player.sprite.setRotation(player.body->GetAngle()*180.0f / 3.14159f);
+
+	for (unsigned int i = 0; i < playerBullets.size(); i++)
+	{
+		if (playerBullets[i] != NULL)
+		{
+			playerBullets[i]->sprite.setPosition(sf::Vector2f(playerBullets[i]->body->GetPosition().x, playerBullets[i]->body->GetPosition().y));
+			playerBullets[i]->sprite.setRotation(playerBullets[i]->body->GetAngle()*180.0f / 3.14159f);
+
+			if (checkDelete(playerBullets[i]))
+			{
+				delete(playerBullets[i]);
+				playerBullets[i] = NULL;
+			}
+		}
+	}
 }
 
-void checkWrap(b2Body* body)
+void checkWrap(OBJECT object)
 {
-	b2Vec2 position = body->GetPosition();
+	b2Vec2 position = object.body->GetPosition();
 
 	if (position.x > SCREEN_WIDTH)
 	{
-		body->SetTransform(b2Vec2(-playerSprite.getLocalBounds().width, body->GetPosition().y), body->GetAngle());
+		object.body->SetTransform(b2Vec2(-object.sprite.getLocalBounds().width, object.body->GetPosition().y), object.body->GetAngle());
 	}
-	else if (position.x < -playerSprite.getLocalBounds().width)
+	else if (position.x < -object.sprite.getLocalBounds().width)
 	{
-		body->SetTransform(b2Vec2(SCREEN_WIDTH, body->GetPosition().y), body->GetAngle());
+		object.body->SetTransform(b2Vec2(SCREEN_WIDTH, object.body->GetPosition().y), object.body->GetAngle());
 	}
-
 	if (position.y > SCREEN_HEIGHT)
 	{
-		body->SetTransform(b2Vec2(body->GetPosition().x, -playerSprite.getLocalBounds().height), body->GetAngle());
+		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, -object.sprite.getLocalBounds().height), object.body->GetAngle());
 	}
-	else if (position.y < -playerSprite.getLocalBounds().height)
+	else if (position.y < -object.sprite.getLocalBounds().height)
 	{
-		body->SetTransform(b2Vec2(body->GetPosition().x, SCREEN_HEIGHT), body->GetAngle());
+		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, SCREEN_HEIGHT), object.body->GetAngle());
 	}
+}
+
+bool checkDelete(OBJECT* object)
+{
+	bool needsDeleting = false;
+	b2Vec2 position = object->body->GetPosition();
+
+	     if (position.x > SCREEN_WIDTH)                            { needsDeleting = true; }
+	else if (position.x < -object->sprite.getLocalBounds().width)  { needsDeleting = true; }
+	     if (position.y > SCREEN_HEIGHT)                           { needsDeleting = true; }
+	else if (position.y < -object->sprite.getLocalBounds().height) { needsDeleting = true; }
+
+	if (needsDeleting)
+	{
+		physicsWorld.DestroyBody(object->body);
+	}
+
+	return needsDeleting;
 }
 
 void initFont()
@@ -248,16 +283,16 @@ void initGraphics(bool firstPlayer)
 
 	if (firstPlayer)
 	{
-		playerSprite.setTexture(TEXTURES::mFirstShip);
-		player->SetTransform(b2Vec2(SCREEN_WIDTH / 4.0f, SCREEN_HEIGHT / 2.0f), player->GetAngle());
+		player.sprite.setTexture(TEXTURES::mFirstShip);
+		player.body->SetTransform(b2Vec2(SCREEN_WIDTH / 4.0f, SCREEN_HEIGHT / 2.0f), player.body->GetAngle());
 	}
 	else
 	{
-		playerSprite.setTexture(TEXTURES::mSecondShip);
-		playerSprite.setRotation(180);
-		player->SetTransform(b2Vec2(SCREEN_WIDTH / 4.0f * 3.0f, SCREEN_HEIGHT / 2.0f), PI);
+		player.sprite.setTexture(TEXTURES::mSecondShip);
+		player.sprite.setRotation(180);
+		player.body->SetTransform(b2Vec2(SCREEN_WIDTH / 4.0f * 3.0f, SCREEN_HEIGHT / 2.0f), PI);
 	}
-	playerSprite.setOrigin(sf::Vector2f(playerSprite.getLocalBounds().width / 2.0f, playerSprite.getLocalBounds().height / 2.0f));
+	player.sprite.setOrigin(sf::Vector2f(player.sprite.getLocalBounds().width / 2.0f, player.sprite.getLocalBounds().height / 2.0f));
 }
 
 //draw the client's game info
@@ -266,7 +301,15 @@ void drawScreen(sf::RenderWindow &pWindow)
 	//clear the display
 	pWindow.clear(sf::Color::Black);
 
-	pWindow.draw(playerSprite);
+	pWindow.draw(player.sprite);
+
+	for (unsigned int i = 0; i < playerBullets.size(); i++)
+	{
+		if (playerBullets[i] != NULL)
+		{
+			pWindow.draw(playerBullets[i]->sprite);
+		}
+	}
 
 	//update the display
 	pWindow.display();
@@ -278,8 +321,8 @@ void getInput()
 	//up arrow key or W is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-		player->SetLinearVelocity(b2Vec2(player->GetLinearVelocity().x + PHYSICS::SHIP::linearSpeed()*cos(player->GetAngle()),
-			                             player->GetLinearVelocity().y + PHYSICS::SHIP::linearSpeed()*sin(player->GetAngle())));
+		player.body->SetLinearVelocity(b2Vec2(player.body->GetLinearVelocity().x + PHYSICS::SHIP::linearSpeed()*cos(player.body->GetAngle()),
+			                             player.body->GetLinearVelocity().y + PHYSICS::SHIP::linearSpeed()*sin(player.body->GetAngle())));
 	}
 
 	//down arrow key or S is pressed down
@@ -288,22 +331,32 @@ void getInput()
 	//left arrow key or A is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		player->SetAngularVelocity(player->GetAngularVelocity() - PHYSICS::SHIP::rotateSpeed());
-		playerSprite.setRotation(player->GetAngle() * 180.0f / 3.14159f);
+		player.body->SetAngularVelocity(player.body->GetAngularVelocity() - PHYSICS::SHIP::rotateSpeed());
+		player.sprite.setRotation(player.body->GetAngle() * 180.0f / 3.14159f);
 	}
 
 	//right arrow key or D is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		player->SetAngularVelocity(player->GetAngularVelocity() + PHYSICS::SHIP::rotateSpeed());
-		playerSprite.setRotation(player->GetAngle() * 180.0f / 3.14159f);
+		player.body->SetAngularVelocity(player.body->GetAngularVelocity() + PHYSICS::SHIP::rotateSpeed());
+		player.sprite.setRotation(player.body->GetAngle() * 180.0f / 3.14159f);
 	}
 
 	//space key is pressed down
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) 
 	{
-		fireBullet();
+		if (!isSpacePressed)
+		{
+			fireBullet();
+			isSpacePressed = true;
+		}
 	}
+	else
+	{
+		isSpacePressed = false;
+	}
+
+	
 };
 
 //get random port number from 201 - 401
@@ -324,7 +377,59 @@ char* getPortNumber()
 
 void fireBullet()
 {
+	for (unsigned int i = 0; i < playerBullets.size(); i++)
+	{
+		if (playerBullets[i] == NULL)
+		{
+			playerBullets[i] = new OBJECT();
 
+			if (mpClient->getFirstConnected())
+			{
+				playerBullets[i]->sprite.setTexture(TEXTURES::mFirstBullet);
+			}
+			else			
+			{
+				playerBullets[i]->sprite.setTexture(TEXTURES::mSecondBullet);
+			}
+
+			b2BodyDef bodyDefinition;
+			bodyDefinition.type = b2_dynamicBody;
+			bodyDefinition.position.Set(player.body->GetPosition().x, player.body->GetPosition().y);
+
+			playerBullets[i]->body = physicsWorld.CreateBody(&bodyDefinition);
+			playerBullets[i]->body->SetTransform(player.body->GetPosition(), player.body->GetAngle());
+
+			b2PolygonShape dynamicBox;
+			dynamicBox.SetAsBox(float32(TEXTURES::mFirstBullet.getSize().x / 2.0f), float32(TEXTURES::mFirstBullet.getSize().y / 2.0f));
+
+			static b2FixtureDef fix;
+			fix.shape = &dynamicBox;
+			fix.density = PHYSICS::BULLET::density();
+			fix.friction = PHYSICS::BULLET::friction();
+			if (mpClient->getFirstConnected())
+			{
+				fix.filter.categoryBits = PHYSICS::category::FIRST_BULLET;
+				fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::SECOND_SHIP;
+			}
+			else
+			{
+				fix.filter.categoryBits = PHYSICS::category::SECOND_BULLET;
+				fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::FIRST_SHIP;
+			}
+
+			playerBullets[i]->body->CreateFixture(&fix);
+			playerBullets[i]->body->SetLinearVelocity(b2Vec2(PHYSICS::BULLET::linearSpeed()*cos(player.body->GetAngle()),
+				                                             PHYSICS::BULLET::linearSpeed()*sin(player.body->GetAngle())));
+
+			playerBullets[i]->sprite.setOrigin(sf::Vector2f(playerBullets[i]->sprite.getLocalBounds().width / 2.0f, 
+				                                            playerBullets[i]->sprite.getLocalBounds().height / 2.0f));
+
+			playerBullets[i]->sprite.setPosition(sf::Vector2f(playerBullets[i]->body->GetPosition().x, playerBullets[i]->body->GetPosition().y));
+			playerBullets[i]->sprite.setRotation(playerBullets[i]->body->GetAngle()*180.0f / 3.14159f);
+
+			break;
+		}
+	}
 }
 
 void initPhysics()
@@ -335,17 +440,28 @@ void initPhysics()
 	bodyDefinition.type = b2_dynamicBody;
 	bodyDefinition.position.Set(50.0f, 50.0f);
 
-	player = physicsWorld.CreateBody(&bodyDefinition);
+	player.body = physicsWorld.CreateBody(&bodyDefinition);
 
 	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(TEXTURES::mFirstShip.getSize().x, TEXTURES::mFirstShip.getSize().y);
-
+	dynamicBox.SetAsBox(float32(TEXTURES::mFirstShip.getSize().x / 2.0f), float32(TEXTURES::mFirstShip.getSize().y / 2.0f));
 	static b2FixtureDef fix;
 	fix.shape    = &dynamicBox;
 	fix.density  = PHYSICS::SHIP::density();
 	fix.friction = PHYSICS::SHIP::friction();
 
-	player->CreateFixture(&fix);
-	player->SetLinearDamping(PHYSICS::SHIP::LinearDampening());
-	player->SetAngularDamping(PHYSICS::SHIP::AngularDampening());
+	if (mpClient->getFirstConnected())
+	{
+		fix.filter.categoryBits = PHYSICS::category::FIRST_SHIP;
+		fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::SECOND_BULLET;
+	}
+	else
+	{
+		fix.filter.categoryBits = PHYSICS::category::SECOND_SHIP;
+		fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::FIRST_BULLET;
+	}
+	
+
+	player.body->CreateFixture(&fix);
+	player.body->SetLinearDamping(PHYSICS::SHIP::LinearDamping());
+	player.body->SetAngularDamping(PHYSICS::SHIP::AngularDamping());
 }
