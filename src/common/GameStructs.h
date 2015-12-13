@@ -35,7 +35,10 @@ const float PI = std::atan(1.0f) * 4.0f;
 struct TEXTURES
 {
 	static sf::Texture mFirstShip,   mSecondShip,
-					   mFirstBullet, mSecondBullet;
+					   mFirstBullet, mSecondBullet,
+					   mSmallAsteroid1,  mSmallAsteroid2,  mSmallAsteroid3,
+					   mMediumAsteroid1, mMediumAsteroid2, mMediumAsteroid3,
+					   mLargeAsteroid1,  mLargeAsteroid2;
 
 	static void init(std::string mBuildType)
 	{
@@ -44,6 +47,17 @@ struct TEXTURES
 
 		mFirstBullet.loadFromFile(mBuildType + "redBullet.png");
 		mSecondBullet.loadFromFile(mBuildType + "blueBullet.png");
+
+		mSmallAsteroid1.loadFromFile(mBuildType + "asteroidS1.png");
+		mSmallAsteroid2.loadFromFile(mBuildType + "asteroidS2.png");
+		mSmallAsteroid3.loadFromFile(mBuildType + "asteroidS3.png");
+
+		mMediumAsteroid2.loadFromFile(mBuildType + "asteroidM1.png");
+		mMediumAsteroid2.loadFromFile(mBuildType + "asteroidM2.png");
+		mMediumAsteroid2.loadFromFile(mBuildType + "asteroidM3.png");
+
+		mLargeAsteroid1.loadFromFile(mBuildType + "asteroidL1.png");
+		mLargeAsteroid2.loadFromFile(mBuildType + "asteroidL2.png");
 	}
 };
 
@@ -86,6 +100,20 @@ struct PHYSICS
 		static const float32 linearSpeed()		{ return 10.0f;  };
 		static const float32 density()			{ return 1.0f;   };
 		static const float32 friction()			{ return 0.3f;   };
+	};
+
+	struct ASTEROIDS
+	{
+		static const float32 linearSpeed()	  { return 0.1f; };
+		static const float32 rotateSpeed()	  { return 0.008f; };
+		static const float32 density()		  { return 2.0f; };
+
+		enum size
+		{
+			SMALL,
+			MEDIUM,
+			LARGE,
+		};
 	};
 };
 

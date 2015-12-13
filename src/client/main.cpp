@@ -29,16 +29,66 @@ sf::Font mFont;
 //physics world
 b2World physicsWorld(PHYSICS::WORLD::gravity());
 
-//player object
+//game objects
 OBJECT player;
 std::array<OBJECT*, 32> playerBullets;
+std::array<OBJECT*, 64> asteroids;
+
 
 //textures
 sf::Texture TEXTURES::mFirstShip,   TEXTURES::mSecondShip,
-			TEXTURES::mFirstBullet, TEXTURES::mSecondBullet;
+			TEXTURES::mFirstBullet, TEXTURES::mSecondBullet,
+			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
+			TEXTURES::mMediumAsteroid1, TEXTURES::mMediumAsteroid2, TEXTURES::mMediumAsteroid3,
+			TEXTURES::mLargeAsteroid1,  TEXTURES::mLargeAsteroid2;
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//WHERE IN THE WORLD SHOULD I PUT THIS THING!!!!!!!!!
 bool isSpacePressed = false;
+bool isPPressed = false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //###METHOD DECLARATIONS###############################################################################################
@@ -60,6 +110,7 @@ bool isSpacePressed = false;
 
 	//check for screen wrap
 	void checkWrap(OBJECT object);
+	void checkWrap(OBJECT* object);
 	bool checkDelete(OBJECT* object);
 
 	//draw screen
@@ -74,10 +125,15 @@ bool isSpacePressed = false;
 	//fire bullet from ship
 	void fireBullet();
 
+	//spawn asteroid
+	void spawnAsteroid();
+
 
 
 int main(int argc, char** argv)
 {
+	srand(time(NULL));
+
 	//if to determine if being run from Visual Studio
 #ifdef _DEBUG
 	mBuildType = "Debug/";
@@ -185,6 +241,40 @@ Client* initClient(int argc, char** argv)
 	}
 }
 
+//physics
+void initPhysics()
+{
+	physicsWorld.SetAllowSleeping(true);
+
+	b2BodyDef bodyDefinition;
+	bodyDefinition.type = b2_dynamicBody;
+	bodyDefinition.position.Set(50.0f, 50.0f);
+
+	player.body = physicsWorld.CreateBody(&bodyDefinition);
+
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(float32(TEXTURES::mFirstShip.getSize().x / 2.0f), float32(TEXTURES::mFirstShip.getSize().y / 2.0f));
+	static b2FixtureDef fix;
+	fix.shape = &dynamicBox;
+	fix.density = PHYSICS::SHIP::density();
+	fix.friction = PHYSICS::SHIP::friction();
+
+	if (mpClient->getFirstConnected())
+	{
+		fix.filter.categoryBits = PHYSICS::category::FIRST_SHIP;
+		fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::SECOND_BULLET;
+	}
+	else
+	{
+		fix.filter.categoryBits = PHYSICS::category::SECOND_SHIP;
+		fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::FIRST_BULLET;
+	}
+
+
+	player.body->CreateFixture(&fix);
+	player.body->SetLinearDamping(PHYSICS::SHIP::LinearDamping());
+	player.body->SetAngularDamping(PHYSICS::SHIP::AngularDamping());
+}
 void updatePhysics()
 {
 	for (int32 i = 0; i < 60; i++)
@@ -210,8 +300,20 @@ void updatePhysics()
 			}
 		}
 	}
+
+	for (unsigned int i = 0; i < asteroids.size(); i++)
+	{
+		if (asteroids[i] != NULL)
+		{
+			asteroids[i]->sprite.setPosition(sf::Vector2f(asteroids[i]->body->GetPosition().x, asteroids[i]->body->GetPosition().y));
+			asteroids[i]->sprite.setRotation(asteroids[i]->body->GetAngle()*180.0f / 3.14159f);
+
+			checkWrap(asteroids[i]);
+		}
+	}
 }
 
+//check for wrap/delete based on screen coordinates
 void checkWrap(OBJECT object)
 {
 	b2Vec2 position = object.body->GetPosition();
@@ -233,6 +335,27 @@ void checkWrap(OBJECT object)
 		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, SCREEN_HEIGHT), object.body->GetAngle());
 	}
 }
+void checkWrap(OBJECT* object)
+{
+	b2Vec2 position = object->body->GetPosition();
+
+	if (position.x > SCREEN_WIDTH)
+	{
+		object->body->SetTransform(b2Vec2(-object->sprite.getLocalBounds().width, object->body->GetPosition().y), object->body->GetAngle());
+	}
+	else if (position.x < -object->sprite.getLocalBounds().width)
+	{
+		object->body->SetTransform(b2Vec2(SCREEN_WIDTH, object->body->GetPosition().y), object->body->GetAngle());
+	}
+	if (position.y > SCREEN_HEIGHT)
+	{
+		object->body->SetTransform(b2Vec2(object->body->GetPosition().x, -object->sprite.getLocalBounds().height), object->body->GetAngle());
+	}
+	else if (position.y < -object->sprite.getLocalBounds().height)
+	{
+		object->body->SetTransform(b2Vec2(object->body->GetPosition().x, SCREEN_HEIGHT), object->body->GetAngle());
+	}
+}
 
 bool checkDelete(OBJECT* object)
 {
@@ -252,14 +375,14 @@ bool checkDelete(OBJECT* object)
 	return needsDeleting;
 }
 
+//init window, etc.
 void initFont()
 {
 	mFont.loadFromFile(mBuildType + "font.otf");
 }
-
 void initWindow(sf::RenderWindow &pWindow)
 {
-	pWindow.clear(sf::Color::Black);
+	pWindow.clear(sf::Color(37, 37, 37));
 
 	sf::Text beginText;
 	beginText.setString("CONNECTING...");
@@ -273,7 +396,6 @@ void initWindow(sf::RenderWindow &pWindow)
 
 	pWindow.display();
 }
-
 void initGraphics(bool firstPlayer)
 {
 	if (mIsCommandLine)
@@ -299,7 +421,7 @@ void initGraphics(bool firstPlayer)
 void drawScreen(sf::RenderWindow &pWindow)
 {
 	//clear the display
-	pWindow.clear(sf::Color::Black);
+	pWindow.clear(sf::Color(37, 37, 37));
 
 	pWindow.draw(player.sprite);
 
@@ -308,6 +430,14 @@ void drawScreen(sf::RenderWindow &pWindow)
 		if (playerBullets[i] != NULL)
 		{
 			pWindow.draw(playerBullets[i]->sprite);
+		}
+	}
+
+	for (unsigned int i = 0; i < asteroids.size(); i++)
+	{
+		if (asteroids[i] != NULL)
+		{
+			pWindow.draw(asteroids[i]->sprite);
 		}
 	}
 
@@ -356,7 +486,19 @@ void getInput()
 		isSpacePressed = false;
 	}
 
-	
+	//p key is pressed down
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+	{
+		if (!isPPressed)
+		{
+			spawnAsteroid();
+			isPPressed = true;
+		}
+	}
+	else
+	{
+		isPPressed = false;
+	}
 };
 
 //get random port number from 201 - 401
@@ -375,6 +517,7 @@ char* getPortNumber()
 	return (char*)temp_str.c_str();
 };
 
+//fire bullet from player
 void fireBullet()
 {
 	for (unsigned int i = 0; i < playerBullets.size(); i++)
@@ -432,36 +575,110 @@ void fireBullet()
 	}
 }
 
-void initPhysics()
+void spawnAsteroid()
 {
-	physicsWorld.SetAllowSleeping(true);
-
-	b2BodyDef bodyDefinition;
-	bodyDefinition.type = b2_dynamicBody;
-	bodyDefinition.position.Set(50.0f, 50.0f);
-
-	player.body = physicsWorld.CreateBody(&bodyDefinition);
-
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(float32(TEXTURES::mFirstShip.getSize().x / 2.0f), float32(TEXTURES::mFirstShip.getSize().y / 2.0f));
-	static b2FixtureDef fix;
-	fix.shape    = &dynamicBox;
-	fix.density  = PHYSICS::SHIP::density();
-	fix.friction = PHYSICS::SHIP::friction();
-
-	if (mpClient->getFirstConnected())
+	for (unsigned int i = 0; i < asteroids.size(); i++)
 	{
-		fix.filter.categoryBits = PHYSICS::category::FIRST_SHIP;
-		fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::SECOND_BULLET;
-	}
-	else
-	{
-		fix.filter.categoryBits = PHYSICS::category::SECOND_SHIP;
-		fix.filter.maskBits = PHYSICS::category::ASTEROID | PHYSICS::category::FIRST_BULLET;
-	}
-	
+		if (asteroids[i] == NULL)
+		{
+			asteroids[i] = new OBJECT();
+			b2PolygonShape dynamicBox;
 
-	player.body->CreateFixture(&fix);
-	player.body->SetLinearDamping(PHYSICS::SHIP::LinearDamping());
-	player.body->SetAngularDamping(PHYSICS::SHIP::AngularDamping());
+
+			int randomSize = rand() % 3;
+			if (randomSize == 0) // small
+			{
+				int randomType = rand() % 3;
+
+				if (randomType == 0) 
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mSmallAsteroid1); 
+					dynamicBox.SetAsBox(float32(TEXTURES::mSmallAsteroid1.getSize().x) / 2.0f, float32(TEXTURES::mSmallAsteroid1.getSize().y) / 2.0f);
+				}
+				else if (randomType == 1) 
+				{ 
+					asteroids[i]->sprite.setTexture(TEXTURES::mSmallAsteroid2);
+					dynamicBox.SetAsBox(float32(TEXTURES::mSmallAsteroid2.getSize().x) / 2.0f, float32(TEXTURES::mSmallAsteroid2.getSize().y) / 2.0f);
+				}
+				else if (randomType == 2) 
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mSmallAsteroid3);
+					dynamicBox.SetAsBox(float32(TEXTURES::mSmallAsteroid3.getSize().x) / 2.0f, float32(TEXTURES::mSmallAsteroid3.getSize().y) / 2.0f);
+				}
+			}
+			else if (randomSize == 1) // medium
+			{
+				int randomType = rand() % 3;
+
+				if (randomType == 0)
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mMediumAsteroid1);
+					dynamicBox.SetAsBox(float32(TEXTURES::mMediumAsteroid1.getSize().x) / 2.0f, float32(TEXTURES::mMediumAsteroid1.getSize().y) / 2.0f);
+				}
+				else if (randomType == 1)
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mMediumAsteroid2);
+					dynamicBox.SetAsBox(float32(TEXTURES::mMediumAsteroid2.getSize().x) / 2.0f, float32(TEXTURES::mMediumAsteroid2.getSize().y) / 2.0f);
+				}
+				else if (randomType == 2)
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mMediumAsteroid3);
+					dynamicBox.SetAsBox(float32(TEXTURES::mMediumAsteroid3.getSize().x) / 2.0f, float32(TEXTURES::mMediumAsteroid3.getSize().y) / 2.0f);
+				}
+			}
+			else if (randomSize == 2) // large
+			{
+				int randomType = rand() % 2;
+
+				if (randomType == 0)
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mLargeAsteroid1);
+					dynamicBox.SetAsBox(float32(TEXTURES::mLargeAsteroid1.getSize().x) / 2.0f, float32(TEXTURES::mLargeAsteroid1.getSize().y) / 2.0f);
+				}
+				else if (randomType == 1)
+				{
+					asteroids[i]->sprite.setTexture(TEXTURES::mLargeAsteroid2);
+					dynamicBox.SetAsBox(float32(TEXTURES::mLargeAsteroid2.getSize().x) / 2.0f, float32(TEXTURES::mLargeAsteroid2.getSize().y) / 2.0f);
+				}
+			}
+
+
+			b2Vec2 position;
+			position.x = SCREEN_WIDTH / 2.0f;
+			position.y = SCREEN_HEIGHT / 2.0f;
+			float32 angle = (static_cast <float32> (rand()) / static_cast <float32> (RAND_MAX)) * PI * 2;
+
+
+			b2BodyDef bodyDefinition;
+			bodyDefinition.type = b2_dynamicBody;
+			bodyDefinition.position.Set(position.x, position.y);
+
+			asteroids[i]->body = physicsWorld.CreateBody(&bodyDefinition);
+			asteroids[i]->body->SetTransform(position, angle);
+
+
+			static b2FixtureDef fix;
+			fix.shape = &dynamicBox;
+			fix.density = PHYSICS::ASTEROIDS::density();
+			fix.filter.categoryBits = PHYSICS::category::ASTEROID;
+			fix.filter.maskBits = PHYSICS::category::FIRST_SHIP | PHYSICS::category::SECOND_SHIP | PHYSICS::category::FIRST_BULLET | PHYSICS::category::SECOND_BULLET | PHYSICS::category::ASTEROID;
+			asteroids[i]->body->CreateFixture(&fix);
+
+
+			asteroids[i]->body->SetLinearVelocity(b2Vec2(PHYSICS::ASTEROIDS::linearSpeed()*cos(asteroids[i]->body->GetAngle()),
+				                                         PHYSICS::ASTEROIDS::linearSpeed()*sin(asteroids[i]->body->GetAngle())));
+
+
+			//set sprite's properties
+			asteroids[i]->sprite.setOrigin(sf::Vector2f(asteroids[i]->sprite.getLocalBounds().width  / 2.0f,
+				                                        asteroids[i]->sprite.getLocalBounds().height / 2.0f));
+
+			asteroids[i]->sprite.setPosition(sf::Vector2f(asteroids[i]->body->GetPosition().x, 
+				                                          asteroids[i]->body->GetPosition().y));
+
+			asteroids[i]->sprite.setRotation(asteroids[i]->body->GetAngle()*180.0f / 3.14159f);
+
+			break;
+		}
+	}
 }
