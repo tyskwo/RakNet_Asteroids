@@ -83,7 +83,7 @@ struct PHYSICS
 
 	struct BULLET
 	{
-		static const float32 linearSpeed()		{ return 10.0f;   };
+		static const float32 linearSpeed()		{ return 10.0f;  };
 		static const float32 density()			{ return 1.0f;   };
 		static const float32 friction()			{ return 0.3f;   };
 	};
