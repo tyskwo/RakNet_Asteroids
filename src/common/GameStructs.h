@@ -7,6 +7,9 @@
 //Box2D includes
 #include <Box2D\Box2D.h>
 
+//SFML includes
+#include <SFML/Graphics.hpp>
+
 //library includes
 #include <cstdio>
 
@@ -25,6 +28,24 @@
 const float SCREEN_WIDTH  = 1200.0;
 const float SCREEN_HEIGHT = 768.0;
 const double PI = std::atan(1.0) * 4;
+
+
+
+//struct for textures
+struct TEXTURES
+{
+	static sf::Texture mFirstShip,   mSecondShip,
+					   mFirstBullet, mSecondBullet;
+
+	static void init(std::string mBuildType)
+	{
+		mFirstShip.loadFromFile(mBuildType + "redShip.png");
+		mSecondShip.loadFromFile(mBuildType + "blueShip.png");
+
+		mFirstBullet.loadFromFile(mBuildType + "redBullet.png");
+		mSecondBullet.loadFromFile(mBuildType + "blueBullet.png");
+	}
+};
 
 
 
@@ -47,20 +68,21 @@ struct PHYSICS
 		static const float32 AngularDampening() { return 0.1f;   };
 		static const float32 linearSpeed()		{ return 0.1f;   };
 		static const float32 rotateSpeed()		{ return 0.008f; };
-
-		static const b2FixtureDef fixture()
-		{
-			b2PolygonShape dynamicBox;
-			dynamicBox.SetAsBox(1.0f, 1.0f);
-
-			static b2FixtureDef fix;
-			fix.shape = &dynamicBox;
-			fix.density = 1.0f;
-			fix.friction = 0.3f;
-
-			return fix;
-		}
+		static const float32 density()			{ return 1.0f;   };
+		static const float32 friction()			{ return 0.3f;	 };
 	};
+
+	struct BULLET
+	{
+		static const float32 LinearDampening()  { return 0.025f; };
+		static const float32 linearSpeed()		{ return 1.0f;   };
+		static const float32 density()			{ return 1.0f;   };
+		static const float32 friction()			{ return 0.3f;   };
+	};
+};
+
+struct OBJECT
+{
 
 };
 
