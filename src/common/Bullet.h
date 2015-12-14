@@ -31,11 +31,6 @@ private:
 		static const float32 friction()	   { return 0.3f; };
 	};
 
-	struct data
-	{
-		bool shouldDelete = false;
-		int  index = 0;
-	};
 };
 
 #endif

@@ -11,7 +11,7 @@ link_directories(${CMAKE_SOURCE_DIR}/3rdParty/RakNet/lib)
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/Box2D/lib)
 
 add_executable(Client src/client/main.cpp 
-src/common/NetworkStructs.h src/common/PhysicsStructs.h
+src/common/NetworkStructs.h src/common/PhysicsStructs.h src/common/PhysicsStructs.cpp
 src/client/Client.h src/client/Client.cpp
 src/common/Object.h src/common/Object.cpp
 src/common/Asteroid.h src/common/Asteroid.cpp
@@ -20,7 +20,7 @@ src/common/Ship.h src/common/Ship.cpp
 )
 
 add_executable(Server src/server/main.cpp 
-src/common/NetworkStructs.h src/common/PhysicsStructs.h
+src/common/NetworkStructs.h src/common/PhysicsStructs.h src/common/PhysicsStructs.cpp
 src/server/Server.h src/server/Server.cpp
 src/common/Object.h src/common/Object.cpp
 src/common/Asteroid.h src/common/Asteroid.cpp

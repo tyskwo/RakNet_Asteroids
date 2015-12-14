@@ -39,12 +39,6 @@ private:
 		static const float32 density()	   { return 2.0f; };
 	};
 
-	struct data
-	{
-		bool shouldDelete = false;
-		int  index = 0;
-	};
-
 	Size size;
 };
 

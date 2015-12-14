@@ -24,6 +24,7 @@ public:
 	inline b2Body*     getBody()      { return body;   };
 
 
+	inline void setDelete(bool trash) { mShouldDelete = trash; };
 
 protected:
 	void initPhysics();

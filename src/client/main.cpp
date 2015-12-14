@@ -111,7 +111,7 @@ bool isPPressed = false;
 
 int main(int argc, char** argv)
 {
-	srand(time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 
 //###DETERMINE ENVIRONMENT#############################################################################################
 	#ifdef _DEBUG
@@ -241,7 +241,7 @@ void updatePhysics()
 
 	for (unsigned int i = 0; i < playerBullets.size(); i++)
 	{
-		if (playerBullets[i]->shouldDelete()) 
+		if (playerBullets[i] != NULL && playerBullets[i]->shouldDelete()) 
 		{
 			delete(playerBullets[i]);
 			playerBullets[i] = NULL;
