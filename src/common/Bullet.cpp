@@ -1,5 +1,6 @@
 #include "Bullet.h"
 
+
 Bullet::Bullet(bool firstConnected, Ship* player) { init(firstConnected, player); };
 
 Bullet::Bullet(const Bullet &other)
@@ -48,10 +49,7 @@ void Bullet::initPhysics(bool firstConnected, Ship* player)
 	body->SetLinearVelocity(b2Vec2(mPhysics::linearSpeed()*cos(player->getBody()->GetAngle()),
 		                           mPhysics::linearSpeed()*sin(player->getBody()->GetAngle())));
 
-
-	/*PHYSICS::BULLET::data* temp = new PHYSICS::BULLET::data();
-	temp->index = i;
-	playerBullets[i]->body->SetUserData(temp);*/
+	body->SetUserData(this);
 }
 
 void Bullet::initSprite(bool firstConnected)

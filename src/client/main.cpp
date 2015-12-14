@@ -241,6 +241,12 @@ void updatePhysics()
 
 	for (unsigned int i = 0; i < playerBullets.size(); i++)
 	{
+		if (playerBullets[i]->shouldDelete()) 
+		{
+			delete(playerBullets[i]);
+			playerBullets[i] = NULL;
+		}
+
 		if (playerBullets[i] != NULL)
 		{
 			playerBullets[i]->getSprite()->setPosition(sf::Vector2f(playerBullets[i]->getBody()->GetPosition().x, playerBullets[i]->getBody()->GetPosition().y));

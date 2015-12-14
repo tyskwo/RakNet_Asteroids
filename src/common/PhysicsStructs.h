@@ -12,7 +12,8 @@
 
 //library includes
 #include <cstdio>
-#include <queue>
+#include "Object.h"
+#include "Bullet.h"
 
 
 
@@ -97,94 +98,95 @@ class ContactListener: public b2ContactListener
 {
 	void BeginContact(b2Contact* contact) 
 	{
-		//b2Body bodyA = contact->GetFixtureA()->GetBody();
+		//get the two bodies
+		b2Body* bodyA = contact->GetFixtureA()->GetBody();
+		b2Body* bodyB = contact->GetFixtureB()->GetBody();
 
-		//check if fixture B was a bullet
-		const b2Filter bodyA = contact->GetFixtureA()->GetFilterData();
-		//check if fixture B was a bullet
-		const b2Filter bodyB = contact->GetFixtureB()->GetFilterData();
+		//and the two mask filters
+		const b2Filter filterA = contact->GetFixtureA()->GetFilterData();
+		const b2Filter filterB = contact->GetFixtureB()->GetFilterData();
 
 
-		if (bodyA.categoryBits == PHYSICS::category::FIRST_BULLET)
+		if (filterA.categoryBits == PHYSICS::category::FIRST_BULLET)
 		{
 			//remove bullet
-			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
-			//data->shouldDelete = true;
+			Bullet* bullet = (Bullet*)(bodyA->GetUserData());
+			bullet->shouldDelete = true;
 			
-			if (bodyB.categoryBits == PHYSICS::category::SECOND_SHIP)
+			if (filterB.categoryBits == PHYSICS::category::SECOND_SHIP)
 			{
 				//lower second ship's life count
 			}
-			if (bodyB.categoryBits == PHYSICS::category::ASTEROID)
+			if (filterB.categoryBits == PHYSICS::category::ASTEROID)
 			{
 				//split asteroid
 			}
 		}
-		else if (bodyB.categoryBits == PHYSICS::category::FIRST_BULLET)
+		else if (filterB.categoryBits == PHYSICS::category::FIRST_BULLET)
 		{
 			//remove bullet
-			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
-			//data->shouldDelete = true;
+			Bullet* bullet = (Bullet*)(bodyA->GetUserData());
+			bullet->shouldDelete = true;
 
-			if (bodyA.categoryBits == PHYSICS::category::SECOND_SHIP)
+			if (filterA.categoryBits == PHYSICS::category::SECOND_SHIP)
 			{
 				//lower second ship's life count
 			}
-			if (bodyA.categoryBits == PHYSICS::category::ASTEROID)
+			if (filterA.categoryBits == PHYSICS::category::ASTEROID)
 			{
 				//split asteroid
 			}
 		}
 
-		if (bodyA.categoryBits == PHYSICS::category::SECOND_BULLET)
+		if (filterA.categoryBits == PHYSICS::category::SECOND_BULLET)
 		{
 			//remove bullet
-			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
-			//data->shouldDelete = true;
+			Bullet* bullet = (Bullet*)(bodyA->GetUserData());
+			bullet->shouldDelete = true;
 
-			if (bodyB.categoryBits == PHYSICS::category::FIRST_SHIP)
+			if (filterB.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
 				//lower first ship's life count
 			}
-			if (bodyB.categoryBits == PHYSICS::category::ASTEROID)
+			if (filterB.categoryBits == PHYSICS::category::ASTEROID)
 			{
 				//split asteroid
 			}
 		}
-		else if (bodyB.categoryBits == PHYSICS::category::SECOND_BULLET)
+		else if (filterB.categoryBits == PHYSICS::category::SECOND_BULLET)
 		{
 			//remove bullet
-			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
-			//data->shouldDelete = true;
+			Bullet* bullet = (Bullet*)(bodyA->GetUserData());
+			bullet->shouldDelete = true;
 
-			if (bodyA.categoryBits == PHYSICS::category::FIRST_SHIP)
+			if (filterA.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
 				//lower first ship's life count
 			}
-			if (bodyA.categoryBits == PHYSICS::category::ASTEROID)
+			if (filterA.categoryBits == PHYSICS::category::ASTEROID)
 			{
 				//split asteroid
 			}
 		}
 
-		if (bodyA.categoryBits == PHYSICS::category::ASTEROID)
+		if (filterA.categoryBits == PHYSICS::category::ASTEROID)
 		{
-			if (bodyB.categoryBits == PHYSICS::category::FIRST_SHIP)
+			if (filterB.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
 				//lower first ship's life count
 			}
-			if (bodyB.categoryBits == PHYSICS::category::SECOND_SHIP)
+			if (filterB.categoryBits == PHYSICS::category::SECOND_SHIP)
 			{
 				//lower second ship's life count
 			}
 		}
-		else if (bodyB.categoryBits == PHYSICS::category::ASTEROID)
+		else if (filterB.categoryBits == PHYSICS::category::ASTEROID)
 		{
-			if (bodyA.categoryBits == PHYSICS::category::FIRST_SHIP)
+			if (filterA.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
 				//lower first ship's life count
 			}
-			if (bodyA.categoryBits == PHYSICS::category::SECOND_SHIP)
+			if (filterA.categoryBits == PHYSICS::category::SECOND_SHIP)
 			{
 				//lower second ship's life count
 			}

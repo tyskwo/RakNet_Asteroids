@@ -33,8 +33,6 @@ protected:
 	b2Body* body;
 	sf::Sprite* sprite;
 
-	struct data {};
-
 	bool mShouldDelete = false;
 };
 

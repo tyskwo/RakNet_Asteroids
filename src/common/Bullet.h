@@ -8,7 +8,7 @@
 #include "Object.h"
 #include "Ship.h"
 
-class Bullet : public Object
+class Bullet: public Object
 {
 public:
 	Bullet();

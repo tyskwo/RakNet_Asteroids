@@ -41,6 +41,8 @@ void Ship::initPhysics(bool firstConnected)
 	body->CreateFixture(&fix);
 	body->SetLinearDamping(mPhysics::LinearDamping());
 	body->SetAngularDamping(mPhysics::AngularDamping());
+
+	body->SetUserData(this);
 }
 
 void Ship::initSprite(bool firstConnected)
