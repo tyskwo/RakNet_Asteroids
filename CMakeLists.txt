@@ -10,8 +10,23 @@ link_directories(${CMAKE_SOURCE_DIR}/3rdParty/SFML/lib)
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/RakNet/lib)
 link_directories(${CMAKE_SOURCE_DIR}/3rdParty/Box2D/lib)
 
-add_executable(Client src/client/main.cpp src/common/NetworkStructs.h src/common/PhysicsStructs.h src/client/Client.h src/client/Client.cpp)
-add_executable(Server src/server/main.cpp src/common/NetworkStructs.h src/common/PhysicsStructs.h src/server/Server.h src/server/Server.cpp)
+add_executable(Client src/client/main.cpp 
+src/common/NetworkStructs.h src/common/PhysicsStructs.h
+src/client/Client.h src/client/Client.cpp
+src/common/Object.h src/common/Object.cpp
+src/common/Asteroid.h src/common/Asteroid.cpp
+src/common/Bullet.h src/common/Bullet.cpp
+src/common/Ship.h src/common/Ship.cpp
+)
+
+add_executable(Server src/server/main.cpp 
+src/common/NetworkStructs.h src/common/PhysicsStructs.h
+src/server/Server.h src/server/Server.cpp
+src/common/Object.h src/common/Object.cpp
+src/common/Asteroid.h src/common/Asteroid.cpp
+src/common/Bullet.h src/common/Bullet.cpp
+src/common/Ship.h src/common/Ship.cpp
+)
 
 add_custom_command(TARGET Client PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy_directory

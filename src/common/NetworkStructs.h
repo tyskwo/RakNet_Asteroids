@@ -54,24 +54,24 @@ struct velocity
 };
 
 //struct for bullet values
-struct Bullet
+struct BulletObject
 {
 	position position;
 	velocity velocity;
 };
 
 //struct for player values
-struct Player
+struct ShipObject
 {
 	position position;
 	velocity velocity;
 	int numLives;
 
-	std::array<Bullet, 16> bullets;
+	std::array<BulletObject, 16> bullets;
 };
 
 //struct for asteroid values
-struct Asteroid
+struct AsteroidObject
 {
 	unsigned char size;
 	position position;
@@ -97,9 +97,9 @@ struct GameInfo
 
 	//6 bytes so far.
 
-	Player firstPlayer;
-	Player secondPlayer;
-	std::array<Asteroid, 64> asteroids;
+	ShipObject firstPlayer;
+	ShipObject secondPlayer;
+	std::array<AsteroidObject, 64> asteroids;
 };
 #pragma pack(pop)
 

@@ -82,53 +82,15 @@ struct PHYSICS
 		static const int32   velocityIterations = 6;
 		static const int32   positionIterations = 2;
 	};
-	
-	struct SHIP
-	{
-		static const float32 LinearDamping()  { return 0.025f; };
-		static const float32 AngularDamping() { return 0.1f;   };
-		static const float32 linearSpeed()	  { return 0.1f;   };
-		static const float32 rotateSpeed()	  { return 0.008f; };
-		static const float32 density()		  { return 1.0f;   };
-		static const float32 friction()		  { return 0.3f;   };
-	};
-
-	struct BULLET
-	{
-		static const float32 linearSpeed()		{ return 10.0f;  };
-		static const float32 density()			{ return 1.0f;   };
-		static const float32 friction()			{ return 0.3f;   };
-
-		struct data
-		{
-			bool shouldDelete = false;
-			int  index = 0;
-		};
-	};
-
-	struct ASTEROIDS
-	{
-		static const float32 linearSpeed()	  { return 0.1f; };
-		static const float32 rotateSpeed()	  { return 0.008f; };
-		static const float32 density()		  { return 2.0f; };
-
-		enum size
-		{
-			SMALL,
-			MEDIUM,
-			LARGE,
-		};
-	};
 };
+
+
 
 //physics world
-b2World physicsWorld(PHYSICS::WORLD::gravity());
+extern b2World* physicsWorld;
+static b2World* getWorld() { return physicsWorld; };
 
-struct OBJECT
-{
-	b2Body* body = NULL;
-	sf::Sprite sprite;
-};
+
 
 class ContactListener: public b2ContactListener
 {
@@ -143,8 +105,8 @@ class ContactListener: public b2ContactListener
 		if (bodyA.categoryBits == PHYSICS::category::FIRST_BULLET)
 		{
 			//remove bullet
-			PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
-			data->shouldDelete = true;
+			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
+			//data->shouldDelete = true;
 			
 			if (bodyB.categoryBits == PHYSICS::category::SECOND_SHIP)
 			{
@@ -158,8 +120,8 @@ class ContactListener: public b2ContactListener
 		else if (bodyB.categoryBits == PHYSICS::category::FIRST_BULLET)
 		{
 			//remove bullet
-			PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
-			data->shouldDelete = true;
+			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
+			//data->shouldDelete = true;
 
 			if (bodyA.categoryBits == PHYSICS::category::SECOND_SHIP)
 			{
@@ -174,8 +136,8 @@ class ContactListener: public b2ContactListener
 		if (bodyA.categoryBits == PHYSICS::category::SECOND_BULLET)
 		{
 			//remove bullet
-			PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
-			data->shouldDelete = true;
+			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
+			//data->shouldDelete = true;
 
 			if (bodyB.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
@@ -189,8 +151,8 @@ class ContactListener: public b2ContactListener
 		else if (bodyB.categoryBits == PHYSICS::category::SECOND_BULLET)
 		{
 			//remove bullet
-			PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
-			data->shouldDelete = true;
+			//PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
+			//data->shouldDelete = true;
 
 			if (bodyA.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
