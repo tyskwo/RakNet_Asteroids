@@ -367,6 +367,7 @@ bool checkDelete(OBJECT* object)
 	     if (position.y > SCREEN_HEIGHT)                           { needsDeleting = true; }
 	else if (position.y < -object->sprite.getLocalBounds().height) { needsDeleting = true; }
 
+	//should be abstracted
 	PHYSICS::BULLET::data* temp = static_cast<PHYSICS::BULLET::data*>(object->body->GetUserData());
 	if (temp->shouldDelete) { needsDeleting = true; }
 

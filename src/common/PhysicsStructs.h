@@ -174,7 +174,9 @@ class ContactListener: public b2ContactListener
 		if (bodyA.categoryBits == PHYSICS::category::SECOND_BULLET)
 		{
 			//remove bullet
-			
+			PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureA()->GetBody()->GetUserData());
+			data->shouldDelete = true;
+
 			if (bodyB.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
 				//lower first ship's life count
@@ -187,6 +189,8 @@ class ContactListener: public b2ContactListener
 		else if (bodyB.categoryBits == PHYSICS::category::SECOND_BULLET)
 		{
 			//remove bullet
+			PHYSICS::BULLET::data* data = (PHYSICS::BULLET::data*)(contact->GetFixtureB()->GetBody()->GetUserData());
+			data->shouldDelete = true;
 
 			if (bodyA.categoryBits == PHYSICS::category::FIRST_SHIP)
 			{
