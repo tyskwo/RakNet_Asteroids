@@ -67,7 +67,7 @@ struct Player
 	velocity velocity;
 	int numLives;
 
-	std::array<Bullet, 32> bullets;
+	std::array<Bullet, 16> bullets;
 };
 
 //struct for asteroid values

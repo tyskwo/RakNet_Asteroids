@@ -29,7 +29,7 @@ sf::Font mFont;
 
 //game objects
 OBJECT player;
-std::array<OBJECT*, 32> playerBullets;
+std::array<OBJECT*, 16> playerBullets;
 std::array<OBJECT*, 64> asteroids;
 
 
