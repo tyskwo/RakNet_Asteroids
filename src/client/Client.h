@@ -8,7 +8,7 @@
 #include "Gets.h"
 
 //game includes
-#include "../common/GameStructs.h"
+#include "../common/NetworkStructs.h"
 
 class Client
 {

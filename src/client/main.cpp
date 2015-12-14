@@ -12,7 +12,7 @@
 
 //game includes
 #include "Client.h"
-#include "../common/GameStructs.h"
+#include "../common/PhysicsStructs.h"
 
 
 
@@ -26,8 +26,6 @@ Client* mpClient;
 //font
 sf::Font mFont;
 
-//physics world
-b2World physicsWorld(PHYSICS::WORLD::gravity());
 
 //game objects
 OBJECT player;
@@ -245,6 +243,7 @@ Client* initClient(int argc, char** argv)
 void initPhysics()
 {
 	physicsWorld.SetAllowSleeping(true);
+	physicsWorld.SetContactListener(new ContactListener());
 
 	b2BodyDef bodyDefinition;
 	bodyDefinition.type = b2_dynamicBody;
@@ -301,6 +300,8 @@ void updatePhysics()
 		}
 	}
 
+	
+
 	for (unsigned int i = 0; i < asteroids.size(); i++)
 	{
 		if (asteroids[i] != NULL)
@@ -318,45 +319,44 @@ void checkWrap(OBJECT object)
 {
 	b2Vec2 position = object.body->GetPosition();
 
-	if (position.x > SCREEN_WIDTH)
+	if (position.x > SCREEN_WIDTH + object.sprite.getLocalBounds().width / 2.0f)
 	{
-		object.body->SetTransform(b2Vec2(-object.sprite.getLocalBounds().width, object.body->GetPosition().y), object.body->GetAngle());
+		object.body->SetTransform(b2Vec2(-object.sprite.getLocalBounds().width / 2.0f, object.body->GetPosition().y), object.body->GetAngle());
 	}
-	else if (position.x < -object.sprite.getLocalBounds().width)
+	else if (position.x < -object.sprite.getLocalBounds().width / 2.0f)
 	{
-		object.body->SetTransform(b2Vec2(SCREEN_WIDTH, object.body->GetPosition().y), object.body->GetAngle());
+		object.body->SetTransform(b2Vec2(SCREEN_WIDTH + object.sprite.getLocalBounds().width / 2.0f, object.body->GetPosition().y), object.body->GetAngle());
 	}
-	if (position.y > SCREEN_HEIGHT)
+	if (position.y > SCREEN_HEIGHT + object.sprite.getLocalBounds().height / 2.0f)
 	{
-		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, -object.sprite.getLocalBounds().height), object.body->GetAngle());
+		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, -object.sprite.getLocalBounds().height / 2.0f), object.body->GetAngle());
 	}
-	else if (position.y < -object.sprite.getLocalBounds().height)
+	else if (position.y < -object.sprite.getLocalBounds().height / 2.0f)
 	{
-		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, SCREEN_HEIGHT), object.body->GetAngle());
+		object.body->SetTransform(b2Vec2(object.body->GetPosition().x, SCREEN_HEIGHT + object.sprite.getLocalBounds().height / 2.0f), object.body->GetAngle());
 	}
 }
 void checkWrap(OBJECT* object)
 {
 	b2Vec2 position = object->body->GetPosition();
 
-	if (position.x > SCREEN_WIDTH)
+	if (position.x > SCREEN_WIDTH + object->sprite.getLocalBounds().width / 2.0f)
 	{
-		object->body->SetTransform(b2Vec2(-object->sprite.getLocalBounds().width, object->body->GetPosition().y), object->body->GetAngle());
+		object->body->SetTransform(b2Vec2(-object->sprite.getLocalBounds().width / 2.0f, object->body->GetPosition().y), object->body->GetAngle());
 	}
-	else if (position.x < -object->sprite.getLocalBounds().width)
+	else if (position.x < -object->sprite.getLocalBounds().width / 2.0f)
 	{
-		object->body->SetTransform(b2Vec2(SCREEN_WIDTH, object->body->GetPosition().y), object->body->GetAngle());
+		object->body->SetTransform(b2Vec2(SCREEN_WIDTH + object->sprite.getLocalBounds().width / 2.0f, object->body->GetPosition().y), object->body->GetAngle());
 	}
-	if (position.y > SCREEN_HEIGHT)
+	if (position.y > SCREEN_HEIGHT + object->sprite.getLocalBounds().height / 2.0f)
 	{
-		object->body->SetTransform(b2Vec2(object->body->GetPosition().x, -object->sprite.getLocalBounds().height), object->body->GetAngle());
+		object->body->SetTransform(b2Vec2(object->body->GetPosition().x, -object->sprite.getLocalBounds().height / 2.0f), object->body->GetAngle());
 	}
-	else if (position.y < -object->sprite.getLocalBounds().height)
+	else if (position.y < -object->sprite.getLocalBounds().height / 2.0f)
 	{
-		object->body->SetTransform(b2Vec2(object->body->GetPosition().x, SCREEN_HEIGHT), object->body->GetAngle());
+		object->body->SetTransform(b2Vec2(object->body->GetPosition().x, SCREEN_HEIGHT + object->sprite.getLocalBounds().height / 2.0f), object->body->GetAngle());
 	}
 }
-
 bool checkDelete(OBJECT* object)
 {
 	bool needsDeleting = false;
@@ -366,6 +366,9 @@ bool checkDelete(OBJECT* object)
 	else if (position.x < -object->sprite.getLocalBounds().width)  { needsDeleting = true; }
 	     if (position.y > SCREEN_HEIGHT)                           { needsDeleting = true; }
 	else if (position.y < -object->sprite.getLocalBounds().height) { needsDeleting = true; }
+
+	PHYSICS::BULLET::data* temp = static_cast<PHYSICS::BULLET::data*>(object->body->GetUserData());
+	if (temp->shouldDelete) { needsDeleting = true; }
 
 	if (needsDeleting)
 	{
@@ -570,6 +573,11 @@ void fireBullet()
 			playerBullets[i]->sprite.setPosition(sf::Vector2f(playerBullets[i]->body->GetPosition().x, playerBullets[i]->body->GetPosition().y));
 			playerBullets[i]->sprite.setRotation(playerBullets[i]->body->GetAngle()*180.0f / 3.14159f);
 
+			PHYSICS::BULLET::data* temp = new PHYSICS::BULLET::data();
+			temp->index = i;
+			playerBullets[i]->body->SetUserData(temp);
+
+
 			break;
 		}
 	}
@@ -582,7 +590,7 @@ void spawnAsteroid()
 		if (asteroids[i] == NULL)
 		{
 			asteroids[i] = new OBJECT();
-			b2PolygonShape dynamicBox;
+			b2CircleShape circleShape;
 
 
 			int randomSize = rand() % 3;
@@ -593,17 +601,17 @@ void spawnAsteroid()
 				if (randomType == 0) 
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mSmallAsteroid1); 
-					dynamicBox.SetAsBox(float32(TEXTURES::mSmallAsteroid1.getSize().x) / 2.0f, float32(TEXTURES::mSmallAsteroid1.getSize().y) / 2.0f);
+					circleShape.m_radius = 25;
 				}
 				else if (randomType == 1) 
 				{ 
 					asteroids[i]->sprite.setTexture(TEXTURES::mSmallAsteroid2);
-					dynamicBox.SetAsBox(float32(TEXTURES::mSmallAsteroid2.getSize().x) / 2.0f, float32(TEXTURES::mSmallAsteroid2.getSize().y) / 2.0f);
+					circleShape.m_radius = 25;
 				}
 				else if (randomType == 2) 
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mSmallAsteroid3);
-					dynamicBox.SetAsBox(float32(TEXTURES::mSmallAsteroid3.getSize().x) / 2.0f, float32(TEXTURES::mSmallAsteroid3.getSize().y) / 2.0f);
+					circleShape.m_radius = 25;
 				}
 			}
 			else if (randomSize == 1) // medium
@@ -613,17 +621,17 @@ void spawnAsteroid()
 				if (randomType == 0)
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mMediumAsteroid1);
-					dynamicBox.SetAsBox(float32(TEXTURES::mMediumAsteroid1.getSize().x) / 2.0f, float32(TEXTURES::mMediumAsteroid1.getSize().y) / 2.0f);
+					circleShape.m_radius = 50;
 				}
 				else if (randomType == 1)
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mMediumAsteroid2);
-					dynamicBox.SetAsBox(float32(TEXTURES::mMediumAsteroid2.getSize().x) / 2.0f, float32(TEXTURES::mMediumAsteroid2.getSize().y) / 2.0f);
+					circleShape.m_radius = 50;
 				}
 				else if (randomType == 2)
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mMediumAsteroid3);
-					dynamicBox.SetAsBox(float32(TEXTURES::mMediumAsteroid3.getSize().x) / 2.0f, float32(TEXTURES::mMediumAsteroid3.getSize().y) / 2.0f);
+					circleShape.m_radius = 50;
 				}
 			}
 			else if (randomSize == 2) // large
@@ -633,12 +641,12 @@ void spawnAsteroid()
 				if (randomType == 0)
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mLargeAsteroid1);
-					dynamicBox.SetAsBox(float32(TEXTURES::mLargeAsteroid1.getSize().x) / 2.0f, float32(TEXTURES::mLargeAsteroid1.getSize().y) / 2.0f);
+					circleShape.m_radius = 100;
 				}
 				else if (randomType == 1)
 				{
 					asteroids[i]->sprite.setTexture(TEXTURES::mLargeAsteroid2);
-					dynamicBox.SetAsBox(float32(TEXTURES::mLargeAsteroid2.getSize().x) / 2.0f, float32(TEXTURES::mLargeAsteroid2.getSize().y) / 2.0f);
+					circleShape.m_radius = 100;
 				}
 			}
 
@@ -658,7 +666,7 @@ void spawnAsteroid()
 
 
 			static b2FixtureDef fix;
-			fix.shape = &dynamicBox;
+			fix.shape = &circleShape;
 			fix.density = PHYSICS::ASTEROIDS::density();
 			fix.filter.categoryBits = PHYSICS::category::ASTEROID;
 			fix.filter.maskBits = PHYSICS::category::FIRST_SHIP | PHYSICS::category::SECOND_SHIP | PHYSICS::category::FIRST_BULLET | PHYSICS::category::SECOND_BULLET | PHYSICS::category::ASTEROID;
