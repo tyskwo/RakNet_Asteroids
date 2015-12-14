@@ -76,6 +76,7 @@ void Asteroid::initSprite()
 	{
 		if (size == SMALL)       { sprite->setTexture(TEXTURES::mSmallAsteroid3);  }
 		else if (size == MEDIUM) { sprite->setTexture(TEXTURES::mMediumAsteroid3); }
+		else if (size == LARGE)  { sprite->setTexture(TEXTURES::mLargeAsteroid3);  }
 	}
 
 	//set sprite's properties

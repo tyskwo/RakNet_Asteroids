@@ -25,6 +25,8 @@ Client* mpClient;
 
 sf::Font mFont;
 
+b2World* physicsWorld = new b2World(PHYSICS::WORLD::gravity());
+
 Ship* player;
 std::array<Bullet*,   16> playerBullets;
 std::array<Asteroid*, 64> asteroids;
@@ -33,7 +35,7 @@ sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
 			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
 			TEXTURES::mMediumAsteroid1, TEXTURES::mMediumAsteroid2, TEXTURES::mMediumAsteroid3,
-			TEXTURES::mLargeAsteroid1,  TEXTURES::mLargeAsteroid2;
+			TEXTURES::mLargeAsteroid1,  TEXTURES::mLargeAsteroid2,  TEXTURES::mLargeAsteroid3;
 
 
 
@@ -57,7 +59,6 @@ sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 
 
 
-b2World* physicsWorld = new b2World(PHYSICS::WORLD::gravity());
 
 
 //WHERE IN THE WORLD SHOULD I PUT THIS THING!!!!!!!!!

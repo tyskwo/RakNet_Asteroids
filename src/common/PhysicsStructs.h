@@ -36,7 +36,7 @@ struct TEXTURES
 					   mFirstBullet, mSecondBullet,
 					   mSmallAsteroid1,  mSmallAsteroid2,  mSmallAsteroid3,
 					   mMediumAsteroid1, mMediumAsteroid2, mMediumAsteroid3,
-					   mLargeAsteroid1,  mLargeAsteroid2;
+					   mLargeAsteroid1,  mLargeAsteroid2,  mLargeAsteroid3;
 
 	static void init(std::string mBuildType)
 	{
@@ -56,6 +56,7 @@ struct TEXTURES
 
 		mLargeAsteroid1.loadFromFile(mBuildType + "asteroidL1.png");
 		mLargeAsteroid2.loadFromFile(mBuildType + "asteroidL2.png");
+		mLargeAsteroid3.loadFromFile(mBuildType + "asteroidL3.png");
 	}
 };
 
@@ -96,6 +97,8 @@ class ContactListener: public b2ContactListener
 {
 	void BeginContact(b2Contact* contact) 
 	{
+		//b2Body bodyA = contact->GetFixtureA()->GetBody();
+
 		//check if fixture B was a bullet
 		const b2Filter bodyA = contact->GetFixtureA()->GetFilterData();
 		//check if fixture B was a bullet

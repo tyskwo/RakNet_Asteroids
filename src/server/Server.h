@@ -7,7 +7,7 @@
 #include <Box2D\Box2D.h>
 
 //game includes
-#include "../common/GameStructs.h"
+#include "../common/NetworkStructs.h"
 
 
 class Server
