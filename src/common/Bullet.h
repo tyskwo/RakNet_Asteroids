@@ -30,7 +30,6 @@ private:
 		static const float32 density()	   { return 1.0f; };
 		static const float32 friction()	   { return 0.3f; };
 	};
-
 };
 
 #endif

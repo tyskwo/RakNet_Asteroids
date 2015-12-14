@@ -26,6 +26,11 @@ public:
 
 	inline const float32 getLinearSpeed() { return mPhysics::linearSpeed(); };
 	inline const float32 getRotateSpeed() { return mPhysics::rotateSpeed(); };
+	
+	inline Size getSize()   { return size;   };
+	inline int  getHealth() { return health; };
+
+	inline void loseHealth(int damage) { health -= damage; };
 
 private:
 	void initSize();
@@ -40,6 +45,7 @@ private:
 	};
 
 	Size size;
+	int health;
 };
 
 #endif

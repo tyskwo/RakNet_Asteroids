@@ -21,6 +21,9 @@ public:
 	inline const float32 getLinearSpeed()  { return mPhysics::linearSpeed(); };
 	inline const float32 getAngularSpeed() { return mPhysics::rotateSpeed(); };
 
+	inline int  getHealth()            { return health;    };
+	inline void loseHealth(int damage) { health -= damage; };
+
 private:
 	void initPhysics(bool firstConnected);
 	void initSprite(bool  firstConnected);
@@ -34,6 +37,8 @@ private:
 		static const float32 density()		   { return 1.0f; };
 		static const float32 friction()	       { return 0.3f; };
 	};
+
+	int health = 20;
 };
 
 #endif

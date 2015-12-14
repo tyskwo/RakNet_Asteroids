@@ -17,7 +17,11 @@ void Asteroid::init()
 	initSprite();
 }
 
-void Asteroid::initSize() { size = static_cast<Size>(rand() % 3); }
+void Asteroid::initSize() 
+{ 
+	size = static_cast<Size>(rand() % 3); 
+	health = (size + 1) * 2;
+}
 
 void Asteroid::initPhysics()
 {
@@ -53,6 +57,8 @@ void Asteroid::initPhysics()
 
 	body->SetLinearVelocity(b2Vec2(mPhysics::linearSpeed()*cos(body->GetAngle()),
 		                           mPhysics::linearSpeed()*sin(body->GetAngle())));
+
+	body->SetUserData(this);
 }
 
 void Asteroid::initSprite()
