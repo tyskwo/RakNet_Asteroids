@@ -15,10 +15,33 @@ enum Size
 	LARGE,
 };
 
+struct AsteroidSpawn
+{
+	bool deleteSelf    = false;
+	int  numberToSpawn = 0;
+	int  sizeToSpawn   = 0;
+
+	bool operator==(const AsteroidSpawn& rhs)
+	{
+		return deleteSelf    == rhs.deleteSelf    &&
+			   numberToSpawn == rhs.numberToSpawn &&
+			   sizeToSpawn   == rhs.sizeToSpawn;
+	}
+
+	bool operator!=(const AsteroidSpawn& rhs)
+	{
+		return deleteSelf != rhs.deleteSelf       ||
+			   numberToSpawn != rhs.numberToSpawn ||
+			   sizeToSpawn != rhs.sizeToSpawn;
+	}
+};
+const static AsteroidSpawn NoSpawn;
+
 class Asteroid : public Object
 {
 public:
 	Asteroid();
+	Asteroid(int size, b2Vec2 location);
 	Asteroid(const Asteroid &other);
 	~Asteroid();
 
@@ -30,22 +53,27 @@ public:
 	inline Size getSize()   { return size;   };
 	inline int  getHealth() { return health; };
 
-	inline void loseHealth(int damage) { health -= damage; };
+	void loseHealth(int damage);
+
+	inline AsteroidSpawn getSpawn()       { return collisionSpawn; };
+	inline void setSpawn(AsteroidSpawn x) { collisionSpawn = x;    };
 
 private:
 	void initSize();
-	void initPhysics();
+	void initPhysics(b2Vec2 location);
 	void initSprite();
 
 	struct mPhysics
 	{
-		static const float32 linearSpeed() { return 0.1f; };
-		static const float32 rotateSpeed() { return 0.008f; };
+		static const float32 linearSpeed() { return 0.4f; };
+		static const float32 rotateSpeed() { return 0.012f; };
 		static const float32 density()	   { return 2.0f; };
 	};
 
 	Size size;
 	int health;
+
+	AsteroidSpawn collisionSpawn = NoSpawn;
 };
 
 #endif

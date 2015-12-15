@@ -104,8 +104,8 @@ bool isPPressed = false;
 	char* getPortNumber();							//generate random port number
 
 	void fireBullet();								//fire bullet from ship
-	void spawnAsteroid();							//spawn asteroid
-
+	void spawnAsteroid();							
+	void checkAsteroidSpawn(Asteroid* asteroid);	//spawn asteroid
 
 
 
@@ -237,7 +237,6 @@ void updatePhysics()
 		physicsWorld->Step(PHYSICS::WORLD::timeStep(), PHYSICS::WORLD::velocityIterations, PHYSICS::WORLD::positionIterations);
 		checkWrap(player);
 	}
-
 	player->getSprite()->setPosition(sf::Vector2f(player->getBody()->GetPosition().x, player->getBody()->GetPosition().y));
 	player->getSprite()->setRotation(player->getBody()->GetAngle()*180.0f / 3.14159f);
 
@@ -248,7 +247,6 @@ void updatePhysics()
 			delete(playerBullets[i]);
 			playerBullets[i] = NULL;
 		}
-
 		if (playerBullets[i] != NULL)
 		{
 			playerBullets[i]->getSprite()->setPosition(sf::Vector2f(playerBullets[i]->getBody()->GetPosition().x, playerBullets[i]->getBody()->GetPosition().y));
@@ -256,7 +254,7 @@ void updatePhysics()
 
 			if (checkDelete(playerBullets[i]))
 			{
-				delete(playerBullets[i]);
+				delete playerBullets[i];
 				playerBullets[i] = NULL;
 			}
 		}
@@ -266,6 +264,15 @@ void updatePhysics()
 
 	for (unsigned int i = 0; i < asteroids.size(); i++)
 	{
+		if (asteroids[i] != NULL)
+		{
+			checkAsteroidSpawn(asteroids[i]);
+		}
+		if (asteroids[i] != NULL && asteroids[i]->shouldDelete())
+		{
+			delete(asteroids[i]);
+			asteroids[i] = NULL;
+		}
 		if (asteroids[i] != NULL)
 		{
 			asteroids[i]->getSprite()->setPosition(sf::Vector2f(asteroids[i]->getBody()->GetPosition().x, asteroids[i]->getBody()->GetPosition().y));
@@ -316,10 +323,6 @@ bool checkDelete(Object* object)
 	     if (position.y > SCREEN_HEIGHT)                                 { needsDeleting = true; }
 	else if (position.y < -object->getSprite()->getLocalBounds().height) { needsDeleting = true; }
 
-	//should be abstracted
-	/*PHYSICS::BULLET::data* temp = static_cast<PHYSICS::BULLET::data*>(object->body->GetUserData());
-	if (temp->shouldDelete) { needsDeleting = true; }*/
-
 	return needsDeleting;
 }
 
@@ -358,7 +361,7 @@ void drawScreen(sf::RenderWindow &pWindow)
 	{
 		if (playerBullets[i] != NULL)
 		{
-			pWindow.draw(*playerBullets[i]->getSprite());
+ 			pWindow.draw(*playerBullets[i]->getSprite());
 		}
 	}
 
@@ -471,5 +474,41 @@ void spawnAsteroid()
 			asteroids[i] = new Asteroid();
 			break;
 		}
+	}
+}
+
+void checkAsteroidSpawn(Asteroid* asteroid)
+{
+	if (asteroid->getSpawn() != NoSpawn)
+	{
+		if (asteroid->getSpawn().deleteSelf)
+		{
+			asteroid->setDelete(true);
+		}
+
+		if (asteroid->getSpawn().numberToSpawn > 0)
+		{
+			for (int i = 0; i < asteroid->getSpawn().numberToSpawn; i++)
+			{
+				for (unsigned int j = 0; j < asteroids.size(); j++)
+				{
+					if (asteroids[j] == NULL)
+					{
+						b2Vec2 location = asteroid->getBody()->GetPosition();
+						float  angle    = (rand() / RAND_MAX) * PI * 2.0f;
+						float  radius = int(asteroid->getSize()              * int(asteroid->getSize() / 2))              * 25 + 25 +
+							            int(asteroid->getSpawn().sizeToSpawn * int(asteroid->getSpawn().sizeToSpawn / 2)) * 25 + 25;
+
+						location.x += cos(angle)*radius;
+						location.y += sin(angle)*radius;
+
+						asteroids[j] = new Asteroid(asteroid->getSpawn().sizeToSpawn, location);
+						break;
+					}
+				}
+			}
+		}
+
+		asteroid->setSpawn(NoSpawn);
 	}
 }
