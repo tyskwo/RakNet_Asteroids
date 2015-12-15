@@ -1,12 +1,8 @@
 #ifndef ASTEROID_H
 #define ASTEROID_H
 
-
-//library includes
-
 //game includes
 #include "Object.h"
-
 
 enum Size
 {

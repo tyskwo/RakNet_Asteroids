@@ -1,4 +1,7 @@
 #include "Bullet.h"
+#include "Ship.h"
+
+#include "..\common\PhysicsStructs.h"
 
 Bullet::Bullet() {};
 

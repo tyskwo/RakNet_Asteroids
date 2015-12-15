@@ -1,11 +1,6 @@
 #ifndef SHIP_H
 #define SHIP_H
 
-
-//library includes
-/*#include "Box2D\Box2D.h"
-#include "SFML\Graphics.hpp"*/
-
 //game includes
 #include "Object.h"
 

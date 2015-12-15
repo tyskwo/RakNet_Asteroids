@@ -1,5 +1,8 @@
 #include "Object.h"
 
+//library includes
+#include "Box2D\Box2D.h"
+
 Object::Object() { init(); };
 
 Object::Object(b2World* pWorld) :mpWorld(pWorld) { init(); };

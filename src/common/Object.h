@@ -1,13 +1,13 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-
 //library includes
 #include "Box2D\Box2D.h"
 #include "SFML\Graphics.hpp"
 
-//game includes
-#include "../common/PhysicsStructs.h"
+//forward declarations
+class b2Body;
+class b2World;
 
 class Object
 {

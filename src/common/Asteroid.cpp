@@ -1,5 +1,7 @@
 #include "Asteroid.h"
 
+#include "..\common\PhysicsStructs.h"
+
 Asteroid::Asteroid() { init(); };
 
 Asteroid::Asteroid(b2World* pWorld) :Object(pWorld) { init(); };

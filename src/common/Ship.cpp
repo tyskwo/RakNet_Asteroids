@@ -1,5 +1,7 @@
 #include "Ship.h"
 
+#include "..\common\PhysicsStructs.h"
+
 Ship::Ship(bool firstConnected, b2World* pWorld) : Object(pWorld) { init(firstConnected); };
 
 Ship::~Ship() { cleanup(); };

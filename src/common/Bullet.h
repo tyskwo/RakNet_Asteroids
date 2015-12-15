@@ -1,12 +1,11 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-
-//library includes
-
 //game includes
 #include "Object.h"
-#include "Ship.h"
+
+//forward declarations
+class Ship;
 
 class Bullet: public Object
 {
@@ -21,6 +20,8 @@ public:
 	inline const float32 getLinearSpeed()  { return mPhysics::linearSpeed(); };
 
 private:
+	typedef float float32;
+
 	void initPhysics(bool firstConnected, Ship* player);
 	void initSprite(bool  firstConnected);
 
