@@ -11,6 +11,9 @@
 //RakNet includes
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
+#include "Export.h"
+#include "RakNetTime.h"
+#include "GetTime.h"
 
 
 //#####################################################################################################################
@@ -83,20 +86,19 @@ struct AsteroidObject
 #pragma pack(push, 1)
 struct GameInfo
 {
-	//1 byte
 	unsigned char mID;
+	unsigned char useTimeStamp = ID_TIMESTAMP;
+	RakNet::Time timeStamp; 
+	//Put the system time in here returned by RakNet::GetTime() or some other method that returns a similar value
 
 	int  gameNumber;
 
-	//2 bytes
 	bool started  = false;
 	bool finished = false;
 
-	//3 bytes
 	char numLevel = 0;
 	unsigned short score = 0;
 
-	//6 bytes so far.
 
 	ShipObject firstPlayer;
 	ShipObject secondPlayer;
