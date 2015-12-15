@@ -496,8 +496,8 @@ void checkAsteroidSpawn(Asteroid* asteroid)
 					{
 						b2Vec2 location = asteroid->getBody()->GetPosition();
 						float  angle    = (rand() / RAND_MAX) * PI * 2.0f;
-						float  radius = int(asteroid->getSize()              * int(asteroid->getSize() / 2))              * 25 + 25 +
-							            int(asteroid->getSpawn().sizeToSpawn * int(asteroid->getSpawn().sizeToSpawn / 2)) * 25 + 25;
+						float  radius = static_cast<float>(int(asteroid->getSize()              * int(asteroid->getSize() / 2))              * 25 + 25 +
+							            int(asteroid->getSpawn().sizeToSpawn * int(asteroid->getSpawn().sizeToSpawn / 2)) * 25 + 25);
 
 						location.x += cos(angle)*radius;
 						location.y += sin(angle)*radius;

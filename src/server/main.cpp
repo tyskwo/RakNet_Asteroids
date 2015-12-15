@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "../common/PhysicsStructs.h"
-#include "Game.h"
+#include "../common/Game.h"
 #include <array>
 
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
