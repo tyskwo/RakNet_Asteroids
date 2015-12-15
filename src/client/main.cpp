@@ -28,7 +28,7 @@ sf::Font mFont;
 b2World* physicsWorld = new b2World(PHYSICS::WORLD::gravity());
 
 Ship* player;
-std::array<Bullet*,   16> playerBullets;
+std::array<Bullet*,   8> playerBullets;
 std::array<Asteroid*, 64> asteroids;
 
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
