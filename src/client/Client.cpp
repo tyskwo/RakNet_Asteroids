@@ -1,5 +1,7 @@
 #include "Client.h"
 
+#include "GetTime.h"
+
 Client::Client()
 {
 	//value for the IP.
@@ -79,18 +81,12 @@ void Client::update()
 	getPackets();
 
 	//if enough time has passed (30fps), broadcast game states to clients
-	sendShipData();
-	/*if (mpTimer->shouldUpdate())
+	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
-		if (getFirstConnected())
-		{
-			sendPaddleData(mGameInfo.lPlayer.x, mGameInfo.lPlayer.y);
-		}
-		else
-		{
-			sendPaddleData(mGameInfo.rPlayer.x, mGameInfo.rPlayer.y);
-		}
-	}*/
+		mGameInfo.timeStamp = RakNet::GetTime();
+		sendShipData();
+		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
+	}
 }
 
 void Client::getPackets()
@@ -139,6 +135,7 @@ void Client::getPackets()
 		{
 			//get the packet's GameInfo struct
 			GameInfo gameInfo = *reinterpret_cast<GameInfo*>(mpPacket->data);
+			mGameInfo = gameInfo;
 			break;
 		}
 
@@ -153,5 +150,6 @@ void Client::getPackets()
 
 void Client::sendShipData()
 {
+	mGameInfo.mID = ID_SEND_SHIP_INFO;
 	mpClient->Send((const char*)&mGameInfo, sizeof(mGameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mServerGuid, false);
 }

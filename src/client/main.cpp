@@ -92,6 +92,7 @@ bool isPPressed = false;
 
 	void drawScreen(sf::RenderWindow &pWindow);		//draw to window
 	void getInput();								//get keyboard input
+	void getInfoFromGame();
 
 	char* getPortNumber();							//generate random port number
 
@@ -149,8 +150,14 @@ int main(int argc, char** argv)
 //###UPDATE CLIENT####################################################################################################
 		mpClient->update();
 
+		if (mpClient->getFirstConnected())
+			mpGame->getSecondPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getGameInfo().secondPlayer.position.x, mpClient->getGameInfo().secondPlayer.position.y), mpClient->getGameInfo().secondPlayer.velocity.rot);
+		else
+			mpGame->getFirstPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getGameInfo().firstPlayer.position.x, mpClient->getGameInfo().firstPlayer.position.y), mpClient->getGameInfo().firstPlayer.velocity.rot);
+
 //###UPDATE GAME######################################################################################################
 		mpGame->update();
+		getInfoFromGame();
 
 //###GET INPUT########################################################################################################
 		getInput();
@@ -165,6 +172,11 @@ int main(int argc, char** argv)
 			//close the window
 			if (event.type == sf::Event::Closed)
 				window.close();
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		{
+			window.close();
 		}
 	}
 
@@ -382,31 +394,45 @@ void getInfoFromGame()
 	for (unsigned int i = 0; i < mpGame->getAsteroids().size(); i++)
 	{
 		Asteroid* pTempAsteroid = mpGame->getAsteroids()[i];
-		info.asteroids[i].health = pTempAsteroid->getHealth();
-		info.asteroids[i].position.x = pTempAsteroid->getBody()->GetPosition().x;
-		info.asteroids[i].position.y = pTempAsteroid->getBody()->GetPosition().y;
-		info.asteroids[i].size = pTempAsteroid->getSize();
-		info.asteroids[i].velocity.x = pTempAsteroid->getBody()->GetLinearVelocity().x;
-		info.asteroids[i].velocity.y = pTempAsteroid->getBody()->GetLinearVelocity().y;
-		info.asteroids[i].velocity.rot = pTempAsteroid->getBody()->GetAngle();
+
+		if (pTempAsteroid != NULL)
+		{
+			info.asteroids[i].health = pTempAsteroid->getHealth();
+			info.asteroids[i].position.x = pTempAsteroid->getBody()->GetPosition().x;
+			info.asteroids[i].position.y = pTempAsteroid->getBody()->GetPosition().y;
+			info.asteroids[i].size = pTempAsteroid->getSize();
+			info.asteroids[i].velocity.x = pTempAsteroid->getBody()->GetLinearVelocity().x;
+			info.asteroids[i].velocity.y = pTempAsteroid->getBody()->GetLinearVelocity().y;
+			info.asteroids[i].velocity.rot = pTempAsteroid->getBody()->GetAngle();
+		}
 	}
 	
 	for (unsigned int i = 0; i < mpGame->getFirstPlayerBullets().size(); i++)
 	{
-		info.firstPlayer.bullets[i].position.x = mpGame->getFirstPlayerBullets()[i]->getBody()->GetPosition().x;
-		info.firstPlayer.bullets[i].position.y = mpGame->getFirstPlayerBullets()[i]->getBody()->GetPosition().y;
-		info.firstPlayer.bullets[i].velocity.x = mpGame->getFirstPlayerBullets()[i]->getBody()->GetLinearVelocity().x;
-		info.firstPlayer.bullets[i].velocity.y = mpGame->getFirstPlayerBullets()[i]->getBody()->GetLinearVelocity().y;
-		info.firstPlayer.bullets[i].velocity.rot = mpGame->getFirstPlayerBullets()[i]->getBody()->GetAngle();
+		Bullet* pBullet = mpGame->getFirstPlayerBullets()[i];
+
+		if (pBullet != NULL)
+		{
+			info.firstPlayer.bullets[i].position.x = pBullet->getBody()->GetPosition().x;
+			info.firstPlayer.bullets[i].position.y = pBullet->getBody()->GetPosition().y;
+			info.firstPlayer.bullets[i].velocity.x = pBullet->getBody()->GetLinearVelocity().x;
+			info.firstPlayer.bullets[i].velocity.y = pBullet->getBody()->GetLinearVelocity().y;
+			info.firstPlayer.bullets[i].velocity.rot = pBullet->getBody()->GetAngle();
+		}
 	}
 
 	for (unsigned int i = 0; i < mpGame->getSecondPlayerBullets().size(); i++)
 	{
-		info.secondPlayer.bullets[i].position.x = mpGame->getSecondPlayerBullets()[i]->getBody()->GetPosition().x;
-		info.secondPlayer.bullets[i].position.y = mpGame->getSecondPlayerBullets()[i]->getBody()->GetPosition().y;
-		info.secondPlayer.bullets[i].velocity.x = mpGame->getSecondPlayerBullets()[i]->getBody()->GetLinearVelocity().x;
-		info.secondPlayer.bullets[i].velocity.y = mpGame->getSecondPlayerBullets()[i]->getBody()->GetLinearVelocity().y;
-		info.secondPlayer.bullets[i].velocity.rot = mpGame->getSecondPlayerBullets()[i]->getBody()->GetAngle();
+		Bullet* pBullet = mpGame->getSecondPlayerBullets()[i];
+
+		if (pBullet != NULL)
+		{
+			info.secondPlayer.bullets[i].position.x = pBullet->getBody()->GetPosition().x;
+			info.secondPlayer.bullets[i].position.y = pBullet->getBody()->GetPosition().y;
+			info.secondPlayer.bullets[i].velocity.x = pBullet->getBody()->GetLinearVelocity().x;
+			info.secondPlayer.bullets[i].velocity.y = pBullet->getBody()->GetLinearVelocity().y;
+			info.secondPlayer.bullets[i].velocity.rot = pBullet->getBody()->GetAngle();
+		}
 	}
 
 	info.firstPlayer.health = mpGame->getFirstPlayer()->getHealth();
@@ -422,4 +448,6 @@ void getInfoFromGame()
 	info.secondPlayer.velocity.x = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x;
 	info.secondPlayer.velocity.y = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y;
 	info.secondPlayer.velocity.rot = mpGame->getSecondPlayer()->getBody()->GetAngle();
+
+	mpClient->setGameInfo(info);
 }

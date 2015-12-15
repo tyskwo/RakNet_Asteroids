@@ -141,6 +141,8 @@ void Server::getPackets()
 			{
 				GameInfo gameInfo = *reinterpret_cast<GameInfo*>(p->data);
 
+				gameInfo.mID = ID_RECIEVE_GAME_INFO;
+
 				if (mGames[i][0] == p->guid)
 				{
 					mpServer->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][1], false);

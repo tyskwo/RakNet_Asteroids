@@ -33,6 +33,7 @@ public:
 	inline bool getConnected()					 { return mIsConnected;        };
 
 	//getter for the corresponding game info from server
+	inline void setGameInfo(GameInfo info) { mGameInfo = info; };
 	inline GameInfo getGameInfo() { return mGameInfo; };
 
 private:
@@ -60,6 +61,8 @@ private:
 
 	//game info
 	GameInfo mGameInfo;
+
+	RakNet::Time mLastUpdateSent;
 };
 
 #endif
