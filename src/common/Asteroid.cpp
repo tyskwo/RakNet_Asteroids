@@ -2,7 +2,10 @@
 
 Asteroid::Asteroid() { init(); };
 
-Asteroid::Asteroid(int size, b2Vec2 location) 
+Asteroid::Asteroid(b2World* pWorld) :Object(pWorld) { init(); };
+
+Asteroid::Asteroid(int size, b2Vec2 location, b2World* pWorld)
+:Object(pWorld)
 {  
 	this->size = static_cast<Size>(size);
 	health = (size + 1) * (size + 1);
@@ -11,7 +14,8 @@ Asteroid::Asteroid(int size, b2Vec2 location)
 	initSprite();
 }
 
-Asteroid::Asteroid(const Asteroid &other)
+Asteroid::Asteroid(const Asteroid &other, b2World* pWorld)
+:Object(pWorld)
 {
 	body = other.body;
 	sprite = other.sprite;
@@ -49,7 +53,7 @@ void Asteroid::initPhysics(b2Vec2 location)
 	bodyDefinition.type = b2_dynamicBody;
 	bodyDefinition.position.Set(location.x, location.y);
 
-	body = physicsWorld->CreateBody(&bodyDefinition);
+	body = mpCurrWorld->CreateBody(&bodyDefinition);
 	body->SetTransform(location, angle);
 
 

@@ -12,8 +12,8 @@ class Bullet: public Object
 {
 public:
 	Bullet();
-	Bullet(const Bullet &other);
-	Bullet(bool firstConnected, Ship* player);
+	Bullet(const Bullet &other, b2World* pWorld);
+	Bullet(bool firstConnected, Ship* player, b2World* pWorld);
 	~Bullet();
 
 	void init(bool firstConnected, Ship* player);

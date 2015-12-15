@@ -153,7 +153,7 @@ int main(int argc, char** argv)
 
 
 
-	player = new Ship(mpClient->getFirstConnected());
+	player = new Ship(mpClient->getFirstConnected(), physicsWorld);
 
 
 
@@ -459,7 +459,7 @@ void fireBullet()
 	{
 		if (playerBullets[i] == NULL)
 		{
-			playerBullets[i] = new Bullet(mpClient->getFirstConnected(), player);
+			playerBullets[i] = new Bullet(mpClient->getFirstConnected(), player, physicsWorld);
 			break;
 		}
 	}
@@ -502,7 +502,7 @@ void checkAsteroidSpawn(Asteroid* asteroid)
 						location.x += cos(angle)*radius;
 						location.y += sin(angle)*radius;
 
-						asteroids[j] = new Asteroid(asteroid->getSpawn().sizeToSpawn, location);
+						asteroids[j] = new Asteroid(asteroid->getSpawn().sizeToSpawn, location, physicsWorld);
 						break;
 					}
 				}

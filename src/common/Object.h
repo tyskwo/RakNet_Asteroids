@@ -13,6 +13,7 @@ class Object
 {
 public:
 	Object();
+	Object(b2World* pWorld);
 	Object(const Object &other);
 	~Object();
 
@@ -33,6 +34,8 @@ protected:
 
 	b2Body* body;
 	sf::Sprite* sprite;
+
+	b2World* mpCurrWorld;
 
 	bool mShouldDelete = false;
 };

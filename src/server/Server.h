@@ -20,7 +20,7 @@ public:
 	void init(const char* serverPort);
 	void cleanup();
 
-	void update(b2World &bWorld);
+	void update();
 	void broadcastGames();
 
 private:
@@ -43,7 +43,7 @@ private:
 	//initialize game infos
 	void initializeGames();
 	//update game infos
-	void updateGames(b2World &bWorld);
+	void updateGames();
 	//reset given game info
 	void resetGame(int index);
 
@@ -52,8 +52,8 @@ private:
 
 
 	//======BOX2D STUFF=======
-	b2World* mpB2world;
-	b2Body* mpOtherShip;
+	//b2World* mpB2world;
+	//b2Body* mpOtherShip;
 };
 
 #endif

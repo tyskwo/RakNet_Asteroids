@@ -65,26 +65,6 @@ void Server::init(const char* serverPort)
 
 	//initialize GameInfos
 	initializeGames();
-
-	mpB2world = new b2World(PHYSICS::WORLD::gravity());
-
-	b2BodyDef bodyDef;
-
-	bodyDef.type = b2_dynamicBody;
-
-	bodyDef.position.Set(0.0f, 4.0f);
-
-	mpOtherShip = mpB2world->CreateBody(&bodyDef);
-
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(float32(TEXTURES::mFirstShip.getSize().x / 2.0f), float32(TEXTURES::mFirstShip.getSize().y / 2.0f));
-
-	b2FixtureDef fix;
-	fix.shape = &dynamicBox;
-	fix.density = 1.0f;
-	fix.friction = 0.3f;
-
-	mpOtherShip->CreateFixture(&fix);
 }
 
 
@@ -110,13 +90,13 @@ unsigned char Server::GetPacketIdentifier(RakNet::Packet *p)
 		return (unsigned char)p->data[0];
 }
 
-void Server::update(b2World &bWorld)
+void Server::update()
 {
 	//get packets from clients
 	getPackets();
 
 	//update GameInfos
-	updateGames(bWorld);
+	updateGames();
 
 	//if enough time has passed (30fps), broadcast game states to clients
 	/*if (mpTimer->shouldUpdate())
@@ -126,7 +106,7 @@ void Server::update(b2World &bWorld)
 }
 
 
-void Server::updateGames(b2World &bWorld)
+void Server::updateGames()
 {
 	for (unsigned int i = 0; i < mGameInfos.size(); i++)
 	{
@@ -136,7 +116,7 @@ void Server::updateGames(b2World &bWorld)
 			//simulate game
 			for (int32 i = 0; i < 60; ++i)
 			{
-				mpB2world->Step(1.0f / 60.0f, 6, 2);
+				//mpB2world->Step(1.0f / 60.0f, 6, 2);
 
 			}
 		}
@@ -228,8 +208,8 @@ void Server::resetGame(int index)
 {
 	mGameInfos[index].mID = ID_RECIEVE_GAME_INFO;
 
-	mGameInfos[index].firstPlayer.numLives  = 3;
-	mGameInfos[index].secondPlayer.numLives = 3;
+	//mGameInfos[index].firstPlayer.numLives  = 3;
+	//mGameInfos[index].secondPlayer.numLives = 3;
 
 	mGameInfos[index].firstPlayer.velocity  = velocity(0, 0, 0);
 	mGameInfos[index].secondPlayer.velocity = velocity(0, 0, 0);

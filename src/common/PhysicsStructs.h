@@ -87,8 +87,8 @@ struct PHYSICS
 
 
 //physics world
-extern b2World* physicsWorld;
-static b2World* getWorld() { return physicsWorld; };
+extern b2World* gpPhysicsWorld;
+static b2World* getWorld() { return gpPhysicsWorld; };
 
 
 

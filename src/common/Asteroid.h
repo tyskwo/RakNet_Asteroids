@@ -41,8 +41,9 @@ class Asteroid : public Object
 {
 public:
 	Asteroid();
-	Asteroid(int size, b2Vec2 location);
-	Asteroid(const Asteroid &other);
+	Asteroid(b2World* pWorld);
+	Asteroid(int size, b2Vec2 location, b2World* pWorld);
+	Asteroid(const Asteroid &other, b2World* pWorld);
 	~Asteroid();
 
 	void init();
