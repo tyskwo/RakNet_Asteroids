@@ -374,3 +374,52 @@ char* getPortNumber()
 	//return char pointer of converted int
 	return (char*)temp_str.c_str();
 };
+
+void getInfoFromGame()
+{
+	GameInfo info;
+
+	for (unsigned int i = 0; i < mpGame->getAsteroids().size(); i++)
+	{
+		Asteroid* pTempAsteroid = mpGame->getAsteroids()[i];
+		info.asteroids[i].health = pTempAsteroid->getHealth();
+		info.asteroids[i].position.x = pTempAsteroid->getBody()->GetPosition().x;
+		info.asteroids[i].position.y = pTempAsteroid->getBody()->GetPosition().y;
+		info.asteroids[i].size = pTempAsteroid->getSize();
+		info.asteroids[i].velocity.x = pTempAsteroid->getBody()->GetLinearVelocity().x;
+		info.asteroids[i].velocity.y = pTempAsteroid->getBody()->GetLinearVelocity().y;
+		info.asteroids[i].velocity.rot = pTempAsteroid->getBody()->GetAngle();
+	}
+	
+	for (unsigned int i = 0; i < mpGame->getFirstPlayerBullets().size(); i++)
+	{
+		info.firstPlayer.bullets[i].position.x = mpGame->getFirstPlayerBullets()[i]->getBody()->GetPosition().x;
+		info.firstPlayer.bullets[i].position.y = mpGame->getFirstPlayerBullets()[i]->getBody()->GetPosition().y;
+		info.firstPlayer.bullets[i].velocity.x = mpGame->getFirstPlayerBullets()[i]->getBody()->GetLinearVelocity().x;
+		info.firstPlayer.bullets[i].velocity.y = mpGame->getFirstPlayerBullets()[i]->getBody()->GetLinearVelocity().y;
+		info.firstPlayer.bullets[i].velocity.rot = mpGame->getFirstPlayerBullets()[i]->getBody()->GetAngle();
+	}
+
+	for (unsigned int i = 0; i < mpGame->getSecondPlayerBullets().size(); i++)
+	{
+		info.secondPlayer.bullets[i].position.x = mpGame->getSecondPlayerBullets()[i]->getBody()->GetPosition().x;
+		info.secondPlayer.bullets[i].position.y = mpGame->getSecondPlayerBullets()[i]->getBody()->GetPosition().y;
+		info.secondPlayer.bullets[i].velocity.x = mpGame->getSecondPlayerBullets()[i]->getBody()->GetLinearVelocity().x;
+		info.secondPlayer.bullets[i].velocity.y = mpGame->getSecondPlayerBullets()[i]->getBody()->GetLinearVelocity().y;
+		info.secondPlayer.bullets[i].velocity.rot = mpGame->getSecondPlayerBullets()[i]->getBody()->GetAngle();
+	}
+
+	info.firstPlayer.health = mpGame->getFirstPlayer()->getHealth();
+	info.firstPlayer.position.x = mpGame->getFirstPlayer()->getBody()->GetPosition().x;
+	info.firstPlayer.position.y = mpGame->getFirstPlayer()->getBody()->GetPosition().y;
+	info.firstPlayer.velocity.x = mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x;
+	info.firstPlayer.velocity.y = mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y;
+	info.firstPlayer.velocity.rot = mpGame->getFirstPlayer()->getBody()->GetAngle();
+
+	info.secondPlayer.health = mpGame->getSecondPlayer()->getHealth();
+	info.secondPlayer.position.x = mpGame->getSecondPlayer()->getBody()->GetPosition().x;
+	info.secondPlayer.position.y = mpGame->getSecondPlayer()->getBody()->GetPosition().y;
+	info.secondPlayer.velocity.x = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x;
+	info.secondPlayer.velocity.y = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y;
+	info.secondPlayer.velocity.rot = mpGame->getSecondPlayer()->getBody()->GetAngle();
+}
