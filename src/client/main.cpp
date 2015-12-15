@@ -12,7 +12,11 @@
 
 //game includes
 #include "Client.h"
-#include "../common/Game.h"
+#include "..\common\Game.h"
+#include "..\common\PhysicsStructs.h"
+#include "..\common\Ship.h"
+#include "..\common\Bullet.h"
+#include "..\common\Asteroid.h"
 
 
 

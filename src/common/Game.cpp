@@ -1,5 +1,13 @@
 #include "Game.h"
 
+#include "..\common\PhysicsStructs.h"
+
+//game includes
+#include "..\common\Ship.h"
+#include "..\common\Bullet.h"
+#include "..\common\Asteroid.h"
+
+
 Game::Game() { init(); };
 
 Game::~Game() { cleanup(); };

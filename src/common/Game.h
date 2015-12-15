@@ -1,15 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
+class Ship;
+class Bullet;
+class Asteroid;
+class Object;
 
-//library includes
-#include "Box2D\Box2D.h"
-#include "SFML\Graphics.hpp"
-
-//game includes
-#include "../common/Ship.h"
-#include "../common/Bullet.h"
-#include "../common/Asteroid.h"
+class b2World;
 
 #include <array>
 
