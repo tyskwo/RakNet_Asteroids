@@ -69,6 +69,11 @@ void Game::update()
 		checkWrap(firstPlayer);
 		checkWrap(secondPlayer);
 	}
+	firstPlayer->getSprite()->setPosition(sf::Vector2f(firstPlayer->getBody()->GetPosition().x, firstPlayer->getBody()->GetPosition().y));
+	firstPlayer->getSprite()->setRotation(firstPlayer->getBody()->GetAngle()*180.0f / 3.14159f);
+	secondPlayer->getSprite()->setPosition(sf::Vector2f(secondPlayer->getBody()->GetPosition().x, secondPlayer->getBody()->GetPosition().y));
+	secondPlayer->getSprite()->setRotation(secondPlayer->getBody()->GetAngle()*180.0f / 3.14159f);
+
 
 	for (unsigned int i = 0; i < firstPlayerBullets.size(); i++)
 	{
@@ -79,6 +84,9 @@ void Game::update()
 		}
 		if (firstPlayerBullets[i] != NULL)
 		{
+			firstPlayerBullets[i]->getSprite()->setPosition(sf::Vector2f(firstPlayerBullets[i]->getBody()->GetPosition().x, firstPlayerBullets[i]->getBody()->GetPosition().y));
+			firstPlayerBullets[i]->getSprite()->setRotation(firstPlayerBullets[i]->getBody()->GetAngle()*180.0f / 3.14159f);
+
 			if (checkDelete(firstPlayerBullets[i]))
 			{
 				delete firstPlayerBullets[i];
@@ -96,6 +104,9 @@ void Game::update()
 		}
 		if (secondPlayerBullets[i] != NULL)
 		{
+			secondPlayerBullets[i]->getSprite()->setPosition(sf::Vector2f(secondPlayerBullets[i]->getBody()->GetPosition().x, secondPlayerBullets[i]->getBody()->GetPosition().y));
+			secondPlayerBullets[i]->getSprite()->setRotation(secondPlayerBullets[i]->getBody()->GetAngle()*180.0f / 3.14159f);
+
 			if (checkDelete(secondPlayerBullets[i]))
 			{
 				delete secondPlayerBullets[i];
@@ -118,6 +129,9 @@ void Game::update()
 		}
 		if (asteroids[i] != NULL)
 		{
+			asteroids[i]->getSprite()->setPosition(sf::Vector2f(asteroids[i]->getBody()->GetPosition().x, asteroids[i]->getBody()->GetPosition().y));
+			asteroids[i]->getSprite()->setRotation(asteroids[i]->getBody()->GetAngle()*180.0f / 3.14159f);
+
 			checkWrap(asteroids[i]);
 		}
 	}
@@ -199,5 +213,44 @@ void Game::checkAsteroidSpawn(Asteroid* asteroid)
 		}
 
 		asteroid->setSpawn(NoSpawn);
+	}
+}
+
+//fire bullet from player
+void Game::fireBullet(bool isFirstPlayer)
+{
+	if (isFirstPlayer)
+	{
+		for (unsigned int i = 0; i < firstPlayerBullets.size(); i++)
+		{
+			if (firstPlayerBullets[i] == NULL)
+			{
+				firstPlayerBullets[i] = new Bullet(isFirstPlayer, firstPlayer, physicsWorld);
+				break;
+			}
+		}
+	}
+	else
+	{
+		for (unsigned int i = 0; i < secondPlayerBullets.size(); i++)
+		{
+			if (secondPlayerBullets[i] == NULL)
+			{
+				secondPlayerBullets[i] = new Bullet(isFirstPlayer, secondPlayer, physicsWorld);
+				break;
+			}
+		}
+	}
+}
+
+void Game::spawnAsteroid()
+{
+	for (unsigned int i = 0; i < asteroids.size(); i++)
+	{
+		if (asteroids[i] == NULL)
+		{
+			asteroids[i] = new Asteroid(physicsWorld);
+			break;
+		}
 	}
 }

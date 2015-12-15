@@ -12,10 +12,8 @@
 
 //game includes
 #include "Client.h"
-//#include "../common/PhysicsStructs.h"
-#include "../common/Ship.h"
-#include "../common/Bullet.h"
-#include "../common/Asteroid.h"
+#include "../common/Game.h"
+
 
 
 
@@ -25,11 +23,7 @@ Client* mpClient;
 
 sf::Font mFont;
 
-b2World* physicsWorld = new b2World(PHYSICS::WORLD::gravity());
-
-Ship* player;
-std::array<Bullet*,   8> playerBullets;
-std::array<Asteroid*, 64> asteroids;
+Game* mpGame;
 
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
@@ -92,20 +86,11 @@ bool isPPressed = false;
 	void initFont();
 	void initWindow(sf::RenderWindow &pWindow);		//init font and window
 
-	void initPhysics();								//init physics world
-	void updatePhysics();							//update physics world
-
-	void checkWrap(Object* object);
-	bool checkDelete(Object* object);				//check for screen wrap
-
 	void drawScreen(sf::RenderWindow &pWindow);		//draw to window
 	void getInput();								//get keyboard input
 
 	char* getPortNumber();							//generate random port number
 
-	void fireBullet();								//fire bullet from ship
-	void spawnAsteroid();							
-	void checkAsteroidSpawn(Asteroid* asteroid);	//spawn asteroid
 
 
 
@@ -142,19 +127,14 @@ int main(int argc, char** argv)
 
 	
 
-//###BOX2D INIT########################################################################################################
-	initPhysics();
+//###GAME INIT#########################################################################################################
+	mpGame = new Game();
 
 
 
 
 //###WAIT UNTIL CONNECTED TO RUN GAME LOOP#############################################################################
 	while (!mpClient->getConnected()) { mpClient->update(); }
-
-
-
-	player = new Ship(mpClient->getFirstConnected(), physicsWorld);
-
 
 
 
@@ -165,10 +145,8 @@ int main(int argc, char** argv)
 //###UPDATE CLIENT####################################################################################################
 		mpClient->update();
 
-		printf("%d\n", player->getHealth());
-
-//###UPDATE PHYSICS###################################################################################################
-		updatePhysics();
+//###UPDATE GAME######################################################################################################
+		mpGame->update();
 
 //###GET INPUT########################################################################################################
 		getInput();
@@ -205,7 +183,7 @@ Client* initClient(int argc, char** argv)
 	{
 		mBuildType = "";
 
-		const char* serverIP   = argv[1];
+		const char* serverIP = argv[1];
 		const char* serverPort = argv[2];
 		const char* clientPort = argv[3];
 
@@ -222,108 +200,6 @@ Client* initClient(int argc, char** argv)
 		std::cin >> serverIP;
 		return new Client(clientPort, serverIP.c_str(), "200");
 	}
-}
-
-//physics
-void initPhysics()
-{
-	physicsWorld->SetAllowSleeping(true);
-	physicsWorld->SetContactListener(new ContactListener());
-}
-void updatePhysics()
-{
-	for (int32 i = 0; i < 60; i++)
-	{
-		physicsWorld->Step(PHYSICS::WORLD::timeStep(), PHYSICS::WORLD::velocityIterations, PHYSICS::WORLD::positionIterations);
-		checkWrap(player);
-	}
-	player->getSprite()->setPosition(sf::Vector2f(player->getBody()->GetPosition().x, player->getBody()->GetPosition().y));
-	player->getSprite()->setRotation(player->getBody()->GetAngle()*180.0f / 3.14159f);
-
-	for (unsigned int i = 0; i < playerBullets.size(); i++)
-	{
-		if (playerBullets[i] != NULL && playerBullets[i]->shouldDelete()) 
-		{
-			delete(playerBullets[i]);
-			playerBullets[i] = NULL;
-		}
-		if (playerBullets[i] != NULL)
-		{
-			playerBullets[i]->getSprite()->setPosition(sf::Vector2f(playerBullets[i]->getBody()->GetPosition().x, playerBullets[i]->getBody()->GetPosition().y));
-			playerBullets[i]->getSprite()->setRotation(playerBullets[i]->getBody()->GetAngle()*180.0f / 3.14159f);
-
-			if (checkDelete(playerBullets[i]))
-			{
-				delete playerBullets[i];
-				playerBullets[i] = NULL;
-			}
-		}
-	}
-
-	
-
-	for (unsigned int i = 0; i < asteroids.size(); i++)
-	{
-		if (asteroids[i] != NULL)
-		{
-			checkAsteroidSpawn(asteroids[i]);
-		}
-		if (asteroids[i] != NULL && asteroids[i]->shouldDelete())
-		{
-			delete(asteroids[i]);
-			asteroids[i] = NULL;
-		}
-		if (asteroids[i] != NULL)
-		{
-			asteroids[i]->getSprite()->setPosition(sf::Vector2f(asteroids[i]->getBody()->GetPosition().x, asteroids[i]->getBody()->GetPosition().y));
-			asteroids[i]->getSprite()->setRotation(asteroids[i]->getBody()->GetAngle()*180.0f / 3.14159f);
-
-			checkWrap(asteroids[i]);
-		}
-	}
-}
-
-//check for wrap/delete based on screen coordinates
-void checkWrap(Object* object)
-{
-	b2Vec2 position = object->getBody()->GetPosition();
-
-	if (position.x > SCREEN_WIDTH + object->getSprite()->getLocalBounds().width / 2.0f)
-	{
-		object->getBody()->SetTransform(b2Vec2(-object->getSprite()->getLocalBounds().width / 2.0f,
-											   object->getBody()->GetPosition().y),
-										object->getBody()->GetAngle());
-	}
-	else if (position.x < -object->getSprite()->getLocalBounds().width / 2.0f)
-	{
-		object->getBody()->SetTransform(b2Vec2(SCREEN_WIDTH + object->getSprite()->getLocalBounds().width / 2.0f,
-											   object->getBody()->GetPosition().y),
-										object->getBody()->GetAngle());
-	}
-	if (position.y > SCREEN_HEIGHT + object->getSprite()->getLocalBounds().height / 2.0f)
-	{
-		object->getBody()->SetTransform(b2Vec2(object->getBody()->GetPosition().x,
-											   -object->getSprite()->getLocalBounds().height / 2.0f),
-										object->getBody()->GetAngle());
-	}
-	else if (position.y < -object->getSprite()->getLocalBounds().height / 2.0f)
-	{
-		object->getBody()->SetTransform(b2Vec2(object->getBody()->GetPosition().x,
-											   SCREEN_HEIGHT + object->getSprite()->getLocalBounds().height / 2.0f),
-										object->getBody()->GetAngle());
-	}
-}
-bool checkDelete(Object* object)
-{
-	bool needsDeleting = false;
-	b2Vec2 position = object->getBody()->GetPosition();
-
-	     if (position.x > SCREEN_WIDTH)                                  { needsDeleting = true; }
-	else if (position.x < -object->getSprite()->getLocalBounds().width)  { needsDeleting = true; }
-	     if (position.y > SCREEN_HEIGHT)                                 { needsDeleting = true; }
-	else if (position.y < -object->getSprite()->getLocalBounds().height) { needsDeleting = true; }
-
-	return needsDeleting;
 }
 
 //init window, etc.
@@ -355,21 +231,30 @@ void drawScreen(sf::RenderWindow &pWindow)
 	//clear the display
 	pWindow.clear(sf::Color(37, 37, 37));
 
-	pWindow.draw(*player->getSprite());
+	pWindow.draw(*mpGame->getFirstPlayer()->getSprite());
+	pWindow.draw(*mpGame->getSecondPlayer()->getSprite());
 
-	for (unsigned int i = 0; i < playerBullets.size(); i++)
+	for (unsigned int i = 0; i < mpGame->getFirstPlayerBullets().size(); i++)
 	{
-		if (playerBullets[i] != NULL)
+		if (mpGame->getFirstPlayerBullets()[i] != NULL)
 		{
- 			pWindow.draw(*playerBullets[i]->getSprite());
+ 			pWindow.draw(*mpGame->getFirstPlayerBullets()[i]->getSprite());
 		}
 	}
 
-	for (unsigned int i = 0; i < asteroids.size(); i++)
+	for (unsigned int i = 0; i < mpGame->getSecondPlayerBullets().size(); i++)
 	{
-		if (asteroids[i] != NULL)
+		if (mpGame->getSecondPlayerBullets()[i] != NULL)
 		{
-			pWindow.draw(*asteroids[i]->getSprite());
+			pWindow.draw(*mpGame->getSecondPlayerBullets()[i]->getSprite());
+		}
+	}
+
+	for (unsigned int i = 0; i < mpGame->getAsteroids().size(); i++)
+	{
+		if (mpGame->getAsteroids()[i] != NULL)
+		{
+			pWindow.draw(*mpGame->getAsteroids()[i]->getSprite());
 		}
 	}
 
@@ -380,45 +265,79 @@ void drawScreen(sf::RenderWindow &pWindow)
 //get keyboard/mouse input
 void getInput()
 {
-	//up arrow key or W is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	if (mpClient->getFirstConnected())
 	{
-		player->getBody()->SetLinearVelocity(b2Vec2(player->getBody()->GetLinearVelocity().x + player->getLinearSpeed()*cos(player->getBody()->GetAngle()),
-			player->getBody()->GetLinearVelocity().y + player->getLinearSpeed()*sin(player->getBody()->GetAngle())));
-
-		//float32 temp = player->getBody()->GetLinearVelocity().x + player->getLinearSpeed()*cos(player->getBody()->GetAngle());
-		//printf("%f\n", temp);
-	}
-
-	//down arrow key or S is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {}
-
-	//left arrow key or A is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		player->getBody()->SetAngularVelocity(player->getBody()->GetAngularVelocity() - player->getAngularSpeed());
-		player->getSprite()->setRotation(player->getBody()->GetAngle() * 180.0f / 3.14159f);
-	}
-
-	//right arrow key or D is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		player->getBody()->SetAngularVelocity(player->getBody()->GetAngularVelocity() + player->getAngularSpeed());
-		player->getSprite()->setRotation(player->getBody()->GetAngle() * 180.0f / 3.14159f);
-	}
-
-	//space key is pressed down
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) 
-	{
-		if (!isSpacePressed)
+		//up arrow key or W is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			fireBullet();
-			isSpacePressed = true;
+			mpGame->getFirstPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x + mpGame->getFirstPlayer()->getLinearSpeed()*cos(mpGame->getFirstPlayer()->getBody()->GetAngle()),
+				mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y + mpGame->getFirstPlayer()->getLinearSpeed()*sin(mpGame->getFirstPlayer()->getBody()->GetAngle())));
+		}
+
+		//left arrow key or A is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpGame->getFirstPlayer()->getBody()->GetAngularVelocity() - mpGame->getFirstPlayer()->getAngularSpeed());
+			mpGame->getFirstPlayer()->getSprite()->setRotation(mpGame->getFirstPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+		}
+
+		//right arrow key or D is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpGame->getFirstPlayer()->getBody()->GetAngularVelocity() + mpGame->getFirstPlayer()->getAngularSpeed());
+			mpGame->getFirstPlayer()->getSprite()->setRotation(mpGame->getFirstPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+		}
+
+		//space key is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			if (!isSpacePressed)
+			{
+				mpGame->fireBullet(true);
+				isSpacePressed = true;
+			}
+		}
+		else
+		{
+			isSpacePressed = false;
 		}
 	}
 	else
 	{
-		isSpacePressed = false;
+		//up arrow key or W is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			mpGame->getSecondPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x + mpGame->getSecondPlayer()->getLinearSpeed()*cos(mpGame->getSecondPlayer()->getBody()->GetAngle()),
+				mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y + mpGame->getSecondPlayer()->getLinearSpeed()*sin(mpGame->getSecondPlayer()->getBody()->GetAngle())));
+		}
+
+		//left arrow key or A is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpGame->getSecondPlayer()->getBody()->GetAngularVelocity() - mpGame->getSecondPlayer()->getAngularSpeed());
+			mpGame->getSecondPlayer()->getSprite()->setRotation(mpGame->getSecondPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+		}
+
+		//right arrow key or D is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpGame->getSecondPlayer()->getBody()->GetAngularVelocity() + mpGame->getSecondPlayer()->getAngularSpeed());
+			mpGame->getSecondPlayer()->getSprite()->setRotation(mpGame->getSecondPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+		}
+
+		//space key is pressed down
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			if (!isSpacePressed)
+			{
+				mpGame->fireBullet(false);
+				isSpacePressed = true;
+			}
+		}
+		else
+		{
+			isSpacePressed = false;
+		}
 	}
 
 	//p key is pressed down
@@ -426,7 +345,7 @@ void getInput()
 	{
 		if (!isPPressed)
 		{
-			spawnAsteroid();
+			mpGame->spawnAsteroid();
 			isPPressed = true;
 		}
 	}
@@ -451,64 +370,3 @@ char* getPortNumber()
 	//return char pointer of converted int
 	return (char*)temp_str.c_str();
 };
-
-//fire bullet from player
-void fireBullet()
-{
-	for (unsigned int i = 0; i < playerBullets.size(); i++)
-	{
-		if (playerBullets[i] == NULL)
-		{
-			playerBullets[i] = new Bullet(mpClient->getFirstConnected(), player, physicsWorld);
-			break;
-		}
-	}
-}
-
-void spawnAsteroid()
-{
-	for (unsigned int i = 0; i < asteroids.size(); i++)
-	{
-		if (asteroids[i] == NULL)
-		{
-			asteroids[i] = new Asteroid();
-			break;
-		}
-	}
-}
-
-void checkAsteroidSpawn(Asteroid* asteroid)
-{
-	if (asteroid->getSpawn() != NoSpawn)
-	{
-		if (asteroid->getSpawn().deleteSelf)
-		{
-			asteroid->setDelete(true);
-		}
-
-		if (asteroid->getSpawn().numberToSpawn > 0)
-		{
-			for (int i = 0; i < asteroid->getSpawn().numberToSpawn; i++)
-			{
-				for (unsigned int j = 0; j < asteroids.size(); j++)
-				{
-					if (asteroids[j] == NULL)
-					{
-						b2Vec2 location = asteroid->getBody()->GetPosition();
-						float  angle    = (rand() / RAND_MAX) * PI * 2.0f;
-						float  radius = static_cast<float>(int(asteroid->getSize()              * int(asteroid->getSize() / 2))              * 25 + 25 +
-							            int(asteroid->getSpawn().sizeToSpawn * int(asteroid->getSpawn().sizeToSpawn / 2)) * 25 + 25);
-
-						location.x += cos(angle)*radius;
-						location.y += sin(angle)*radius;
-
-						asteroids[j] = new Asteroid(asteroid->getSpawn().sizeToSpawn, location, physicsWorld);
-						break;
-					}
-				}
-			}
-		}
-
-		asteroid->setSpawn(NoSpawn);
-	}
-}
