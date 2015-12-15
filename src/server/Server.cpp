@@ -113,12 +113,6 @@ void Server::updateGames()
 		//if the game has started
 		if (mGameInfos[i].started)
 		{
-			//simulate game
-			for (int32 i = 0; i < 60; ++i)
-			{
-				//mpB2world->Step(1.0f / 60.0f, 6, 2);
-
-			}
 		}
 	}
 }

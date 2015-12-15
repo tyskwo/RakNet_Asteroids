@@ -2,7 +2,7 @@
 
 Object::Object() { init(); };
 
-Object::Object(b2World* pWorld) :mpCurrWorld(pWorld) { init(); };
+Object::Object(b2World* pWorld) :mpWorld(pWorld) { init(); };
 
 Object::Object(const Object &other)
 {
@@ -18,7 +18,7 @@ void Object::cleanup()
 {
 	mShouldDelete = true;
 
-	mpCurrWorld->DestroyBody(body);
+	mpWorld->DestroyBody(body);
 
 	delete(sprite);
 	sprite = NULL;

@@ -2,10 +2,9 @@
 
 Bullet::Bullet() {};
 
-Bullet::Bullet(bool firstConnected, Ship* player, b2World* pWorld) :Object(pWorld) { init(firstConnected, player); };
+Bullet::Bullet(bool firstConnected, Ship* player, b2World* pWorld) : Object(pWorld) { init(firstConnected, player); };
 
-Bullet::Bullet(const Bullet &other, b2World* pWorld)
-:Object(pWorld)
+Bullet::Bullet(const Bullet &other, b2World* pWorld) : Object(pWorld)
 {
 	body = other.body;
 	sprite = other.sprite;
@@ -25,7 +24,7 @@ void Bullet::initPhysics(bool firstConnected, Ship* player)
 	bodyDefinition.type = b2_dynamicBody;
 	bodyDefinition.position.Set(player->getBody()->GetPosition().x, player->getBody()->GetPosition().y);
 
-	body = mpCurrWorld->CreateBody(&bodyDefinition);
+	body = mpWorld->CreateBody(&bodyDefinition);
 	body->SetTransform(player->getBody()->GetPosition(), player->getBody()->GetAngle());
 
 	b2PolygonShape dynamicBox;

@@ -1,6 +1,6 @@
 #include "Ship.h"
 
-Ship::Ship(bool firstConnected, b2World* pWorld, bool isVisible) :mIsVisible(isVisible), Object(pWorld) { init(firstConnected); };
+Ship::Ship(bool firstConnected, b2World* pWorld) : Object(pWorld) { init(firstConnected); };
 
 Ship::~Ship() { cleanup(); };
 
@@ -16,7 +16,7 @@ void Ship::initPhysics(bool firstConnected)
 	bodyDefinition.type = b2_dynamicBody;
 	bodyDefinition.position.Set(0.0f, 0.0f);
 
-	body = mpCurrWorld->CreateBody(&bodyDefinition);
+	body = mpWorld->CreateBody(&bodyDefinition);
 
 	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(float32(TEXTURES::mFirstShip.getSize().x / 2.0f), float32(TEXTURES::mFirstShip.getSize().y / 2.0f));

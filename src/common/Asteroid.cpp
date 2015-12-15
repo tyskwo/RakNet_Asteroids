@@ -53,7 +53,7 @@ void Asteroid::initPhysics(b2Vec2 location)
 	bodyDefinition.type = b2_dynamicBody;
 	bodyDefinition.position.Set(location.x, location.y);
 
-	body = mpCurrWorld->CreateBody(&bodyDefinition);
+	body = mpWorld->CreateBody(&bodyDefinition);
 	body->SetTransform(location, angle);
 
 

@@ -35,7 +35,7 @@ protected:
 	b2Body* body;
 	sf::Sprite* sprite;
 
-	b2World* mpCurrWorld;
+	b2World* mpWorld;
 
 	bool mShouldDelete = false;
 };

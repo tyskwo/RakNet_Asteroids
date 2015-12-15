@@ -13,7 +13,7 @@ class Ship: public Object
 {
 public:
 	Ship();
-	Ship(bool firstConnected, b2World* pWorld, bool isVisible = true);
+	Ship(bool firstConnected, b2World* pWorld);
 	~Ship();
 
 	void init(bool firstConnected);
@@ -39,7 +39,8 @@ private:
 	};
 
 	int health = 20;
-	bool mIsVisible; //will this ship need a sprite, or is it simply data for the server to use for physics predictions?
+	//bool mIsVisible; //will this ship need a sprite, or is it simply data for the server to use for physics predictions?
+					 //technically doesn't need a sprite, but we're not drawing it anywhere, so it doesn't really matter.
 };
 
 #endif

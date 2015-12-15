@@ -22,6 +22,7 @@ src/common/Ship.h src/common/Ship.cpp
 add_executable(Server src/server/main.cpp 
 src/common/NetworkStructs.h src/common/PhysicsStructs.h src/common/PhysicsStructs.cpp
 src/server/Server.h src/server/Server.cpp
+src/Server/Game.h src/server/Game.cpp
 src/common/Object.h src/common/Object.cpp
 src/common/Asteroid.h src/common/Asteroid.cpp
 src/common/Bullet.h src/common/Bullet.cpp
@@ -35,6 +36,14 @@ add_custom_command(TARGET Client PRE_BUILD
 add_custom_command(TARGET Client PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy_directory
  ${CMAKE_SOURCE_DIR}/src/assets $<TARGET_FILE_DIR:Client>)
+
+add_custom_command(TARGET Server PRE_BUILD
+ COMMAND ${CMAKE_COMMAND} -E copy_directory
+ ${CMAKE_SOURCE_DIR}/3rdParty/bin $<TARGET_FILE_DIR:Server>)
+
+add_custom_command(TARGET Server PRE_BUILD
+ COMMAND ${CMAKE_COMMAND} -E copy_directory
+ ${CMAKE_SOURCE_DIR}/src/assets $<TARGET_FILE_DIR:Server>)
 
 set(DEP_LIBS
 	sfml-system
