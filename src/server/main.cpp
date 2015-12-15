@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 	if (argc == 2) { mpServer = new Server(argv[1]); } //create server with input port number
 	else		   { mpServer = new Server("200");   } //create server with port number of 200
 
-	while (true) { mpServer->update(); } //run the program as long as the server is running
+	while (true) { mpServer->update(*physicsWorld); } //run the program as long as the server is running
 
 	return 0;
 }

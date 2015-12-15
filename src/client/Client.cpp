@@ -16,6 +16,8 @@ Client::Client()
 
 	//init with client port of 202 and entered ip address
 	init("202", mIPaddress, "200");
+
+	mServerGuid = RakNet::UNASSIGNED_RAKNET_GUID;
 }
 
 Client::Client(const char* clientPort, const char* serverAddress, const char* serverPort)
@@ -77,6 +79,7 @@ void Client::update()
 	getPackets();
 
 	//if enough time has passed (30fps), broadcast game states to clients
+	sendShipData();
 	/*if (mpTimer->shouldUpdate())
 	{
 		if (getFirstConnected())
@@ -103,6 +106,8 @@ void Client::getPackets()
 		{
 		case ID_FIRST_CONNECTION:
 		{
+			mServerGuid = mpPacket->guid;
+
 			//set as first connected or second connected.
 			setFirstConnected(true);
 			setConnected(true);
@@ -116,6 +121,8 @@ void Client::getPackets()
 		}
 		case ID_SECOND_CONNECTION:
 		{
+			mServerGuid = mpPacket->guid;
+
 			//set as first connected or second connected.
 			setFirstConnected(false);
 			setConnected(true);
@@ -143,12 +150,8 @@ void Client::getPackets()
 	}
 }
 
-/*
-void Client::sendPaddleData(float x, float y)
+
+void Client::sendShipData()
 {
-	Position pos;
-	pos.x = x;
-	pos.y = y;
-	pos.mID = ID_SEND_PADDLE_DATA;
-	mpClient->Send((const char*)&pos, sizeof(pos), HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
-}*/
+	mpClient->Send((const char*)&mGameInfo, sizeof(mGameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mServerGuid, false);
+}

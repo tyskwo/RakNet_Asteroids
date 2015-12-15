@@ -45,10 +45,14 @@ private:
 	//socket descriptor
 	RakNet::SocketDescriptor mSocketDescriptor;
 
+	RakNet::RakNetGUID mServerGuid;
+
 	//get and identify packet
 	unsigned char mPacketIdentifier;
 	unsigned char GetPacketIdentifier(RakNet::Packet* pPacket);
 	void getPackets();
+
+	void sendShipData();
 
 	//flag for if client is connected, and if so, first player
 	bool mIsConnected;

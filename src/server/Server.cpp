@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "../common/PhysicsStructs.h"
 
 Server::Server()
 {
@@ -64,6 +65,26 @@ void Server::init(const char* serverPort)
 
 	//initialize GameInfos
 	initializeGames();
+
+	mpB2world = new b2World(PHYSICS::WORLD::gravity());
+
+	b2BodyDef bodyDef;
+
+	bodyDef.type = b2_dynamicBody;
+
+	bodyDef.position.Set(0.0f, 4.0f);
+
+	mpOtherShip = mpB2world->CreateBody(&bodyDef);
+
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(float32(TEXTURES::mFirstShip.getSize().x / 2.0f), float32(TEXTURES::mFirstShip.getSize().y / 2.0f));
+
+	b2FixtureDef fix;
+	fix.shape = &dynamicBox;
+	fix.density = 1.0f;
+	fix.friction = 0.3f;
+
+	mpOtherShip->CreateFixture(&fix);
 }
 
 
@@ -89,13 +110,13 @@ unsigned char Server::GetPacketIdentifier(RakNet::Packet *p)
 		return (unsigned char)p->data[0];
 }
 
-void Server::update()
+void Server::update(b2World &bWorld)
 {
 	//get packets from clients
 	getPackets();
 
 	//update GameInfos
-	updateGames();
+	updateGames(bWorld);
 
 	//if enough time has passed (30fps), broadcast game states to clients
 	/*if (mpTimer->shouldUpdate())
@@ -105,7 +126,7 @@ void Server::update()
 }
 
 
-void Server::updateGames()
+void Server::updateGames(b2World &bWorld)
 {
 	for (unsigned int i = 0; i < mGameInfos.size(); i++)
 	{
@@ -113,6 +134,11 @@ void Server::updateGames()
 		if (mGameInfos[i].started)
 		{
 			//simulate game
+			for (int32 i = 0; i < 60; ++i)
+			{
+				mpB2world->Step(1.0f / 60.0f, 6, 2);
+
+			}
 		}
 	}
 }
@@ -131,6 +157,28 @@ void Server::getPackets()
 		{
 			//add client to Games list.
 			setConnection(p);
+			break;
+		}
+		case ID_SEND_SHIP_INFO:
+		{
+			//find correct game and client
+			int j = 0;
+			for (unsigned int i = 0; i < mGames.size(); i++)
+			{
+				GameInfo gameInfo = *reinterpret_cast<GameInfo*>(p->data);
+
+				if (mGames[i][0] == p->guid)
+				{
+					mpServer->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][1], false);
+				}
+				else if (mGames[i][1] == p->guid)
+				{
+					mpServer->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][0], false);
+				}
+
+				if (i % 2 == 1) j++;
+			}
+
 			break;
 		}
 /*
