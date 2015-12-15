@@ -178,4 +178,4 @@ static void handlePackets(unsigned char mPacketIdentifier, RakNet::Packet* mpPac
 	}
 }
 
-#endif 
+#endif NETWORKSTRUCTS_H
