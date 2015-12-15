@@ -65,15 +65,16 @@ struct ShipObject
 {
 	position position;
 	velocity velocity;
-	int numLives;
+	unsigned char health;
 
-	std::array<BulletObject, 16> bullets;
+	std::array<BulletObject, 8> bullets;
 };
 
 //struct for asteroid values
 struct AsteroidObject
 {
 	unsigned char size;
+	unsigned char health;
 	position position;
 	velocity velocity;
 };
