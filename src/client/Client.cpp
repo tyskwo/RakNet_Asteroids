@@ -233,8 +233,6 @@ void Client::getPackets()
 						mAsteroidStates[i].push(data.asteroids[i]);
 						mTwoPacketsAgo = mOnePacketAgo;
 						mOnePacketAgo = data.timeStamp;
-
-						printf("%f\n", data.asteroids[i].position.x);
 					}
 				}
 			}

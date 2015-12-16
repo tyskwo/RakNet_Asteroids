@@ -197,23 +197,36 @@ void Asteroid::interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, 
 	float time = (float(currentTime) - startTime) / (targetTime - startTime);
 	if (time > 1.0f) time = 1.0f;
 
+	if (abs(targetState.data.position.x - startState.data.position.x) > SCREEN_WIDTH ||
+		abs(targetState.data.position.y - startState.data.position.y) > SCREEN_HEIGHT)
+	{
+		b2Vec2 position(targetState.data.position.x, targetState.data.position.y);
+		body->SetTransform(position, targetState.data.position.angle);
+		sprite->setPosition(targetState.data.position.x, targetState.data.position.y);
+		b2Vec2 velocity(0, 0);
+		body->SetLinearVelocity(velocity);
+		body->SetAngularVelocity(0);
+		time = 1.0f;
+	}
 
-	float32 currentX = startState.data.position.x * (1.0f - time) + targetState.data.position.x * time;
-	float32 currentY = startState.data.position.y * (1.0f - time) + targetState.data.position.y * time;
-	float32 currentAngle = startState.data.position.angle * (1.0f - time) + targetState.data.position.angle * time;
-	b2Vec2 position(currentX, currentY);
+	else
+	{
+		float32 currentX = startState.data.position.x * (1.0f - time) + targetState.data.position.x * time;
+		float32 currentY = startState.data.position.y * (1.0f - time) + targetState.data.position.y * time;
+		float32 currentAngle = startState.data.position.angle * (1.0f - time) + targetState.data.position.angle * time;
+		b2Vec2 position(currentX, currentY);
 
-	body->SetTransform(position, currentAngle);
-	sprite->setPosition(currentX, currentY);
+		body->SetTransform(position, currentAngle);
+		sprite->setPosition(currentX, currentY);
 
-	float32 currentXVelocity = startState.data.velocity.x * (1.0f - time) + targetState.data.velocity.x * time;
-	float32 currentYVelocity = startState.data.velocity.y * (1.0f - time) + targetState.data.velocity.y * time;
-	float32 currentAngleVelocity = startState.data.velocity.rot * (1.0f - time) + targetState.data.velocity.rot * time;
-	b2Vec2 velocity(0, 0);
+		float32 currentXVelocity = startState.data.velocity.x * (1.0f - time) + targetState.data.velocity.x * time;
+		float32 currentYVelocity = startState.data.velocity.y * (1.0f - time) + targetState.data.velocity.y * time;
+		float32 currentAngleVelocity = startState.data.velocity.rot * (1.0f - time) + targetState.data.velocity.rot * time;
+		b2Vec2 velocity(0, 0);
 
-	body->SetLinearVelocity(velocity);
-	body->SetAngularVelocity(0);
-
+		body->SetLinearVelocity(velocity);
+		body->SetAngularVelocity(0);
+	}
 	if (time >= 1.0f) { isDoneInterpolating = true; }
 
 }
@@ -228,7 +241,7 @@ void Asteroid::addInterpolation(AsteroidObject data)
 	startState.data = currentAsteroid;
 
 	startTime = float(RakNet::GetTime());
-	targetTime = float(RakNet::GetTime()) + 200.0f;
+	targetTime = float(RakNet::GetTime()) + 100.0f;
 }
 
 position Asteroid::getPosition()

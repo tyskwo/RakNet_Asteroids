@@ -445,18 +445,15 @@ void interpolateAsteroids()
 	{
 		if (mpClient->hasAsteroidStates(i))
 		{
-			if (mpClient->mpGame->getAsteroid(i) != NULL)
+			if (mpClient->mpGame->getAsteroid(i)->isFinishedInterpolating())
 			{
-				if (mpClient->mpGame->getAsteroid(i)->isFinishedInterpolating())
-				{
-					AsteroidObject bestState = mpClient->getBestAsteroidState(i);
-					mpClient->mpGame->getAsteroid(i)->addInterpolation(bestState);
-					mpClient->mpGame->getAsteroid(i)->setDoneInterpolated(false);
-				}
-				else
-				{
-					mpClient->mpGame->getAsteroid(i)->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-				}
+				AsteroidObject bestState = mpClient->getBestAsteroidState(i);
+				mpClient->mpGame->getAsteroid(i)->addInterpolation(bestState);
+				mpClient->mpGame->getAsteroid(i)->setDoneInterpolated(false);
+			}
+			else
+			{
+				mpClient->mpGame->getAsteroid(i)->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
 			}
 		}
 	}

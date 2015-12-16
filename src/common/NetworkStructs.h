@@ -103,7 +103,7 @@ struct BothShips
 struct AsteroidObject
 {
 	RakNet::Time timeStamp;
-	bool isNULL;
+	bool isNULL = true;
 	unsigned char size;
 	unsigned char type;
 	unsigned char health;
