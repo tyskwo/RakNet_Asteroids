@@ -19,6 +19,7 @@ src/common/Bullet.h src/common/Bullet.cpp
 src/common/Ship.h src/common/Ship.cpp
 src/common/Game.h src/common/Game.cpp
 src/common/Timer.h src/common/Timer.cpp
+src/client/ObjectInfo.h src/client/ObjectInfo.cpp
 )
 
 add_executable(Server src/server/main.cpp 

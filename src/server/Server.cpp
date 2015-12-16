@@ -146,6 +146,7 @@ void Server::getPackets()
 				BothShips shipData = *reinterpret_cast<BothShips*>(p->data);
 
 				shipData.mID = ID_RECIEVE_GAME_INFO;
+				shipData.timeStamp = RakNet::GetTime();
 
 				if (mGames[i][0] == p->guid)
 				{
@@ -214,8 +215,8 @@ void Server::resetGame(int index)
 	mGameInfos[index].firstPlayer.velocity  = velocity(0, 0, 0);
 	mGameInfos[index].secondPlayer.velocity = velocity(0, 0, 0);
 
-	mGameInfos[index].firstPlayer.position  = position(0, 0);
-	mGameInfos[index].secondPlayer.position = position(0, 0);
+	mGameInfos[index].firstPlayer.position  = position(0, 0, 0);
+	mGameInfos[index].secondPlayer.position = position(0, 0, 0);
 
 	mGameInfos[index].gameNumber = index;
 	mGameInfos[index].finished   = false;

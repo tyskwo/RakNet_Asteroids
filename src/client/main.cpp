@@ -81,17 +81,30 @@ int main(int argc, char** argv)
 		{
 			if (mpClient->getFirstConnected())
 			{
-				//mpGame->getSecondPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getShipData().secondPlayer.position.x, mpClient->getShipData().secondPlayer.position.y), mpClient->getShipData().secondPlayer.velocity.rot);
-				mpGame->getSecondPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpClient->getShipData().secondPlayer.velocity.x, mpClient->getShipData().secondPlayer.velocity.y));
-				mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpClient->getShipData().secondPlayer.velocity.rot);
-				//mpGame->getSecondPlayer()->getBody()->SetTransform(mpGame->getSecondPlayer()->getBody()->GetPosition(), mpClient->getShipData().secondPlayer.angle);
+				ObjectInfo binfo = mpClient->getOtherShipInterpolation().GetNext(RakNet::GetTime() - mpClient->getShipData().timeStamp);
+				mpGame->getSecondPlayer()->getBody()->SetTransform(b2Vec2(binfo.GetState().mX, binfo.GetState().mY), binfo.GetState().mAngle);
+				mpGame->getSecondPlayer()->getBody()->SetLinearVelocity(b2Vec2(binfo.GetState().mVelX, binfo.GetState().mVelY));
+				mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(binfo.GetState().mVelAngular);
+
+				mpClient->setShipPosAndVel(binfo.GetState().mX, binfo.GetState().mY, binfo.GetState().mAngle, binfo.GetState().mVelX, binfo.GetState().mVelY, binfo.GetState().mVelAngular);
+
+
+				//mpGame->getSecondPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpClient->getShipData().secondPlayer.velocity.x, mpClient->getShipData().secondPlayer.velocity.y));
+				//mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpClient->getShipData().secondPlayer.velocity.rot);
+				//mpGame->getSecondPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getShipData().secondPlayer.position.x, mpClient->getShipData().secondPlayer.position.y), mpClient->getShipData().secondPlayer.position.angle);
 			}
 			else
 			{
-				//mpGame->getFirstPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getShipData().firstPlayer.position.x, mpClient->getShipData().firstPlayer.position.y), mpClient->getShipData().firstPlayer.velocity.rot);
-				mpGame->getFirstPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpClient->getShipData().firstPlayer.velocity.x, mpClient->getShipData().firstPlayer.velocity.y));
-				mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpClient->getShipData().firstPlayer.velocity.rot);
-				//mpGame->getFirstPlayer()->getBody()->SetTransform(mpGame->getFirstPlayer()->getBody()->GetPosition(), mpClient->getShipData().firstPlayer.angle);
+				ObjectInfo binfo = mpClient->getOtherShipInterpolation().GetNext(RakNet::GetTime() - mpClient->getShipData().timeStamp);
+				mpGame->getFirstPlayer()->getBody()->SetTransform(b2Vec2(binfo.GetState().mX, binfo.GetState().mY), binfo.GetState().mAngle);
+				mpGame->getFirstPlayer()->getBody()->SetLinearVelocity(b2Vec2(binfo.GetState().mVelX, binfo.GetState().mVelY));
+				mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(binfo.GetState().mVelAngular);
+
+				mpClient->setShipPosAndVel(binfo.GetState().mX, binfo.GetState().mY, binfo.GetState().mAngle, binfo.GetState().mVelX, binfo.GetState().mVelY, binfo.GetState().mVelAngular);
+
+				//mpGame->getFirstPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpClient->getShipData().firstPlayer.velocity.x, mpClient->getShipData().firstPlayer.velocity.y));
+				//mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpClient->getShipData().firstPlayer.velocity.rot);
+				//mpGame->getFirstPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getShipData().firstPlayer.position.x, mpClient->getShipData().firstPlayer.position.y), mpClient->getShipData().firstPlayer.position.angle);
 			}
 
 			mpClient->setJustRecieved(false);
@@ -363,7 +376,7 @@ void getInfoFromGame()
 	shipData.firstPlayer.velocity.x = mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x;
 	shipData.firstPlayer.velocity.y = mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y;
 	shipData.firstPlayer.velocity.rot = mpGame->getFirstPlayer()->getBody()->GetAngularVelocity();
-	shipData.firstPlayer.angle = mpGame->getFirstPlayer()->getBody()->GetAngle();
+	shipData.firstPlayer.position.angle = mpGame->getFirstPlayer()->getBody()->GetAngle();
 
 	shipData.secondPlayer.health = mpGame->getSecondPlayer()->getHealth();
 	shipData.secondPlayer.position.x = mpGame->getSecondPlayer()->getBody()->GetPosition().x;
@@ -371,7 +384,7 @@ void getInfoFromGame()
 	shipData.secondPlayer.velocity.x = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x;
 	shipData.secondPlayer.velocity.y = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y;
 	shipData.secondPlayer.velocity.rot = mpGame->getSecondPlayer()->getBody()->GetAngularVelocity();
-	shipData.secondPlayer.angle = mpGame->getSecondPlayer()->getBody()->GetAngle();
+	shipData.secondPlayer.position.angle = mpGame->getSecondPlayer()->getBody()->GetAngle();
 
 	mpClient->setShipData(shipData);
 }

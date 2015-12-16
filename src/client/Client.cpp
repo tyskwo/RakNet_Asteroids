@@ -34,6 +34,8 @@ Client::~Client()
 
 void Client::init(const char* clientPort, const char* serverAddress, const char* serverPort)
 {
+	mOtherShipInterpolation = ObjectInfoBuffer();
+
 	//not connected yet
 	mIsConnected = false;
 
@@ -140,6 +142,18 @@ void Client::getPackets()
 			BothShips shipData = *reinterpret_cast<BothShips*>(mpPacket->data);
 			mShipData = shipData;
 
+			ObjectState shipState;
+			!mWasFirstConnected ? shipState.mAngle = shipData.firstPlayer.position.angle : shipState.mAngle = shipData.secondPlayer.position.angle;
+			!mWasFirstConnected ? shipState.mVelAngular = shipData.firstPlayer.velocity.rot : shipState.mVelAngular = shipData.secondPlayer.velocity.rot;
+			!mWasFirstConnected ? shipState.mVelX = shipData.firstPlayer.velocity.x : shipState.mVelX = shipData.secondPlayer.velocity.x;
+			!mWasFirstConnected ? shipState.mVelY = shipData.firstPlayer.velocity.y : shipState.mVelY = shipData.secondPlayer.velocity.y;
+			!mWasFirstConnected ? shipState.mX = shipData.firstPlayer.position.x : shipState.mX = shipData.secondPlayer.position.x;
+			!mWasFirstConnected ? shipState.mY = shipData.firstPlayer.position.y : shipState.mY = shipData.secondPlayer.position.y;
+
+			ObjectInfo shipInfo;
+			shipInfo.SetState(shipState);
+			mOtherShipInterpolation.SetStartingInfo(shipInfo);
+
 			mJustRecieved = true;
 			break;
 		}
@@ -157,4 +171,15 @@ void Client::sendShipData()
 {
 	mShipData.mID = ID_SEND_SHIP_INFO;
 	mpClient->Send((const char*)&mShipData, sizeof(mShipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mServerGuid, false);
+}
+
+
+void Client::setShipPosAndVel(float x, float y, float angle, float xVel, float yVel, float angularVel)
+{
+	mWasFirstConnected ? mShipData.secondPlayer.position.angle = angle : mShipData.firstPlayer.position.angle = angle;
+	mWasFirstConnected ? mShipData.secondPlayer.position.x = x : mShipData.firstPlayer.position.x = x;
+	mWasFirstConnected ? mShipData.secondPlayer.position.y = y : mShipData.firstPlayer.position.y = y;
+	mWasFirstConnected ? mShipData.secondPlayer.velocity.x = xVel : mShipData.firstPlayer.velocity.x = xVel;
+	mWasFirstConnected ? mShipData.secondPlayer.velocity.y = yVel : mShipData.firstPlayer.velocity.y = yVel;
+	mWasFirstConnected ? mShipData.secondPlayer.velocity.rot = angularVel : mShipData.firstPlayer.velocity.rot = angularVel;
 }

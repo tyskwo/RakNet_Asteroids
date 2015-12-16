@@ -79,6 +79,8 @@ struct ShipObject
 struct BothShips
 {
 	unsigned char mID;
+	unsigned char useTimeStamp = ID_TIMESTAMP;
+	RakNet::Time timeStamp;
 	ShipObject firstPlayer;
 	ShipObject secondPlayer;
 };

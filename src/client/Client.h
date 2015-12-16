@@ -8,6 +8,7 @@
 #include "Gets.h"
 
 //game includes
+#include "ObjectInfo.h"
 #include "../common/NetworkStructs.h"
 
 class Client
@@ -23,6 +24,7 @@ public:
 	void update();
 
 
+	const ObjectInfoBuffer& getOtherShipInterpolation()	   { return mOtherShipInterpolation; };
 
 	//get/set flags for whether or not it was the first connected player
 	inline void setFirstConnected(bool wasFirst) { mWasFirstConnected = wasFirst; };
@@ -38,6 +40,8 @@ public:
 
 	inline void setShipData(BothShips data) { mShipData = data; };
 	inline BothShips getShipData() { return mShipData; };
+
+	void setShipPosAndVel(float x, float y, float angle, float xVel, float yVel, float angularVel);
 
 	void setJustRecieved(bool value) { mJustRecieved = value; };
 	bool getJustRecieved() { return mJustRecieved; };
@@ -72,6 +76,8 @@ private:
 	bool mJustRecieved;
 
 	RakNet::Time mLastUpdateSent;
+
+	ObjectInfoBuffer mOtherShipInterpolation;
 };
 
 #endif
