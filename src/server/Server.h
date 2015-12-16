@@ -5,13 +5,14 @@
 #include <array>
 #include <cmath>
 #include <Box2D\Box2D.h>
+#include "..\common\Trackable.h"
 
 //game includes
 #include "../common/NetworkStructs.h"
 
 class Timer;
 
-class Server
+class Server : public Trackable
 {
 public:
 	Server();

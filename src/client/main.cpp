@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "..\common\MemoryTracker.h"
 
 //game includes
 #include "Client.h"
@@ -119,6 +120,10 @@ int main(int argc, char** argv)
 		while (window.pollEvent(event)) { if (event.type == sf::Event::Closed) window.close(); }
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) { window.close(); }
 	}
+
+	gMemoryTracker.reportAllocations(std::cout);
+
+	system("pause");
 
 	return 0;
 };
