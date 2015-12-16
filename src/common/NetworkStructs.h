@@ -68,10 +68,20 @@ struct ShipObject
 {
 	position position;
 	velocity velocity;
+	float angle;
 	unsigned char health;
 
 	std::array<BulletObject, 8> bullets;
 };
+
+#pragma pack(push, 1)
+struct BothShips
+{
+	unsigned char mID;
+	ShipObject firstPlayer;
+	ShipObject secondPlayer;
+};
+#pragma pack(pop)
 
 //struct for asteroid values
 struct AsteroidObject

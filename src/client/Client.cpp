@@ -51,6 +51,9 @@ void Client::init(const char* clientPort, const char* serverAddress, const char*
 	//try to connect
 	RakNet::ConnectionAttemptResult car = mpClient->Connect(serverAddress, atoi(serverPort), "hello", (int)strlen("hello"));
 	RakAssert(car == RakNet::CONNECTION_ATTEMPT_STARTED);
+
+	//mShipData.firstPlayer.velocity = velocity(0.0f, 0.0f, 0.0f);
+	//mShipData.secondPlayer.velocity = velocity(0.0f, 0.0f, 0.0f);
 }
 
 void Client::cleanup()
@@ -134,8 +137,10 @@ void Client::getPackets()
 		case ID_RECIEVE_GAME_INFO:
 		{
 			//get the packet's GameInfo struct
-			GameInfo gameInfo = *reinterpret_cast<GameInfo*>(mpPacket->data);
-			mGameInfo = gameInfo;
+			BothShips shipData = *reinterpret_cast<BothShips*>(mpPacket->data);
+			mShipData = shipData;
+
+			mJustRecieved = true;
 			break;
 		}
 
@@ -150,6 +155,6 @@ void Client::getPackets()
 
 void Client::sendShipData()
 {
-	mGameInfo.mID = ID_SEND_SHIP_INFO;
-	mpClient->Send((const char*)&mGameInfo, sizeof(mGameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mServerGuid, false);
+	mShipData.mID = ID_SEND_SHIP_INFO;
+	mpClient->Send((const char*)&mShipData, sizeof(mShipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mServerGuid, false);
 }

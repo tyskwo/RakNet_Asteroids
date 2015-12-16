@@ -1,5 +1,6 @@
 #include "Server.h"
-#include "../common/PhysicsStructs.h"
+#include "..\common\PhysicsStructs.h"
+#include "..\common\Timer.h"
 
 Server::Server()
 {
@@ -98,6 +99,7 @@ void Server::update()
 	//update GameInfos
 	updateGames();
 
+	
 	//if enough time has passed (30fps), broadcast game states to clients
 	/*if (mpTimer->shouldUpdate())
 	{
@@ -139,17 +141,17 @@ void Server::getPackets()
 			int j = 0;
 			for (unsigned int i = 0; i < mGames.size(); i++)
 			{
-				GameInfo gameInfo = *reinterpret_cast<GameInfo*>(p->data);
+				BothShips shipData = *reinterpret_cast<BothShips*>(p->data);
 
-				gameInfo.mID = ID_RECIEVE_GAME_INFO;
+				shipData.mID = ID_RECIEVE_GAME_INFO;
 
 				if (mGames[i][0] == p->guid)
 				{
-					mpServer->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][1], false);
+					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][1], false);
 				}
 				else if (mGames[i][1] == p->guid)
 				{
-					mpServer->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][0], false);
+					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][0], false);
 				}
 
 				if (i % 2 == 1) j++;

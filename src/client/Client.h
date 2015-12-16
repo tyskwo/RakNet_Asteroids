@@ -32,9 +32,15 @@ public:
 	inline void setConnected(bool isConnected)   { mIsConnected = isConnected; };
 	inline bool getConnected()					 { return mIsConnected;        };
 
-	//getter for the corresponding game info from server
+	//getter and setter for the corresponding game info from server
 	inline void setGameInfo(GameInfo info) { mGameInfo = info; };
 	inline GameInfo getGameInfo() { return mGameInfo; };
+
+	inline void setShipData(BothShips data) { mShipData = data; };
+	inline BothShips getShipData() { return mShipData; };
+
+	void setJustRecieved(bool value) { mJustRecieved = value; };
+	bool getJustRecieved() { return mJustRecieved; };
 
 private:
 	//pointer to client object
@@ -61,6 +67,9 @@ private:
 
 	//game info
 	GameInfo mGameInfo;
+	BothShips mShipData;
+
+	bool mJustRecieved;
 
 	RakNet::Time mLastUpdateSent;
 };

@@ -9,6 +9,7 @@
 //game includes
 #include "../common/NetworkStructs.h"
 
+class Timer;
 
 class Server
 {
@@ -50,6 +51,7 @@ private:
 	//set the connection with a client
 	void setConnection(RakNet::Packet* p);
 
+	Timer* mpTimer;
 
 	//======BOX2D STUFF=======
 	//b2World* mpB2world;

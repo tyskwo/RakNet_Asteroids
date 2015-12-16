@@ -18,6 +18,7 @@ src/common/Asteroid.h src/common/Asteroid.cpp
 src/common/Bullet.h src/common/Bullet.cpp
 src/common/Ship.h src/common/Ship.cpp
 src/common/Game.h src/common/Game.cpp
+src/common/Timer.h src/common/Timer.cpp
 )
 
 add_executable(Server src/server/main.cpp 
@@ -28,6 +29,7 @@ src/common/Asteroid.h src/common/Asteroid.cpp
 src/common/Bullet.h src/common/Bullet.cpp
 src/common/Ship.h src/common/Ship.cpp
 src/common/Game.h src/common/Game.cpp
+src/common/Timer.h src/common/Timer.cpp
 )
 
 add_custom_command(TARGET Client PRE_BUILD
