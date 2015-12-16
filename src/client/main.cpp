@@ -353,51 +353,6 @@ void getInfoFromGame()
 	//GameInfo info;
 	BothShips shipData;
 
-	/*
-	for (unsigned int i = 0; i < mpGame->getAsteroids().size(); i++)
-	{
-		Asteroid* pTempAsteroid = mpGame->getAsteroids()[i];
-
-		if (pTempAsteroid != NULL)
-		{
-			info.asteroids[i].health = pTempAsteroid->getHealth();
-			info.asteroids[i].position.x = pTempAsteroid->getBody()->GetPosition().x;
-			info.asteroids[i].position.y = pTempAsteroid->getBody()->GetPosition().y;
-			info.asteroids[i].size = pTempAsteroid->getSize();
-			info.asteroids[i].velocity.x = pTempAsteroid->getBody()->GetLinearVelocity().x;
-			info.asteroids[i].velocity.y = pTempAsteroid->getBody()->GetLinearVelocity().y;
-			info.asteroids[i].velocity.rot = pTempAsteroid->getBody()->GetAngle();
-		}
-	}
-	
-	for (unsigned int i = 0; i < mpGame->getFirstPlayerBullets().size(); i++)
-	{
-		Bullet* pBullet = mpGame->getFirstPlayerBullets()[i];
-
-		if (pBullet != NULL)
-		{
-			info.firstPlayer.bullets[i].position.x = pBullet->getBody()->GetPosition().x;
-			info.firstPlayer.bullets[i].position.y = pBullet->getBody()->GetPosition().y;
-			info.firstPlayer.bullets[i].velocity.x = pBullet->getBody()->GetLinearVelocity().x;
-			info.firstPlayer.bullets[i].velocity.y = pBullet->getBody()->GetLinearVelocity().y;
-			info.firstPlayer.bullets[i].velocity.rot = pBullet->getBody()->GetAngle();
-		}
-	}
-
-	for (unsigned int i = 0; i < mpGame->getSecondPlayerBullets().size(); i++)
-	{
-		Bullet* pBullet = mpGame->getSecondPlayerBullets()[i];
-
-		if (pBullet != NULL)
-		{
-			info.secondPlayer.bullets[i].position.x = pBullet->getBody()->GetPosition().x;
-			info.secondPlayer.bullets[i].position.y = pBullet->getBody()->GetPosition().y;
-			info.secondPlayer.bullets[i].velocity.x = pBullet->getBody()->GetLinearVelocity().x;
-			info.secondPlayer.bullets[i].velocity.y = pBullet->getBody()->GetLinearVelocity().y;
-			info.secondPlayer.bullets[i].velocity.rot = pBullet->getBody()->GetAngle();
-		}
-	}*/
-
 	shipData.firstPlayer.health = mpClient->mpGame->getFirstPlayer()->getHealth();
 	shipData.firstPlayer.position.x = mpClient->mpGame->getFirstPlayer()->getBody()->GetPosition().x;
 	shipData.firstPlayer.position.y = mpClient->mpGame->getFirstPlayer()->getBody()->GetPosition().y;
@@ -421,13 +376,13 @@ void getInfoFromGame()
 
 void interpolateOtherPlayer()
 {
-	if (mpClient->hasStates())
+	if (mpClient->hasShipStates())
 	{
 		if (mpClient->getFirstConnected())
 		{
 			if (mpClient->mpGame->getSecondPlayer()->isFinishedInterpolating())
 			{
-				BothShips bestState = mpClient->getBestState();
+				BothShips bestState = mpClient->getBestShipState();
 				mpClient->mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
 				mpClient->mpGame->getSecondPlayer()->setDoneInterpolated(false);
 			}
@@ -440,7 +395,7 @@ void interpolateOtherPlayer()
 		{
 			if (mpClient->mpGame->getFirstPlayer()->isFinishedInterpolating())
 			{
-				BothShips bestState = mpClient->getBestState();
+				BothShips bestState = mpClient->getBestShipState();
 				mpClient->mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
 				mpClient->mpGame->getFirstPlayer()->setDoneInterpolated(false);
 			}

@@ -120,6 +120,17 @@ struct AsteroidData
 	unsigned char type;
 	position position;
 	velocity velocity;
+
+	RakNet::Time timeStamp;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+struct AsteroidsData
+{
+	unsigned char mID;
+	RakNet::Time timeStamp;
+	std::array<AsteroidData, 64> asteroids;
 };
 #pragma pack(pop)
 
@@ -156,7 +167,8 @@ enum MessageTypes
 	ID_RECIEVE_GAME_INFO,
 	ID_SEND_BULLET_INFO,
 	ID_RECIEVE_BULLET_INFO,
-	ID_RECIEVE_NEW_ASTEROID
+	ID_RECIEVE_NEW_ASTEROID,
+	ID_RECIEVE_ASTEROID_INFO
 };
 
 

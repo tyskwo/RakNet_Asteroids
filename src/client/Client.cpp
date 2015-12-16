@@ -149,23 +149,21 @@ void Client::getPackets()
 		{
 			//get the packet's GameInfo struct
 			BothShips shipData = *reinterpret_cast<BothShips*>(mpPacket->data);
-			mShipData = shipData;
+			//mShipData = shipData;
 
 			if (mShipStates.size() == 0)
 			{
 				mShipStates.push(shipData);
 				mTwoPacketsAgo = mOnePacketAgo;
-				mOnePacketAgo = mShipData.timeStamp;
+				mOnePacketAgo = shipData.timeStamp;
 			}
 			else if(mShipData.timeStamp > mShipStates.back().timeStamp)
 			{
 				mShipStates.push(shipData);
 				mTwoPacketsAgo = mOnePacketAgo;
-				mOnePacketAgo = mShipData.timeStamp;
+				mOnePacketAgo = shipData.timeStamp;
 			}
 			
-
-			mJustRecieved = true;
 			break;
 		}
 
@@ -193,6 +191,29 @@ void Client::getPackets()
 			break;
 		}
 
+		case ID_RECIEVE_ASTEROID_INFO:
+		{
+			//get the packet's GameInfo struct
+			AsteroidsData data = *reinterpret_cast<AsteroidsData*>(mpPacket->data);
+
+			for (unsigned int i = 0; i < mAsteroidStates.size(); i++)
+			{
+				if (mAsteroidStates[i].size() == 0)
+				{
+					mAsteroidStates[i].push(data.asteroids[i]);
+					mTwoPacketsAgo = mOnePacketAgo;
+					mOnePacketAgo = data.timeStamp;
+				}
+				else if (data.timeStamp > mAsteroidStates[i].back().timeStamp)
+				{
+					mAsteroidStates[i].push(data.asteroids[i]);
+					mTwoPacketsAgo = mOnePacketAgo;
+					mOnePacketAgo = data.timeStamp;
+				}
+			}
+			break;
+		}
+
 		default:
 			//default handle packets in GameStructs
 			handlePackets(mPacketIdentifier, mpPacket);
@@ -209,7 +230,7 @@ void Client::sendShipData()
 	mpClient->Send((const char*)&mShipData, sizeof(mShipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
 }
 
-BothShips Client::getBestState()
+BothShips Client::getBestShipState()
 {
 	while (mShipStates.size() > 1 && float(RakNet::GetTime() - mShipStates.front().timeStamp) > delay)
 	{

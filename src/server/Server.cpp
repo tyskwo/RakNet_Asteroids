@@ -114,7 +114,7 @@ void Server::update()
 		//sendShipData();
 		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
 		
-		if (mAsteroidIncr > 200)
+		if (mAsteroidIncr > 500)
 		{
 			spawnAsteroid();
 			mAsteroidIncr = 0;

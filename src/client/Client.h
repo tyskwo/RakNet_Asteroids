@@ -26,6 +26,7 @@ public:
 
 	void update();
 
+	std::array<std::queue<AsteroidData>, 64> mAsteroidStates;
 	std::queue<BothShips> mShipStates;
 	Game* mpGame;
 
@@ -46,11 +47,13 @@ public:
 	inline void setShipData(BothShips data) { mShipData = data; };
 	inline BothShips getShipData() { return mShipData; };
 
-	void setJustRecieved(bool value) { mJustRecieved = value; };
-	bool getJustRecieved() { return mJustRecieved; };
 
-	BothShips getBestState();
-	inline bool hasStates() { return mShipStates.size() > 0 ? true : false; };
+	BothShips getBestShipState();
+	AsteroidData getBestAsteroidState(int index);
+
+	inline bool hasShipStates() { return mShipStates.size() > 0 ? true : false; };
+	inline bool hasAsteroidStates(int index) { return mAsteroidStates[index].size() > 0 ? true : false; };
+
 	RakNet::Time mTwoPacketsAgo = 0;
 	RakNet::Time mOnePacketAgo = 0;
 
@@ -86,12 +89,8 @@ private:
 	BothShips mShipData;
 	std::queue<BulletData> mBulletData;
 
-	bool mJustRecieved;
-
 	float mLastUpdateSent;
-
 	float delay = 20.0f;
-	
 };
 
 #endif
