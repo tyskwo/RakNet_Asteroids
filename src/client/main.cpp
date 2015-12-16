@@ -176,6 +176,9 @@ void drawScreen(sf::RenderWindow &pWindow)
 			else
 			{
 				//draw marker at edge of screen.
+				sf::Sprite marker(TEXTURES::mMarker);
+				marker.setPosition(0.0f, 0.0f);
+				pWindow.draw(marker);
 			}
 		}
 	}
