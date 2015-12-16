@@ -25,9 +25,6 @@ int main(int argc, char** argv)
 	TEXTURES::init(mBuildType);
 
 	Server* mpServer;
-
-	std::array<Game*, 8> mpGames;
-	for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i] = new Game(true); }
 	
 
 	if (argc == 2) { mpServer = new Server(argv[1]); } //create server with input port number
@@ -37,7 +34,7 @@ int main(int argc, char** argv)
 	{
 		mpServer->update();
 
-		for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i]->update(); }
+		for (unsigned int i = 0; i < mpServer->mpGames.size(); i++) { mpServer->mpGames[i]->update(); }
 	}
 	return 0;
 }

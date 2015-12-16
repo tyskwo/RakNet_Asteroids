@@ -90,7 +90,7 @@ void Client::update()
 	{
 		mGameInfo.timeStamp = RakNet::GetTime();
 
-		while (mBulletData.size > 0)
+		while (mBulletData.size() > 0)
 		{
 			mpClient->Send((const char*)&mBulletData.front(), sizeof(mBulletData.front()), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
 			mBulletData.pop();

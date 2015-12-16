@@ -8,6 +8,7 @@
 
 //game includes
 #include "../common/NetworkStructs.h"
+#include "../common/Game.h"
 
 class Timer;
 
@@ -23,6 +24,8 @@ public:
 
 	void update();
 	void broadcastGames();
+
+	std::array<Game*, 8> mpGames;
 
 private:
 	//pointer to server object
