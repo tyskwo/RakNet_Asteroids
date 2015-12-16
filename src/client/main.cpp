@@ -177,7 +177,28 @@ void drawScreen(sf::RenderWindow &pWindow)
 			{
 				//draw marker at edge of screen.
 				sf::Sprite marker(TEXTURES::mMarker);
-				marker.setPosition(0.0f, 0.0f);
+				b2Vec2 position(mpClient->mpGame->getAsteroids()[i]->getBody()->GetPosition());
+
+				sf::Vector2f markerPosition;
+				markerPosition.x = position.x;
+				markerPosition.y = position.y;
+
+				float markerWidth  = marker.getLocalBounds().width  + 10.0f;
+				float markerHeight = marker.getLocalBounds().height + 10.0f;
+
+				if (position.x < 0 && position.y < 0)                             { markerPosition.x = markerWidth, markerPosition.y = markerHeight; }
+				else if (position.x > SCREEN_WIDTH && position.y > SCREEN_HEIGHT) { markerPosition.x = SCREEN_WIDTH - markerWidth, markerPosition.y = SCREEN_HEIGHT - markerPosition.y; }
+				else if (position.x < 0 && position.y > SCREEN_HEIGHT)            { markerPosition.x = markerWidth, markerPosition.y = SCREEN_HEIGHT - markerPosition.y; }
+				else if (position.x > SCREEN_WIDTH && position.y < 0)             { markerPosition.x = SCREEN_WIDTH - markerWidth, markerPosition.y = markerHeight; }
+
+				else if (position.x < 0)             { markerPosition.x = markerWidth; }
+				else if (position.x > SCREEN_WIDTH)  { markerPosition.x = SCREEN_WIDTH - markerWidth; }
+				else if (position.y < 0)             { markerPosition.y = markerHeight; }
+				else if (position.y > SCREEN_HEIGHT) { markerPosition.y = SCREEN_HEIGHT - markerHeight; }
+
+				marker.setPosition(markerPosition);
+
+
 				pWindow.draw(marker);
 			}
 		}
