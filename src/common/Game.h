@@ -22,7 +22,7 @@ public:
 
 	void update();
 
-	void fireBullet(bool isFirstPlayer);
+	int fireBullet(bool isFirstPlayer);
 	void spawnAsteroid();
 
 	inline Ship* getFirstPlayer()  { return firstPlayer;  };
@@ -32,8 +32,6 @@ public:
 	inline std::array<Bullet*, 8> getSecondPlayerBullets() { return secondPlayerBullets; };
 
 	inline std::array<Asteroid*, 64> getAsteroids() { return asteroids; };
-
-
 
 private:
 	b2World* physicsWorld;

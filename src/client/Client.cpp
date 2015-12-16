@@ -89,6 +89,13 @@ void Client::update()
 	if (float(RakNet::GetTimeMS()) - mLastUpdateSent > 50.0f)
 	{
 		mGameInfo.timeStamp = RakNet::GetTime();
+
+		while (mBulletData.size() > 0)
+		{
+			mpClient->Send((const char*)&mBulletData.front(), sizeof(mBulletData.front()), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
+			mBulletData.pop();
+		}
+
 		sendShipData();
 		mLastUpdateSent = float(RakNet::GetTimeMS());
 	}
@@ -157,6 +164,14 @@ void Client::getPackets()
 			
 
 			mJustRecieved = true;
+			break;
+		}
+
+		case ID_RECIEVE_BULLET_INFO:
+		{
+			//get the packet's GameInfo struct
+			BulletData bulletData = *reinterpret_cast<BulletData*>(mpPacket->data);
+
 			break;
 		}
 

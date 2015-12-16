@@ -51,6 +51,8 @@ public:
 	RakNet::Time mTwoPacketsAgo = 0;
 	RakNet::Time mOnePacketAgo = 0;
 
+	inline void addBulletData(BulletData data) { mBulletData.push(data); };
+
 private:
 	//pointer to client object
 	RakNet::RakPeerInterface* mpClient;
@@ -77,6 +79,7 @@ private:
 	//game info
 	GameInfo mGameInfo;
 	BothShips mShipData;
+	std::queue<BulletData> mBulletData;
 
 	bool mJustRecieved;
 

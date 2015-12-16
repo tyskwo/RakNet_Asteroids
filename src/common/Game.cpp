@@ -232,7 +232,7 @@ void Game::checkAsteroidSpawn(Asteroid* asteroid)
 }
 
 //fire bullet from player
-void Game::fireBullet(bool isFirstPlayer)
+int Game::fireBullet(bool isFirstPlayer)
 {
 	if (isFirstPlayer)
 	{
@@ -241,6 +241,7 @@ void Game::fireBullet(bool isFirstPlayer)
 			if (firstPlayerBullets[i] == NULL)
 			{
 				firstPlayerBullets[i] = new Bullet(isFirstPlayer, firstPlayer, physicsWorld);
+				return i;
 				break;
 			}
 		}
@@ -252,10 +253,12 @@ void Game::fireBullet(bool isFirstPlayer)
 			if (secondPlayerBullets[i] == NULL)
 			{
 				secondPlayerBullets[i] = new Bullet(isFirstPlayer, secondPlayer, physicsWorld);
+				return i;
 				break;
 			}
 		}
 	}
+	return -1;
 }
 
 void Game::spawnAsteroid()

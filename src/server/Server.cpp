@@ -1,6 +1,9 @@
 #include "Server.h"
 
 #include "..\common\PhysicsStructs.h"
+#include "..\common\Ship.h"
+#include "..\common\Bullet.h"
+
 
 #include "GetTime.h"
 
@@ -69,6 +72,7 @@ void Server::init(const char* serverPort)
 
 	//initialize GameInfos
 	initializeGames();
+	for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i] = new Game(true); }
 }
 
 
@@ -99,9 +103,6 @@ void Server::update()
 	//get packets from clients
 	getPackets();
 
-	//update GameInfos
-	updateGames();
-
 	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
 		//mGameInfo.timeStamp = RakNet::GetTime();
@@ -110,17 +111,6 @@ void Server::update()
 	}
 }
 
-
-void Server::updateGames()
-{
-	for (unsigned int i = 0; i < mGameInfos.size(); i++)
-	{
-		//if the game has started
-		if (mGameInfos[i].started)
-		{
-		}
-	}
-}
 
 void Server::getPackets()
 {
@@ -150,11 +140,48 @@ void Server::getPackets()
 
 				if (mGames[i][0] == p->guid)
 				{
+					b2Vec2 position(shipData.firstPlayer.position.x, shipData.firstPlayer.position.y);
+					mpGames[i]->getFirstPlayer()->getBody()->SetTransform(position, shipData.firstPlayer.position.angle);
+
+					b2Vec2 velocity(shipData.firstPlayer.velocity.x, shipData.firstPlayer.velocity.y);
+					mpGames[i]->getFirstPlayer()->getBody()->SetLinearVelocity(velocity);
+					mpGames[i]->getFirstPlayer()->getBody()->SetAngularVelocity(shipData.firstPlayer.velocity.rot);
+
+
 					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
 				}
 				else if (mGames[i][1] == p->guid)
 				{
+					b2Vec2 position(shipData.secondPlayer.position.x, shipData.secondPlayer.position.y);
+					mpGames[i]->getSecondPlayer()->getBody()->SetTransform(position, shipData.secondPlayer.position.angle);
+
+					b2Vec2 velocity(shipData.secondPlayer.velocity.x, shipData.secondPlayer.velocity.y);
+					mpGames[i]->getSecondPlayer()->getBody()->SetLinearVelocity(velocity);
+					mpGames[i]->getSecondPlayer()->getBody()->SetAngularVelocity(shipData.secondPlayer.velocity.rot);
+
 					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
+				}
+			}
+
+			break;
+		}
+
+		case ID_SEND_BULLET_INFO:
+		{
+			//find correct game and client
+			for (unsigned int i = 0; i < mGames.size(); i++)
+			{
+				BulletData bulletData = *reinterpret_cast<BulletData*>(p->data);
+
+				bulletData.mID = ID_RECIEVE_BULLET_INFO;
+
+				if (mGames[i][0] == p->guid)
+				{
+					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
+				}
+				else if (mGames[i][1] == p->guid)
+				{
+					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				}
 			}
 
