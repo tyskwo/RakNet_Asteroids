@@ -33,6 +33,8 @@ public:
 
 	inline std::array<Asteroid*, 64> getAsteroids() { return asteroids; };
 
+	inline b2World* getWorld() { return physicsWorld; };
+
 private:
 	b2World* physicsWorld;
 

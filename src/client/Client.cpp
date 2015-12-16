@@ -1,5 +1,6 @@
 #include "Client.h"
 #include "../common/Ship.h"
+#include "../common/Bullet.h"
 #include "GetTime.h"
 
 Client::Client()
@@ -171,14 +172,26 @@ void Client::getPackets()
 		{
 			//get the packet's GameInfo struct
 			BulletData bulletData = *reinterpret_cast<BulletData*>(mpPacket->data);
-
+			printf("%d\n", bulletData.index);
 			if (mWasFirstConnected)
 			{
+				mpGame->getSecondPlayerBullets()[bulletData.index] = new Bullet(false, mpGame->getSecondPlayer(), mpGame->getWorld());
+				/*b2Vec2 position(bulletData.bullet.position.x, bulletData.bullet.position.y);
+				mpGame->getSecondPlayerBullets()[bulletData.index]->getBody()->SetTransform(position, bulletData.bullet.position.angle);
 
+				b2Vec2 velocity(bulletData.bullet.velocity.x, bulletData.bullet.velocity.y);
+				mpGame->getSecondPlayerBullets()[bulletData.index]->getBody()->SetLinearVelocity(velocity);
+				mpGame->getSecondPlayerBullets()[bulletData.index]->getBody()->SetAngularVelocity(bulletData.bullet.velocity.rot);*/
 			}
 			else
 			{
+				mpGame->getFirstPlayerBullets()[bulletData.index] = new Bullet(true, mpGame->getFirstPlayer(), mpGame->getWorld());
+				/*b2Vec2 position(bulletData.bullet.position.x, bulletData.bullet.position.y);
+				mpGame->getFirstPlayerBullets()[bulletData.index]->getBody()->SetTransform(position, bulletData.bullet.position.angle);
 
+				b2Vec2 velocity(bulletData.bullet.velocity.x, bulletData.bullet.velocity.y);
+				mpGame->getFirstPlayerBullets()[bulletData.index]->getBody()->SetLinearVelocity(velocity);
+				mpGame->getFirstPlayerBullets()[bulletData.index]->getBody()->SetAngularVelocity(bulletData.bullet.velocity.rot);*/
 			}
 
 			break;
