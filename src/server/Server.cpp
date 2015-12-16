@@ -85,6 +85,15 @@ void Server::cleanup()
 	mpServer->Shutdown(300);
 	//We're done with the network
 	RakNet::RakPeerInterface::DestroyInstance(mpServer);
+
+	for (unsigned int i = 0; i < mpGames.size(); i++)
+	{
+		if (mpGames[i] != NULL)
+		{
+			delete mpGames[i];
+			mpGames[i] = NULL;
+		}
+	}
 }
 
 unsigned char Server::GetPacketIdentifier(RakNet::Packet *p)
