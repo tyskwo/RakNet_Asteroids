@@ -19,6 +19,8 @@ src/common/Bullet.h src/common/Bullet.cpp
 src/common/Ship.h src/common/Ship.cpp
 src/common/Game.h src/common/Game.cpp
 src/common/Timer.h src/common/Timer.cpp
+src/common/MemoryTracker.h src/common/MemoryTracker.cpp
+src/common/Trackable.h src/common/Trackable.cpp
 )
 
 add_executable(Server src/server/main.cpp 
@@ -30,6 +32,8 @@ src/common/Bullet.h src/common/Bullet.cpp
 src/common/Ship.h src/common/Ship.cpp
 src/common/Game.h src/common/Game.cpp
 src/common/Timer.h src/common/Timer.cpp
+src/common/MemoryTracker.h src/common/MemoryTracker.cpp
+src/common/Trackable.h src/common/Trackable.cpp
 )
 
 add_custom_command(TARGET Client PRE_BUILD

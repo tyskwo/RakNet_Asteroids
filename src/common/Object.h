@@ -4,12 +4,13 @@
 //library includes
 #include "Box2D\Box2D.h"
 #include "SFML\Graphics.hpp"
+#include "..\common\Trackable.h"
 
 //forward declarations
 class b2Body;
 class b2World;
 
-class Object
+class Object : public Trackable
 {
 public:
 	Object();

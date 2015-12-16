@@ -4,6 +4,7 @@
 //library includes
 #include <array>
 #include <queue>
+#include "..\common\Trackable.h"
 
 //RakNet includes
 #include "Gets.h"
@@ -13,7 +14,7 @@
 #include "../common/Game.h"
 
 
-class Client
+class Client : public Trackable
 {
 public:
 	Client();

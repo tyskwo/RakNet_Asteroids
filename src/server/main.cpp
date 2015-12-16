@@ -2,8 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../common/PhysicsStructs.h"
-#include "../common/Game.h"
+#include "..\common\MemoryTracker.h"
+#include "..\common\PhysicsStructs.h"
+#include "..\common\Game.h"
 #include <array>
 
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
@@ -36,5 +37,10 @@ int main(int argc, char** argv)
 
 		for (unsigned int i = 0; i < mpServer->mpGames.size(); i++) { mpServer->mpGames[i]->update(); }
 	}
+
+	gMemoryTracker.reportAllocations(std::cout);
+
+	system("pause");
+
 	return 0;
 }

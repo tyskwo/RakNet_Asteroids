@@ -9,8 +9,9 @@ class Object;
 class b2World;
 
 #include <array>
+#include "..\common\Trackable.h"
 
-class Game
+class Game : public Trackable
 {
 public:
 	Game(bool isServer);
