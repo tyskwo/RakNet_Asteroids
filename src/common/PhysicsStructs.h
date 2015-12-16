@@ -92,7 +92,12 @@ static b2World* getWorld() { return gpPhysicsWorld; };
 
 
 
-class ContactListener: public b2ContactListener
+class ServerContactListener: public b2ContactListener
+{
+	void BeginContact(b2Contact* contact);
+};
+
+class ClientContactListener : public b2ContactListener
 {
 	void BeginContact(b2Contact* contact);
 };

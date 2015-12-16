@@ -55,6 +55,8 @@ public:
 	inline AsteroidSpawn getSpawn()       { return collisionSpawn; };
 	inline void setSpawn(AsteroidSpawn x) { collisionSpawn = x;    };
 
+	bool isOnScreen();
+
 private:
 	void initSize();
 	void initPhysics(b2Vec2 location);

@@ -24,62 +24,17 @@
 std::string mBuildType = "";	//to determine file paths of assets
 
 Client* mpClient;
-
-sf::Font mFont;
-
 Game* mpGame;
-
+sf::Font mFont;
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
 			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
 			TEXTURES::mMediumAsteroid1, TEXTURES::mMediumAsteroid2, TEXTURES::mMediumAsteroid3,
 			TEXTURES::mLargeAsteroid1,  TEXTURES::mLargeAsteroid2,  TEXTURES::mLargeAsteroid3;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//WHERE IN THE WORLD SHOULD I PUT THIS THING!!!!!!!!!
+//input flags
 bool isSpacePressed = false;
 bool isPPressed = false;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -87,8 +42,7 @@ bool isPPressed = false;
 
 	Client* initClient(int argc, char** argv);		//init client
 
-	void initFont();
-	void initWindow(sf::RenderWindow &pWindow);		//init font and window
+	void initWindow(sf::RenderWindow &pWindow);		//init window
 
 	void drawScreen(sf::RenderWindow &pWindow);		//draw to window
 	void getInput();								//get keyboard input
@@ -103,51 +57,24 @@ int main(int argc, char** argv)
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 
-//###DETERMINE ENVIRONMENT#############################################################################################
 	#ifdef _DEBUG
 		mBuildType = "Debug/";
 	#else
 		mBuildType = "Release/";
 	#endif
 
-
-
-
-//###INIT WINDOW#######################################################################################################
 	sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(SCREEN_WIDTH), 
 		                                  static_cast<unsigned int>(SCREEN_HEIGHT)), "Asteroids");
 	initWindow(window);
 
-
-
-
-//###INIT CLIENT#######################################################################################################
 	mpClient = initClient(argc, argv);
-
-
-
-//###INIT TEXTURES#####################################################################################################
 	TEXTURES::init(mBuildType);
+	mpGame = new Game(false);
 
-
-	
-
-//###GAME INIT#########################################################################################################
-	mpGame = new Game();
-
-
-
-
-//###WAIT UNTIL CONNECTED TO RUN GAME LOOP#############################################################################
 	while (!mpClient->getConnected()) { mpClient->update(); }
 
-
-
-
-//###RUN PROGRAM######################################################################################################
 	while (window.isOpen())
 	{
-//###UPDATE CLIENT####################################################################################################
 		mpClient->update();
 
 		if (mpClient->getFirstConnected())
@@ -155,39 +82,20 @@ int main(int argc, char** argv)
 		else
 			mpGame->getFirstPlayer()->getBody()->SetTransform(b2Vec2(mpClient->getGameInfo().firstPlayer.position.x, mpClient->getGameInfo().firstPlayer.position.y), mpClient->getGameInfo().firstPlayer.velocity.rot);
 
-//###UPDATE GAME######################################################################################################
 		mpGame->update();
 		getInfoFromGame();
 
-//###GET INPUT########################################################################################################
 		getInput();
 		
-//###DRAW#############################################################################################################
 		drawScreen(window);
 
-//###CHECK TO CLOSE WINDOW############################################################################################
 		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			//close the window
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-		{
-			window.close();
-		}
+		while (window.pollEvent(event)) { if (event.type == sf::Event::Closed) window.close(); }
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) { window.close(); }
 	}
 
 	return 0;
 };
-
-
-
-
-
-
 
 
 //###METHOD IMPLEMENTATIONS###########################################################################################
@@ -218,14 +126,10 @@ Client* initClient(int argc, char** argv)
 	}
 }
 
-//init window, etc.
-void initFont() { mFont.loadFromFile(mBuildType + "font.otf"); }
 void initWindow(sf::RenderWindow &pWindow)
 {
-	initFont();
-
+	mFont.loadFromFile(mBuildType + "font.otf");
 	pWindow.setFramerateLimit(60);
-
 	pWindow.clear(sf::Color(37, 37, 37));
 
 	sf::Text beginText;
@@ -237,14 +141,12 @@ void initWindow(sf::RenderWindow &pWindow)
 	beginText.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
 
 	pWindow.draw(beginText);
-
 	pWindow.display();
 }
 
 //draw the client's game info
 void drawScreen(sf::RenderWindow &pWindow)
 {
-	//clear the display
 	pWindow.clear(sf::Color(37, 37, 37));
 
 	pWindow.draw(*mpGame->getFirstPlayer()->getSprite());
@@ -256,10 +158,6 @@ void drawScreen(sf::RenderWindow &pWindow)
 		{
  			pWindow.draw(*mpGame->getFirstPlayerBullets()[i]->getSprite());
 		}
-	}
-
-	for (unsigned int i = 0; i < mpGame->getSecondPlayerBullets().size(); i++)
-	{
 		if (mpGame->getSecondPlayerBullets()[i] != NULL)
 		{
 			pWindow.draw(*mpGame->getSecondPlayerBullets()[i]->getSprite());
@@ -270,7 +168,14 @@ void drawScreen(sf::RenderWindow &pWindow)
 	{
 		if (mpGame->getAsteroids()[i] != NULL)
 		{
-			pWindow.draw(*mpGame->getAsteroids()[i]->getSprite());
+			if (mpGame->getAsteroids()[i]->isOnScreen())
+			{
+				pWindow.draw(*mpGame->getAsteroids()[i]->getSprite());
+			}
+			else
+			{
+				//draw marker at edge of screen.
+			}
 		}
 	}
 

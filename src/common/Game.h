@@ -13,10 +13,10 @@ class b2World;
 class Game
 {
 public:
-	Game();
+	Game(bool isServer);
 	~Game();
 
-	void init();
+	void init(bool isServer);
 	void cleanup();
 
 	void update();

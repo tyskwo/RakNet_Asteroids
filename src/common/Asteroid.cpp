@@ -156,3 +156,15 @@ void Asteroid::loseHealth(int damage)
 		}
 	}
 }
+
+bool Asteroid::isOnScreen()
+{
+	bool onScreen = true;
+
+	if (body->GetPosition().x < -sprite->getLocalBounds().width)  { onScreen = false; }
+	if (body->GetPosition().y < -sprite->getLocalBounds().height) { onScreen = false; }
+	if (body->GetPosition().x > SCREEN_WIDTH  + sprite->getLocalBounds().width)  { onScreen = false; }
+	if (body->GetPosition().y > SCREEN_HEIGHT + sprite->getLocalBounds().height) { onScreen = false; }
+
+	return onScreen;
+}

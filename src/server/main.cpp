@@ -27,22 +27,17 @@ int main(int argc, char** argv)
 	Server* mpServer;
 
 	std::array<Game*, 8> mpGames;
-	for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i] = new Game(); }
+	for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i] = new Game(true); }
 	
 
 	if (argc == 2) { mpServer = new Server(argv[1]); } //create server with input port number
 	else		   { mpServer = new Server("200");   } //create server with port number of 200
 
-	while (true) 
-	{ 
-		mpServer->update(); 
+	while (true) //run the program as long as the server is running
+	{
+		mpServer->update();
 
-		for (unsigned int i = 0; i < mpGames.size(); i++)
-		{
-			mpGames[i]->update();
-		}
-
-	} //run the program as long as the server is running
-
+		for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i]->update(); }
+	}
 	return 0;
 }

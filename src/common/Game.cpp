@@ -8,15 +8,17 @@
 #include "..\common\Asteroid.h"
 
 
-Game::Game() { init(); };
+Game::Game(bool isServer) { init(isServer); };
 
 Game::~Game() { cleanup(); };
 
-void Game::init()
+void Game::init(bool isServer)
 {
 	physicsWorld = new b2World(PHYSICS::WORLD::gravity());
 	physicsWorld->SetAllowSleeping(true);
-	physicsWorld->SetContactListener(new ContactListener());
+	if (isServer) physicsWorld->SetContactListener(new ServerContactListener());
+	else          physicsWorld->SetContactListener(new ClientContactListener());
+
 
 	firstPlayer  = new Ship(true,  physicsWorld);
 	secondPlayer = new Ship(false, physicsWorld);
@@ -149,25 +151,29 @@ void Game::checkWrap(Object* object)
 {
 	b2Vec2 position = object->getBody()->GetPosition();
 
-	if (position.x > SCREEN_WIDTH + object->getSprite()->getLocalBounds().width / 2.0f)
+	if (position.x > SCREEN_WIDTH + object->getSprite()->getLocalBounds().width / 2.0f &&
+		object->getBody()->GetLinearVelocity().x > 0)
 	{
 		object->getBody()->SetTransform(b2Vec2(-object->getSprite()->getLocalBounds().width / 2.0f,
 			object->getBody()->GetPosition().y),
 			object->getBody()->GetAngle());
 	}
-	else if (position.x < -object->getSprite()->getLocalBounds().width / 2.0f)
+	else if (position.x < -object->getSprite()->getLocalBounds().width / 2.0f &&
+		object->getBody()->GetLinearVelocity().x < 0)
 	{
 		object->getBody()->SetTransform(b2Vec2(SCREEN_WIDTH + object->getSprite()->getLocalBounds().width / 2.0f,
 			object->getBody()->GetPosition().y),
 			object->getBody()->GetAngle());
 	}
-	if (position.y > SCREEN_HEIGHT + object->getSprite()->getLocalBounds().height / 2.0f)
+	if (position.y > SCREEN_HEIGHT + object->getSprite()->getLocalBounds().height / 2.0f &&
+		object->getBody()->GetLinearVelocity().y > 0)
 	{
 		object->getBody()->SetTransform(b2Vec2(object->getBody()->GetPosition().x,
 			-object->getSprite()->getLocalBounds().height / 2.0f),
 			object->getBody()->GetAngle());
 	}
-	else if (position.y < -object->getSprite()->getLocalBounds().height / 2.0f)
+	else if (position.y < -object->getSprite()->getLocalBounds().height / 2.0f &&
+		object->getBody()->GetLinearVelocity().y < 0)
 	{
 		object->getBody()->SetTransform(b2Vec2(object->getBody()->GetPosition().x,
 			SCREEN_HEIGHT + object->getSprite()->getLocalBounds().height / 2.0f),
@@ -180,10 +186,11 @@ bool Game::checkDelete(Object* object)
 	bool needsDeleting = false;
 	b2Vec2 position = object->getBody()->GetPosition();
 
-	if (position.x > SCREEN_WIDTH)                                       { needsDeleting = true; }
-	else if (position.x < -object->getSprite()->getLocalBounds().width)  { needsDeleting = true; }
-	if (position.y > SCREEN_HEIGHT)                                      { needsDeleting = true; }
-	else if (position.y < -object->getSprite()->getLocalBounds().height) { needsDeleting = true; }
+	if ((position.x > SCREEN_WIDTH                                  && object->getBody()->GetLinearVelocity().x > 0)   ||
+		(position.x < -object->getSprite()->getLocalBounds().width  && object->getBody()->GetLinearVelocity().x < 0)   ||
+	    (position.y > SCREEN_HEIGHT                                 && object->getBody()->GetLinearVelocity().y > 0)   ||
+		(position.y < -object->getSprite()->getLocalBounds().height && object->getBody()->GetLinearVelocity().y < 0))
+	{ needsDeleting = true; }
 
 	return needsDeleting;
 }
