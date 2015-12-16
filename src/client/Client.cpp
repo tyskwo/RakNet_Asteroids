@@ -131,6 +131,13 @@ void Client::getPackets()
 			GameInfo gameInfo = *reinterpret_cast<GameInfo*>(mpPacket->data);
 			mGameInfo = gameInfo;
 
+			RakNet::Time currentTime = RakNet::GetTimeMS();
+			delay = 200.0f - (currentTime - gameInfo.timeStamp);
+			gameInfo.firstPlayerLag = delay;
+			gameInfo.mID = ID_RECIEVE_LAG;
+
+			mpClient->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
+
 			printf("%d", gameInfo.gameNumber);
 			break;
 		}
@@ -145,6 +152,16 @@ void Client::getPackets()
 			//get the packet's GameInfo struct and set it equal to ours
 			GameInfo gameInfo = *reinterpret_cast<GameInfo*>(mpPacket->data);
 			mGameInfo = gameInfo;
+
+
+			RakNet::Time currentTime = RakNet::GetTimeMS();
+			delay = 200.0f - (currentTime - gameInfo.timeStamp);
+			printf("%f\n", delay);
+			gameInfo.secondPlayerLag = delay;
+			gameInfo.mID = ID_RECIEVE_LAG;
+
+			mpClient->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
+
 
 			printf("%d", gameInfo.gameNumber);
 			break;
@@ -221,6 +238,14 @@ void Client::getPackets()
 					}
 				}
 			}
+			break;
+		}
+
+		case ID_RECIEVE_LAG:
+		{
+			Delay data = *reinterpret_cast<Delay*>(mpPacket->data);
+
+			delay = data.delay;
 			break;
 		}
 

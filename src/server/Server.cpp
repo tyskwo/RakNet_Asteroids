@@ -234,6 +234,37 @@ void Server::getPackets()
 
 			break;
 		}
+
+		case ID_RECIEVE_LAG:
+		{
+			//find correct game and client
+			for (unsigned int i = 0; i < mGames.size(); i++)
+			{
+				GameInfo info = *reinterpret_cast<GameInfo*>(p->data);
+
+				if (mGames[i][0] == p->guid)
+				{
+					mGameInfos[i].firstPlayerLag = info.firstPlayerLag;
+				}
+				else if (mGames[i][1] == p->guid)
+				{
+					mGameInfos[i].secondPlayerLag = info.secondPlayerLag;
+
+					Delay delay;
+					delay.mID = ID_RECIEVE_LAG;
+					if (mGameInfos[i].secondPlayerLag > mGameInfos[i].firstPlayerLag)
+						delay.delay = mGameInfos[i].secondPlayerLag * 3.0f;
+					else
+						delay.delay = mGameInfos[i].firstPlayerLag * 3.0f;
+
+					mpServer->Send((const char*)&delay, sizeof(delay), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
+					mpServer->Send((const char*)&delay, sizeof(delay), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
+				}
+			}
+
+			break;
+		}
+
 		default:
 			//default handle packets in GameStructs
 			handlePackets(packetIdentifier, p);
@@ -294,6 +325,7 @@ void Server::setConnection(RakNet::Packet* p)
 
 		GameInfo info = mGameInfos[mCurrentNumberOfGames];
 		info.mID = ID_FIRST_CONNECTION;
+		info.timeStamp = RakNet::GetTimeMS();
 		mpServer->Send((const char*)&info, sizeof(info), HIGH_PRIORITY, RELIABLE_ORDERED, 0, p->guid, false);
 	}
 
@@ -304,6 +336,7 @@ void Server::setConnection(RakNet::Packet* p)
 
 		GameInfo info = mGameInfos[mCurrentNumberOfGames];
 		info.mID = ID_SECOND_CONNECTION;
+		info.timeStamp = RakNet::GetTimeMS();
 		mpServer->Send((const char*)&info, sizeof(info), HIGH_PRIORITY, RELIABLE_ORDERED, 0, p->guid, false);
 
 		mGameInfos[mCurrentNumberOfGames].started = true;

@@ -149,10 +149,20 @@ struct GameInfo
 	char numLevel = 0;
 	unsigned short score = 0;
 
+	float firstPlayerLag, secondPlayerLag;
+
 
 	ShipObject firstPlayer;
 	ShipObject secondPlayer;
 	std::array<AsteroidObject, 64> asteroids;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+struct Delay
+{
+	unsigned char mID;
+	float delay;
 };
 #pragma pack(pop)
 
@@ -166,7 +176,8 @@ enum MessageTypes
 	ID_SEND_BULLET_INFO,
 	ID_RECIEVE_BULLET_INFO,
 	ID_RECIEVE_NEW_ASTEROID,
-	ID_RECIEVE_ASTEROID_INFO
+	ID_RECIEVE_ASTEROID_INFO,
+	ID_RECIEVE_LAG
 };
 
 

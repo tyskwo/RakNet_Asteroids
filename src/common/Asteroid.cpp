@@ -88,8 +88,8 @@ void Asteroid::initPhysics(b2Vec2 location)
 	fix.filter.maskBits     = PHYSICS::category::FIRST_SHIP    | 
 							  PHYSICS::category::SECOND_SHIP   | 
 							  PHYSICS::category::FIRST_BULLET  | 
-							  PHYSICS::category::SECOND_BULLET; 
-							  //PHYSICS::category::ASTEROID;
+							  PHYSICS::category::SECOND_BULLET | 
+							  PHYSICS::category::ASTEROID;
 	body->CreateFixture(&fix);
 
 
@@ -228,7 +228,7 @@ void Asteroid::addInterpolation(AsteroidObject data)
 	startState.data = currentAsteroid;
 
 	startTime = float(RakNet::GetTime());
-	targetTime = float(RakNet::GetTime()) + 100.0f;
+	targetTime = float(RakNet::GetTime()) + 200.0f;
 }
 
 position Asteroid::getPosition()
