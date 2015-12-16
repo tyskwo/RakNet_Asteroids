@@ -373,10 +373,8 @@ void Server::sendAsteroids()
 				asteroids.asteroids[j].position = mpGames[i]->getAsteroids()[j]->getPosition();
 
 				asteroids.asteroids[j].timeStamp = RakNet::GetTime();
-			}
-			else
-			{
-				asteroids.asteroids[j].isNULL = true;
+
+				asteroids.asteroids[j].isNULL = false;
 			}
 		}
 

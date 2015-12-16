@@ -52,7 +52,7 @@ public:
 	AsteroidObject getBestAsteroidState(int index);
 
 	inline bool hasShipStates() { return mShipStates.size() > 0 ? true : false; };
-	inline bool hasAsteroidStates(int index) { return mAsteroidStates[index].size() > 0 ? true : false; };
+	inline bool hasAsteroidStates(int index) { return (mAsteroidStates[index]).size() > 0 ? true : false; };
 
 	RakNet::Time mTwoPacketsAgo = 0;
 	RakNet::Time mOnePacketAgo = 0;
