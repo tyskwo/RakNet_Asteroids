@@ -28,7 +28,8 @@ sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
 			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
 			TEXTURES::mMediumAsteroid1, TEXTURES::mMediumAsteroid2, TEXTURES::mMediumAsteroid3,
-			TEXTURES::mLargeAsteroid1,  TEXTURES::mLargeAsteroid2,  TEXTURES::mLargeAsteroid3;
+			TEXTURES::mLargeAsteroid1,  TEXTURES::mLargeAsteroid2,  TEXTURES::mLargeAsteroid3,
+			TEXTURES::mMarker;
 
 //input flags
 bool isSpacePressed = false;

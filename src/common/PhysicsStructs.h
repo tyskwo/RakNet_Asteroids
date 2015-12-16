@@ -35,7 +35,8 @@ struct TEXTURES
 					   mFirstBullet, mSecondBullet,
 					   mSmallAsteroid1,  mSmallAsteroid2,  mSmallAsteroid3,
 					   mMediumAsteroid1, mMediumAsteroid2, mMediumAsteroid3,
-					   mLargeAsteroid1,  mLargeAsteroid2,  mLargeAsteroid3;
+					   mLargeAsteroid1,  mLargeAsteroid2,  mLargeAsteroid3,
+					   mMarker;
 
 	static void init(std::string mBuildType)
 	{
@@ -56,6 +57,8 @@ struct TEXTURES
 		mLargeAsteroid1.loadFromFile(mBuildType + "asteroidL1.png");
 		mLargeAsteroid2.loadFromFile(mBuildType + "asteroidL2.png");
 		mLargeAsteroid3.loadFromFile(mBuildType + "asteroidL3.png");
+
+		mMarker.loadFromFile(mBuildType + "marker.png");
 	}
 };
 
