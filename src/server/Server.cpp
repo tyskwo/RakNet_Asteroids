@@ -154,7 +154,7 @@ void Server::spawnAsteroid()
 				asteroid.asteroid.velocity = velocity(mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().x, mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngularVelocity());
 				asteroid.asteroid.health = mpGames[i]->getAsteroids()[index]->getHealth();
 				asteroid.asteroid.size = mpGames[i]->getAsteroids()[index]->getSize();
-				asteroid.asteroid.type = rand() % 3;
+				asteroid.asteroid.type = mpGames[i]->getAsteroids()[index]->getSize();
 
 				asteroid.mID = ID_RECIEVE_NEW_ASTEROID;
 				mpServer->Send((const char*)&asteroid, sizeof(asteroid), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);

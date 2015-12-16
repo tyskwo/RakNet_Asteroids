@@ -55,7 +55,7 @@ void Asteroid::init()
 	xRand == 0 ? position.x = static_cast<float>(rand() % 150 - 300) : position.x = static_cast<float>(SCREEN_WIDTH + (rand() % 150 + 150));
 	yRand == 0 ? position.y = static_cast<float>(rand() % 150 - 300) : position.y = static_cast<float>(SCREEN_HEIGHT + (rand() % 150 + 150));
 	initPhysics(position);
-	initSprite();
+	initSprite(rand() % 3);
 }
 
 void Asteroid::initSize() 
@@ -88,8 +88,8 @@ void Asteroid::initPhysics(b2Vec2 location)
 	fix.filter.maskBits     = PHYSICS::category::FIRST_SHIP    | 
 							  PHYSICS::category::SECOND_SHIP   | 
 							  PHYSICS::category::FIRST_BULLET  | 
-							  PHYSICS::category::SECOND_BULLET | 
-							  PHYSICS::category::ASTEROID;
+							  PHYSICS::category::SECOND_BULLET; 
+							  //PHYSICS::category::ASTEROID;
 	body->CreateFixture(&fix);
 
 
