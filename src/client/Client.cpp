@@ -85,14 +85,12 @@ void Client::update()
 	// Get a packet from either the server or the client
 	getPackets();
 
-	printf("%f\n", float(RakNet::GetTimeMS()) - mLastUpdateSent);
-
 	//if enough time has passed (30fps), broadcast game states to clients
 	if (float(RakNet::GetTimeMS()) - mLastUpdateSent > 50.0f)
 	{
 		mGameInfo.timeStamp = RakNet::GetTime();
 		sendShipData();
-		mLastUpdateSent = RakNet::GetTimeMS();
+		mLastUpdateSent = float(RakNet::GetTimeMS());
 	}
 }
 

@@ -60,6 +60,7 @@ int main(int argc, char** argv)
 	#else
 		mBuildType = "Release/";
 	#endif
+		if (argc == 4) mBuildType = "";
 
 	sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(SCREEN_WIDTH), 
 		                                  static_cast<unsigned int>(SCREEN_HEIGHT)), "Asteroids");
@@ -130,8 +131,6 @@ Client* initClient(int argc, char** argv)
 	//command line arguments
 	if (argc == 4) //serverIP serverPort clientPort
 	{
-		mBuildType = "";
-
 		const char* serverIP = argv[1];
 		const char* serverPort = argv[2];
 		const char* clientPort = argv[3];
