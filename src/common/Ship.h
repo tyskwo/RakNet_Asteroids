@@ -25,7 +25,7 @@ public:
 	void interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakNet::Time twoPacketAgo);
 	void addInterpolation(RakNet::Time timeStamp, ShipObject data);
 	inline bool isFinishedInterpolating() { return isDoneInterpolating; };
-
+	inline void setDoneInterpolated(bool yes) { isDoneInterpolating = yes; };
 
 private:
 	void initPhysics(bool firstConnected);
@@ -52,6 +52,9 @@ private:
 	};
 	InterpolationObject targetState, startState;
 	bool isDoneInterpolating = true;
+
+	float startTime;
+	float targetTime;
 };
 
 #endif

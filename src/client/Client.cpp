@@ -54,6 +54,8 @@ void Client::init(const char* clientPort, const char* serverAddress, const char*
 
 	//mShipData.firstPlayer.velocity = velocity(0.0f, 0.0f, 0.0f);
 	//mShipData.secondPlayer.velocity = velocity(0.0f, 0.0f, 0.0f);
+
+	mLastUpdateSent = float(RakNet::GetTimeMS());
 }
 
 void Client::cleanup()
@@ -83,12 +85,14 @@ void Client::update()
 	// Get a packet from either the server or the client
 	getPackets();
 
+	printf("%f\n", float(RakNet::GetTimeMS()) - mLastUpdateSent);
+
 	//if enough time has passed (30fps), broadcast game states to clients
-	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
+	if (float(RakNet::GetTimeMS()) - mLastUpdateSent > 50.0f)
 	{
 		mGameInfo.timeStamp = RakNet::GetTime();
 		sendShipData();
-		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
+		mLastUpdateSent = RakNet::GetTimeMS();
 	}
 }
 
@@ -176,7 +180,7 @@ void Client::sendShipData()
 
 BothShips Client::getBestState()
 {
-	while (mShipStates.size() > 1 && RakNet::GetTime() - mShipStates.front().timeStamp > delay)
+	while (mShipStates.size() > 1 && float(RakNet::GetTime() - mShipStates.front().timeStamp) > delay)
 	{
 		mShipStates.pop();
 	}

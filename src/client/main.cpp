@@ -79,22 +79,30 @@ int main(int argc, char** argv)
 		{
 			if (mpClient->getFirstConnected())
 			{
-				mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-
 				if (mpGame->getSecondPlayer()->isFinishedInterpolating())
 				{
 					BothShips bestState = mpClient->getBestState();
 					mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
+					mpGame->getSecondPlayer()->setDoneInterpolated(false);
+				}
+				else
+				{
+					mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
 				}
 			}
 			else
 			{
-				mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-
 				if (mpGame->getFirstPlayer()->isFinishedInterpolating())
 				{
+					//printf("ADD\n");
 					BothShips bestState = mpClient->getBestState();
 					mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
+					mpGame->getFirstPlayer()->setDoneInterpolated(false);
+				}
+				else
+				{
+					//printf("INTERPOLATING\n");
+					mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
 				}
 			}
 		}

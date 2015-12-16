@@ -79,9 +79,9 @@ private:
 
 	bool mJustRecieved;
 
-	RakNet::Time mLastUpdateSent;
+	float mLastUpdateSent;
 
-	int delay = 50;
+	float delay = 20.0f;
 	
 };
 

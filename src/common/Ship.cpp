@@ -69,11 +69,15 @@ void Ship::initSprite(bool firstConnected)
 
 void Ship::interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakNet::Time twoPacketAgo)
 {
-	RakNet::Time diffServer = onePacketAgo - twoPacketAgo;
-	RakNet::Time diffClient = currentTime - twoPacketAgo;
-	float32 time = float32(diffServer) / float32(diffClient);
+	/*float delay = 20.0f;
+	float diffServer = float(onePacketAgo - twoPacketAgo);
+	float diffClient = float(currentTime - twoPacketAgo) - delay;
+	float time = float(diffClient) / float(diffServer);*/
+
+	float time = (float(currentTime) - startTime) / (targetTime - startTime);
 
 	if (time > 1.0f) time = 1.0f;
+
 
 	float32 currentX = startState.data.position.x * (1.0f - time) + targetState.data.position.x * time;
 	float32 currentY = startState.data.position.y * (1.0f - time) + targetState.data.position.y * time;
@@ -91,9 +95,7 @@ void Ship::interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakN
 	body->SetLinearVelocity(velocity);
 	body->SetAngularVelocity(0);
 
-	if (time >= 1.0f) {
-		isDoneInterpolating = true; 	printf("DONE\n");
-	}
+	if (time >= 1.0f) { isDoneInterpolating = true; } 	//printf("DONE\n"); }
 
 }
 void Ship::addInterpolation(RakNet::Time timeStamp, ShipObject data)
@@ -107,4 +109,7 @@ void Ship::addInterpolation(RakNet::Time timeStamp, ShipObject data)
 
 	startState.timeStamp = timeStamp - 50;
 	startState.data = currentShip;
+
+	startTime  = float(RakNet::GetTime());
+	targetTime = float(RakNet::GetTime()) + 50.0f;
 }

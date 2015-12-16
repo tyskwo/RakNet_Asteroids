@@ -146,7 +146,7 @@ void Server::getPackets()
 				BothShips shipData = *reinterpret_cast<BothShips*>(p->data);
 
 				shipData.mID = ID_RECIEVE_GAME_INFO;
-				//shipData.timeStamp = RakNet::GetTime();
+				shipData.timeStamp = RakNet::GetTime();
 
 				if (mGames[i][0] == p->guid)
 				{
