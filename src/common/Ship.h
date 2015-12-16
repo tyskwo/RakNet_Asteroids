@@ -51,7 +51,7 @@ private:
 		ShipObject   data;
 	};
 	InterpolationObject targetState, startState;
-	bool isDoneInterpolating = false;
+	bool isDoneInterpolating = true;
 };
 
 #endif

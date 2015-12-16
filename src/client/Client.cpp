@@ -180,5 +180,6 @@ BothShips Client::getBestState()
 	{
 		mShipStates.pop();
 	}
+
 	return mShipStates.front();
 }

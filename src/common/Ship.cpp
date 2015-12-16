@@ -72,7 +72,6 @@ void Ship::interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakN
 	RakNet::Time diffServer = onePacketAgo - twoPacketAgo;
 	RakNet::Time diffClient = currentTime - twoPacketAgo;
 	float32 time = float32(diffServer) / float32(diffClient);
-	printf("%f\n", targetState.data.position.x);
 
 	if (time > 1.0f) time = 1.0f;
 
@@ -92,7 +91,10 @@ void Ship::interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakN
 	body->SetLinearVelocity(velocity);
 	body->SetAngularVelocity(0);
 
-	if (time >= 1.0f) { isDoneInterpolating = true; }
+	if (time >= 1.0f) {
+		isDoneInterpolating = true; 	printf("DONE\n");
+	}
+
 }
 void Ship::addInterpolation(RakNet::Time timeStamp, ShipObject data)
 {
