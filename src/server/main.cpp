@@ -27,20 +27,25 @@ int main(int argc, char** argv)
 	TEXTURES::init(mBuildType);
 
 	Server* mpServer;
+
+	bool shouldUpdate = true;
 	
 
 	if (argc == 2) { mpServer = new Server(argv[1]); } //create server with input port number
 	else		   { mpServer = new Server("200");   } //create server with port number of 200
 
-	while (true) //run the program as long as the server is running
+	while (shouldUpdate) //run the program as long as the server is running
 	{
 		mpServer->update();
-
 		for (unsigned int i = 0; i < mpServer->mpGames.size(); i++) { mpServer->mpGames[i]->update(); }
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) shouldUpdate = false;
 	}
 
-	gMemoryTracker.reportAllocations(std::cout);
+	delete mpServer;
+	mpServer = NULL;
 
+	gMemoryTracker.reportAllocations(std::cout);
 	system("pause");
 
 	return 0;
