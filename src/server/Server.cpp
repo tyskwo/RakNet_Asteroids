@@ -99,9 +99,6 @@ void Server::update()
 	//get packets from clients
 	getPackets();
 
-	//update GameInfos
-	updateGames();
-
 	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
 		//mGameInfo.timeStamp = RakNet::GetTime();
@@ -110,17 +107,6 @@ void Server::update()
 	}
 }
 
-
-void Server::updateGames()
-{
-	for (unsigned int i = 0; i < mGameInfos.size(); i++)
-	{
-		//if the game has started
-		if (mGameInfos[i].started)
-		{
-		}
-	}
-}
 
 void Server::getPackets()
 {
@@ -155,6 +141,28 @@ void Server::getPackets()
 				else if (mGames[i][1] == p->guid)
 				{
 					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
+				}
+			}
+
+			break;
+		}
+
+		case ID_SEND_BULLET_INFO:
+		{
+			//find correct game and client
+			for (unsigned int i = 0; i < mGames.size(); i++)
+			{
+				BulletData bulletData = *reinterpret_cast<BulletData*>(p->data);
+
+				bulletData.mID = ID_RECIEVE_BULLET_INFO;
+
+				if (mGames[i][0] == p->guid)
+				{
+					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
+				}
+				else if (mGames[i][1] == p->guid)
+				{
+					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				}
 			}
 

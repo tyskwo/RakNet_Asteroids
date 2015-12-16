@@ -78,6 +78,16 @@ struct ShipObject
 };
 
 #pragma pack(push, 1)
+struct BulletData
+{
+	unsigned char mID;
+	unsigned char useTimeStamp = ID_TIMESTAMP;
+	RakNet::Time timeStamp;
+	BulletObject bullet;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 struct BothShips
 {
 	unsigned char mID;
@@ -128,6 +138,8 @@ enum MessageTypes
 	ID_FIRST_CONNECTION,
 	ID_SECOND_CONNECTION,
 	ID_RECIEVE_GAME_INFO,
+	ID_SEND_BULLET_INFO,
+	ID_RECIEVE_BULLET_INFO,
 };
 
 

@@ -21,7 +21,7 @@ public:
 
 	void update();
 
-	void fireBullet(bool isFirstPlayer);
+	int fireBullet(bool isFirstPlayer);
 	void spawnAsteroid();
 
 	inline Ship* getFirstPlayer()  { return firstPlayer;  };

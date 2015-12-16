@@ -46,6 +46,8 @@ bool isPPressed = false;
 	void getInput();								//get keyboard input
 	void getInfoFromGame();
 
+	void interpolateOtherPlayer();
+
 	char* getPortNumber();							//generate random port number
 
 
@@ -76,37 +78,7 @@ int main(int argc, char** argv)
 	{
 		mpClient->update();
 
-		if (mpClient->hasStates())
-		{
-			if (mpClient->getFirstConnected())
-			{
-				if (mpGame->getSecondPlayer()->isFinishedInterpolating())
-				{
-					BothShips bestState = mpClient->getBestState();
-					mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
-					mpGame->getSecondPlayer()->setDoneInterpolated(false);
-				}
-				else
-				{
-					mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-				}
-			}
-			else
-			{
-				if (mpGame->getFirstPlayer()->isFinishedInterpolating())
-				{
-					//printf("ADD\n");
-					BothShips bestState = mpClient->getBestState();
-					mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
-					mpGame->getFirstPlayer()->setDoneInterpolated(false);
-				}
-				else
-				{
-					//printf("INTERPOLATING\n");
-					mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-				}
-			}
-		}
+		interpolateOtherPlayer();
 
 		mpGame->update();
 		getInfoFromGame();
@@ -275,7 +247,24 @@ void getInput()
 		{
 			if (!isSpacePressed)
 			{
-				mpGame->fireBullet(false);
+				int index = mpGame->fireBullet(false);
+
+				if (index != -1)
+				{
+					BulletData bulletData;
+					bulletData.bullet.position.x = mpGame->getSecondPlayerBullets()[index]->getBody()->GetPosition().x;
+					bulletData.bullet.position.y = mpGame->getSecondPlayerBullets()[index]->getBody()->GetPosition().y;
+					bulletData.bullet.position.angle = mpGame->getSecondPlayerBullets()[index]->getBody()->GetAngle();
+
+					bulletData.bullet.velocity.x = mpGame->getSecondPlayerBullets()[index]->getBody()->GetLinearVelocity().x;
+					bulletData.bullet.velocity.y = mpGame->getSecondPlayerBullets()[index]->getBody()->GetLinearVelocity().y;
+					bulletData.bullet.velocity.rot = mpGame->getSecondPlayerBullets()[index]->getBody()->GetAngularVelocity();
+
+					bulletData.mID = ID_SEND_BULLET_INFO;
+					bulletData.timeStamp = RakNet::GetTime();
+					
+					mpClient->addBulletData(bulletData);
+				}
 				isSpacePressed = true;
 			}
 		}
@@ -385,4 +374,37 @@ void getInfoFromGame()
 	shipData.timeStamp = RakNet::GetTime();
 
 	mpClient->setShipData(shipData);
+}
+
+void interpolateOtherPlayer()
+{
+	if (mpClient->hasStates())
+	{
+		if (mpClient->getFirstConnected())
+		{
+			if (mpGame->getSecondPlayer()->isFinishedInterpolating())
+			{
+				BothShips bestState = mpClient->getBestState();
+				mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
+				mpGame->getSecondPlayer()->setDoneInterpolated(false);
+			}
+			else
+			{
+				mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+			}
+		}
+		else
+		{
+			if (mpGame->getFirstPlayer()->isFinishedInterpolating())
+			{
+				BothShips bestState = mpClient->getBestState();
+				mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
+				mpGame->getFirstPlayer()->setDoneInterpolated(false);
+			}
+			else
+			{
+				mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+			}
+		}
+	}
 }
