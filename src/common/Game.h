@@ -32,6 +32,8 @@ public:
 	inline std::array<Bullet*, 8> getFirstPlayerBullets()  { return firstPlayerBullets;  };
 	inline std::array<Bullet*, 8> getSecondPlayerBullets() { return secondPlayerBullets; };
 
+	inline Asteroid* getAsteroid(int index) { return mAsteroids[index]; };
+
 	void setFirstPlayerBullets(BulletData data);
 	void setSecondPlayerBullets(BulletData data);
 	void setAsteroids(AsteroidData data);

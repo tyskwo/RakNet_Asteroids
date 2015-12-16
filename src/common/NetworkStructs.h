@@ -102,7 +102,10 @@ struct BothShips
 //struct for asteroid values
 struct AsteroidObject
 {
+	RakNet::Time timeStamp;
+	bool isNULL;
 	unsigned char size;
+	unsigned char type;
 	unsigned char health;
 	unsigned char index;
 	position position;
@@ -114,12 +117,7 @@ struct AsteroidObject
 struct AsteroidData
 {
 	unsigned char mID;
-	unsigned char size;
-	unsigned char health;
-	unsigned char index;
-	unsigned char type;
-	position position;
-	velocity velocity;
+	AsteroidObject asteroid;
 
 	RakNet::Time timeStamp;
 };
@@ -130,7 +128,7 @@ struct AsteroidsData
 {
 	unsigned char mID;
 	RakNet::Time timeStamp;
-	std::array<AsteroidData, 64> asteroids;
+	std::array<AsteroidObject, 64> asteroids;
 };
 #pragma pack(pop)
 

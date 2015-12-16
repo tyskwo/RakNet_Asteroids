@@ -48,6 +48,7 @@ bool isPPressed = false;
 	void getInfoFromGame();
 
 	void interpolateOtherPlayer();
+	void interpolateAsteroids();
 
 	char* getPortNumber();							//generate random port number
 
@@ -80,6 +81,7 @@ int main(int argc, char** argv)
 		mpClient->update();
 
 		interpolateOtherPlayer();
+		interpolateAsteroids();
 
 		mpClient->mpGame->update();
 		getInfoFromGame();
@@ -402,6 +404,29 @@ void interpolateOtherPlayer()
 			else
 			{
 				mpClient->mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+			}
+		}
+	}
+}
+
+void interpolateAsteroids()
+{
+	for (unsigned int i = 0; i < mpClient->mAsteroidStates.size(); i++)
+	{
+		if (mpClient->hasAsteroidStates(i))
+		{
+			if (mpClient->mpGame->getAsteroid(i) != NULL)
+			{
+				if (mpClient->mpGame->getAsteroid(i)->isFinishedInterpolating())
+				{
+					AsteroidObject bestState = mpClient->getBestAsteroidState(i);
+					mpClient->mpGame->getAsteroid(i)->addInterpolation(bestState);
+					mpClient->mpGame->getAsteroid(i)->setDoneInterpolated(false);
+				}
+				else
+				{
+					mpClient->mpGame->getAsteroid(i)->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+				}
 			}
 		}
 	}

@@ -26,7 +26,7 @@ public:
 
 	void update();
 
-	std::array<std::queue<AsteroidData>, 64> mAsteroidStates;
+	std::array<std::queue<AsteroidObject>, 64> mAsteroidStates;
 	std::queue<BothShips> mShipStates;
 	Game* mpGame;
 
@@ -49,7 +49,7 @@ public:
 
 
 	BothShips getBestShipState();
-	AsteroidData getBestAsteroidState(int index);
+	AsteroidObject getBestAsteroidState(int index);
 
 	inline bool hasShipStates() { return mShipStates.size() > 0 ? true : false; };
 	inline bool hasAsteroidStates(int index) { return mAsteroidStates[index].size() > 0 ? true : false; };

@@ -3,6 +3,7 @@
 
 //game includes
 #include "Object.h"
+#include "..\common\NetworkStructs.h"
 
 enum Size
 {
@@ -49,8 +50,9 @@ public:
 	inline const float32 getLinearSpeed() { return mPhysics::linearSpeed(); };
 	inline const float32 getRotateSpeed() { return mPhysics::rotateSpeed(); };
 	
-	inline Size getSize()   { return size;   };
-	inline int  getHealth() { return health; };
+	inline Size     getSize()     { return size;   };
+	inline int      getHealth()   { return health; };
+	position getPosition();
 
 	void loseHealth(int damage);
 
@@ -58,6 +60,11 @@ public:
 	inline void setSpawn(AsteroidSpawn x) { collisionSpawn = x;    };
 
 	bool isOnScreen();
+
+	void interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakNet::Time twoPacketAgo);
+	void addInterpolation(AsteroidObject data);
+	inline bool isFinishedInterpolating() { return isDoneInterpolating; };
+	inline void setDoneInterpolated(bool yes) { isDoneInterpolating = yes; };
 
 private:
 	void initSize();
@@ -75,6 +82,18 @@ private:
 	int health;
 
 	AsteroidSpawn collisionSpawn = NoSpawn;
+
+
+	struct InterpolationObject
+	{
+		RakNet::Time timeStamp;
+		AsteroidObject   data;
+	};
+	InterpolationObject targetState, startState;
+	bool isDoneInterpolating = true;
+
+	float startTime;
+	float targetTime;
 };
 
 #endif

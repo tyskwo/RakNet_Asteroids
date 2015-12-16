@@ -149,7 +149,6 @@ void Client::getPackets()
 		{
 			//get the packet's GameInfo struct
 			BothShips shipData = *reinterpret_cast<BothShips*>(mpPacket->data);
-			//mShipData = shipData;
 
 			if (mShipStates.size() == 0)
 			{
@@ -157,7 +156,7 @@ void Client::getPackets()
 				mTwoPacketsAgo = mOnePacketAgo;
 				mOnePacketAgo = shipData.timeStamp;
 			}
-			else if(mShipData.timeStamp > mShipStates.back().timeStamp)
+			else if(shipData.timeStamp > mShipStates.back().timeStamp)
 			{
 				mShipStates.push(shipData);
 				mTwoPacketsAgo = mOnePacketAgo;
@@ -198,17 +197,23 @@ void Client::getPackets()
 
 			for (unsigned int i = 0; i < mAsteroidStates.size(); i++)
 			{
-				if (mAsteroidStates[i].size() == 0)
+				if (data.asteroids[i].isNULL == false)
 				{
-					mAsteroidStates[i].push(data.asteroids[i]);
-					mTwoPacketsAgo = mOnePacketAgo;
-					mOnePacketAgo = data.timeStamp;
-				}
-				else if (data.timeStamp > mAsteroidStates[i].back().timeStamp)
-				{
-					mAsteroidStates[i].push(data.asteroids[i]);
-					mTwoPacketsAgo = mOnePacketAgo;
-					mOnePacketAgo = data.timeStamp;
+					if (mAsteroidStates[i].size() == 0)
+					{
+						mAsteroidStates[i].push(data.asteroids[i]);
+						mTwoPacketsAgo = mOnePacketAgo;
+						mOnePacketAgo = data.timeStamp;
+
+					}
+					else if (data.asteroids[i].timeStamp > mAsteroidStates[i].back().timeStamp)
+					{
+						mAsteroidStates[i].push(data.asteroids[i]);
+						mTwoPacketsAgo = mOnePacketAgo;
+						mOnePacketAgo = data.timeStamp;
+
+						printf("%f\n", data.asteroids[i].position.x);
+					}
 				}
 			}
 			break;
@@ -238,4 +243,14 @@ BothShips Client::getBestShipState()
 	}
 
 	return mShipStates.front();
+}
+
+AsteroidObject Client::getBestAsteroidState(int index)
+{
+	while (mAsteroidStates[index].size() > 1 && float(RakNet::GetTime() - mAsteroidStates[index].front().timeStamp) > delay)
+	{
+		mAsteroidStates[index].pop();
+	}
+
+	return mAsteroidStates[index].front();
 }

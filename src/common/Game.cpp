@@ -289,5 +289,5 @@ void Game::setSecondPlayerBullets(BulletData data)
 
 void Game::setAsteroids(AsteroidData data)
 {
-	mAsteroids[data.index] = new Asteroid(data.size, b2Vec2(data.position.x, data.position.y), b2Vec2(data.velocity.x, data.velocity.y), data.velocity.rot, data.position.angle, data.type, physicsWorld);
+	mAsteroids[data.asteroid.index] = new Asteroid(data.asteroid.size, b2Vec2(data.asteroid.position.x, data.asteroid.position.y), b2Vec2(data.asteroid.velocity.x, data.asteroid.velocity.y), data.asteroid.velocity.rot, data.asteroid.position.angle, data.asteroid.type, physicsWorld);
 }

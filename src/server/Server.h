@@ -53,6 +53,7 @@ private:
 	void resetGame(int index);
 	//spawn asteroid
 	void spawnAsteroid();
+	void sendAsteroids();
 
 	//set the connection with a client
 	void setConnection(RakNet::Packet* p);

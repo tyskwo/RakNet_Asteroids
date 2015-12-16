@@ -110,8 +110,7 @@ void Server::update()
 
 	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
-		//mGameInfo.timeStamp = RakNet::GetTime();
-		//sendShipData();
+		sendAsteroids();
 		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
 		
 		if (mAsteroidIncr > 500)
@@ -141,12 +140,12 @@ void Server::spawnAsteroid()
 			if (index != -1)
 			{
 				AsteroidData asteroid;
-				asteroid.index = index;
-				asteroid.position = position(mpGames[i]->getAsteroids()[index]->getBody()->GetPosition().x, mpGames[i]->getAsteroids()[index]->getBody()->GetPosition().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngle());
-				asteroid.velocity = velocity(mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().x, mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngularVelocity());
-				asteroid.health = mpGames[i]->getAsteroids()[index]->getHealth();
-				asteroid.size = mpGames[i]->getAsteroids()[index]->getSize();
-				asteroid.type = rand() % 3;
+				asteroid.asteroid.index = index;
+				asteroid.asteroid.position = position(mpGames[i]->getAsteroids()[index]->getBody()->GetPosition().x, mpGames[i]->getAsteroids()[index]->getBody()->GetPosition().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngle());
+				asteroid.asteroid.velocity = velocity(mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().x, mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngularVelocity());
+				asteroid.asteroid.health = mpGames[i]->getAsteroids()[index]->getHealth();
+				asteroid.asteroid.size = mpGames[i]->getAsteroids()[index]->getSize();
+				asteroid.asteroid.type = rand() % 3;
 
 				asteroid.mID = ID_RECIEVE_NEW_ASTEROID;
 				mpServer->Send((const char*)&asteroid, sizeof(asteroid), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
@@ -314,4 +313,33 @@ void Server::setConnection(RakNet::Packet* p)
 		//increase number of games
 		mCurrentNumberOfGames++;
 	}
+}
+
+void Server::sendAsteroids()
+{
+	for (unsigned int i = 0; i < mGames.size(); i++)
+	{
+		AsteroidsData asteroids;
+		asteroids.mID = ID_RECIEVE_ASTEROID_INFO;
+		asteroids.timeStamp = RakNet::GetTime();
+
+		for (unsigned int j = 0; j < mpGames[i]->getAsteroids().size(); j++)
+		{
+			if (mpGames[i]->getAsteroids()[j] != NULL)
+			{
+				asteroids.asteroids[j].health = mpGames[i]->getAsteroids()[j]->getHealth();
+				asteroids.asteroids[j].position = mpGames[i]->getAsteroids()[j]->getPosition();
+
+				asteroids.asteroids[j].timeStamp = RakNet::GetTime();
+			}
+			else
+			{
+				asteroids.asteroids[j].isNULL = true;
+			}
+		}
+
+		mpServer->Send((const char*)&asteroids, sizeof(asteroids), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][0], false);
+		mpServer->Send((const char*)&asteroids, sizeof(asteroids), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][1], false);
+	}
+
 }
