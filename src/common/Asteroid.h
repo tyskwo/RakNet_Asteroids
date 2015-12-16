@@ -38,11 +38,13 @@ class Asteroid : public Object
 public:
 	Asteroid();
 	Asteroid(b2World* pWorld);
+	Asteroid(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type, b2World* pWorld);
 	Asteroid(int size, b2Vec2 location, b2World* pWorld);
 	Asteroid(const Asteroid &other, b2World* pWorld);
 	~Asteroid();
 
 	void init();
+	void initAlreadyCreated(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type);
 
 	inline const float32 getLinearSpeed() { return mPhysics::linearSpeed(); };
 	inline const float32 getRotateSpeed() { return mPhysics::rotateSpeed(); };
@@ -60,7 +62,7 @@ public:
 private:
 	void initSize();
 	void initPhysics(b2Vec2 location);
-	void initSprite();
+	void initSprite(int type = 0);
 
 	struct mPhysics
 	{

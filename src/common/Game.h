@@ -24,7 +24,7 @@ public:
 	void update();
 
 	int fireBullet(bool isFirstPlayer);
-	void spawnAsteroid();
+	int spawnAsteroid();
 
 	inline Ship* getFirstPlayer()  { return firstPlayer;  };
 	inline Ship* getSecondPlayer() { return secondPlayer; };
@@ -34,9 +34,13 @@ public:
 
 	void setFirstPlayerBullets(BulletData data);
 	void setSecondPlayerBullets(BulletData data);
+	void setAsteroids(AsteroidData data);
+
+	inline bool getHasStarted() { return mHasStarted; };
+	inline void setHasStarted(bool value) { mHasStarted = value; };
 
 
-	inline std::array<Asteroid*, 64> getAsteroids() { return asteroids; };
+	inline std::array<Asteroid*, 64> getAsteroids() { return mAsteroids; };
 
 	inline b2World* getWorld() { return physicsWorld; };
 
@@ -45,7 +49,9 @@ private:
 
 	Ship* firstPlayer, *secondPlayer;
 	std::array<Bullet*, 8> firstPlayerBullets, secondPlayerBullets;
-	std::array<Asteroid*, 64> asteroids;
+	std::array<Asteroid*, 64> mAsteroids;
+
+	bool mHasStarted;
 
 	void checkWrap(Object* object);
 	bool checkDelete(Object* object);

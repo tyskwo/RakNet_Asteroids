@@ -6,6 +6,25 @@ Asteroid::Asteroid() { init(); };
 
 Asteroid::Asteroid(b2World* pWorld) :Object(pWorld) { init(); };
 
+Asteroid::Asteroid(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type, b2World* pWorld)
+:Object(pWorld)
+{
+	initAlreadyCreated(size, position, velocity, rotVel, angle, type);
+}
+
+void Asteroid::initAlreadyCreated(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type)
+{
+	this->size = static_cast<Size>(size);
+	health = (size + 1) * (size + 1);
+
+	initPhysics(position);
+	initSprite();
+
+	body->SetLinearVelocity(velocity);
+	body->SetAngularVelocity(rotVel);
+	body->SetTransform(position, angle);
+}
+
 Asteroid::Asteroid(int size, b2Vec2 location, b2World* pWorld)
 :Object(pWorld)
 {  
@@ -30,8 +49,11 @@ void Asteroid::init()
 	initSize();
 
 	b2Vec2 position;
-	position.x = SCREEN_WIDTH / 2.0f;
-	position.y = SCREEN_HEIGHT / 2.0f;
+	//position.x = SCREEN_WIDTH / 2.0f;
+	//position.y = SCREEN_HEIGHT / 2.0f;
+	int xRand = rand() % 2, yRand = rand() % 2;
+	xRand == 0 ? position.x = static_cast<float>(rand() % 150 - 300) : position.x = static_cast<float>(SCREEN_WIDTH + (rand() % 150 + 150));
+	yRand == 0 ? position.y = static_cast<float>(rand() % 150 - 300) : position.y = static_cast<float>(SCREEN_HEIGHT + (rand() % 150 + 150));
 	initPhysics(position);
 	initSprite();
 }
@@ -71,16 +93,16 @@ void Asteroid::initPhysics(b2Vec2 location)
 	body->CreateFixture(&fix);
 
 
-	body->SetLinearVelocity(b2Vec2(mPhysics::linearSpeed()*(3-size)*cos(body->GetAngle()),
-		                           mPhysics::linearSpeed()*(3-size)*sin(body->GetAngle())));
+	body->SetLinearVelocity(b2Vec2(mPhysics::linearSpeed()*(3-size)*cos(body->GetAngle()) * 2.5f,
+		                           mPhysics::linearSpeed()*(3-size)*sin(body->GetAngle()) * 2.5f));
 
 	body->SetUserData(this);
 }
 
-void Asteroid::initSprite()
+void Asteroid::initSprite(int type)
 {
 	sprite = new sf::Sprite();
-	int randomType = rand() % 3;
+	int randomType = type;
 
 	if (randomType == 0)
 	{

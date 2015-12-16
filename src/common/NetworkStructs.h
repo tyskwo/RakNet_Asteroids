@@ -104,9 +104,24 @@ struct AsteroidObject
 {
 	unsigned char size;
 	unsigned char health;
+	unsigned char index;
 	position position;
 	velocity velocity;
 };
+
+//struct for asteroid values
+#pragma pack(push, 1)
+struct AsteroidData
+{
+	unsigned char mID;
+	unsigned char size;
+	unsigned char health;
+	unsigned char index;
+	unsigned char type;
+	position position;
+	velocity velocity;
+};
+#pragma pack(pop)
 
 //struct to receive game state from server
 #pragma pack(push, 1)
@@ -141,6 +156,7 @@ enum MessageTypes
 	ID_RECIEVE_GAME_INFO,
 	ID_SEND_BULLET_INFO,
 	ID_RECIEVE_BULLET_INFO,
+	ID_RECIEVE_NEW_ASTEROID
 };
 
 

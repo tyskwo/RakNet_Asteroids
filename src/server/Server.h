@@ -51,6 +51,8 @@ private:
 	void updateGames();
 	//reset given game info
 	void resetGame(int index);
+	//spawn asteroid
+	void spawnAsteroid();
 
 	//set the connection with a client
 	void setConnection(RakNet::Packet* p);
@@ -58,6 +60,8 @@ private:
 	Timer* mpTimer;
 
 	RakNet::Time mLastUpdateSent;
+
+	int mAsteroidIncr;
 };
 
 #endif

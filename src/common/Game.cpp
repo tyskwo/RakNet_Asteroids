@@ -14,6 +14,8 @@ Game::~Game() { cleanup(); };
 
 void Game::init(bool isServer)
 {
+	mHasStarted = false;
+
 	physicsWorld = new b2World(PHYSICS::WORLD::gravity());
 	physicsWorld->SetAllowSleeping(true);
 	if (isServer) physicsWorld->SetContactListener(new ServerContactListener());
@@ -29,9 +31,9 @@ void Game::init(bool isServer)
 		secondPlayerBullets[i] = NULL;
 	}
 
-	for (unsigned int i = 0; i < asteroids.size(); i++)
+	for (unsigned int i = 0; i < mAsteroids.size(); i++)
 	{
-		asteroids[i] = NULL;
+		mAsteroids[i] = NULL;
 	}
 };
 
@@ -61,12 +63,12 @@ void Game::cleanup()
 		}
 	}
 
-	for (unsigned int i = 0; i < asteroids.size(); i++)
+	for (unsigned int i = 0; i < mAsteroids.size(); i++)
 	{
-		if (asteroids[i] != NULL)
+		if (mAsteroids[i] != NULL)
 		{
-			delete asteroids[i];
-			asteroids[i] = NULL;
+			delete mAsteroids[i];
+			mAsteroids[i] = NULL;
 		}
 	}
 }
@@ -126,23 +128,23 @@ void Game::update()
 	}
 
 
-	for (unsigned int i = 0; i < asteroids.size(); i++)
+	for (unsigned int i = 0; i < mAsteroids.size(); i++)
 	{
-		if (asteroids[i] != NULL)
+		if (mAsteroids[i] != NULL)
 		{
-			checkAsteroidSpawn(asteroids[i]);
+			checkAsteroidSpawn(mAsteroids[i]);
 		}
-		if (asteroids[i] != NULL && asteroids[i]->shouldDelete())
+		if (mAsteroids[i] != NULL && mAsteroids[i]->shouldDelete())
 		{
-			delete(asteroids[i]);
-			asteroids[i] = NULL;
+			delete(mAsteroids[i]);
+			mAsteroids[i] = NULL;
 		}
-		if (asteroids[i] != NULL)
+		if (mAsteroids[i] != NULL)
 		{
-			asteroids[i]->getSprite()->setPosition(sf::Vector2f(asteroids[i]->getBody()->GetPosition().x, asteroids[i]->getBody()->GetPosition().y));
-			asteroids[i]->getSprite()->setRotation(asteroids[i]->getBody()->GetAngle()*180.0f / 3.14159f);
+			mAsteroids[i]->getSprite()->setPosition(sf::Vector2f(mAsteroids[i]->getBody()->GetPosition().x, mAsteroids[i]->getBody()->GetPosition().y));
+			mAsteroids[i]->getSprite()->setRotation(mAsteroids[i]->getBody()->GetAngle()*180.0f / 3.14159f);
 
-			checkWrap(asteroids[i]);
+			checkWrap(mAsteroids[i]);
 		}
 	}
 }
@@ -208,9 +210,9 @@ void Game::checkAsteroidSpawn(Asteroid* asteroid)
 		{
 			for (int i = 0; i < asteroid->getSpawn().numberToSpawn; i++)
 			{
-				for (unsigned int j = 0; j < asteroids.size(); j++)
+				for (unsigned int j = 0; j < mAsteroids.size(); j++)
 				{
-					if (asteroids[j] == NULL)
+					if (mAsteroids[j] == NULL)
 					{
 						b2Vec2 location = asteroid->getBody()->GetPosition();
 						float  angle = (rand() / RAND_MAX) * PI * 2.0f;
@@ -220,7 +222,7 @@ void Game::checkAsteroidSpawn(Asteroid* asteroid)
 						location.x += cos(angle)*radius;
 						location.y += sin(angle)*radius;
 
-						asteroids[j] = new Asteroid(asteroid->getSpawn().sizeToSpawn, location, physicsWorld);
+						mAsteroids[j] = new Asteroid(asteroid->getSpawn().sizeToSpawn, location, physicsWorld);
 						break;
 					}
 				}
@@ -261,16 +263,18 @@ int Game::fireBullet(bool isFirstPlayer)
 	return -1;
 }
 
-void Game::spawnAsteroid()
+int Game::spawnAsteroid()
 {
-	for (unsigned int i = 0; i < asteroids.size(); i++)
+	for (unsigned int i = 0; i < mAsteroids.size(); i++)
 	{
-		if (asteroids[i] == NULL)
+		if (mAsteroids[i] == NULL)
 		{
-			asteroids[i] = new Asteroid(physicsWorld);
-			break;
+			mAsteroids[i] = new Asteroid(physicsWorld);
+			return i;
 		}
 	}
+
+	return -1;
 }
 
 void Game::setFirstPlayerBullets(BulletData data)
@@ -281,4 +285,9 @@ void Game::setFirstPlayerBullets(BulletData data)
 void Game::setSecondPlayerBullets(BulletData data)
 {
 	secondPlayerBullets[data.index] = new Bullet(false, secondPlayer, physicsWorld);
+}
+
+void Game::setAsteroids(AsteroidData data)
+{
+	mAsteroids[data.index] = new Asteroid(data.size, b2Vec2(data.position.x, data.position.y), b2Vec2(data.velocity.x, data.velocity.y), data.velocity.rot, data.position.angle, data.type, physicsWorld);
 }

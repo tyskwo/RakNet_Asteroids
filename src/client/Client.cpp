@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "../common/Ship.h"
 #include "../common/Bullet.h"
+#include "../common/Asteroid.h"
 #include "GetTime.h"
 
 Client::Client()
@@ -181,6 +182,14 @@ void Client::getPackets()
 				mpGame->setFirstPlayerBullets(bulletData);
 			}
 
+			break;
+		}
+
+		case ID_RECIEVE_NEW_ASTEROID:
+		{
+			AsteroidData asteroidData = *reinterpret_cast<AsteroidData*>(mpPacket->data);
+
+			mpGame->setAsteroids(asteroidData);
 			break;
 		}
 

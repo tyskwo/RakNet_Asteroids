@@ -3,6 +3,7 @@
 #include "..\common\PhysicsStructs.h"
 #include "..\common\Ship.h"
 #include "..\common\Bullet.h"
+#include "..\common\Asteroid.h"
 
 
 #include "GetTime.h"
@@ -73,6 +74,8 @@ void Server::init(const char* serverPort)
 	//initialize GameInfos
 	initializeGames();
 	for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i] = new Game(true); }
+
+	mAsteroidIncr = 0;
 }
 
 
@@ -102,15 +105,56 @@ void Server::update()
 {
 	//get packets from clients
 	getPackets();
+	//updateGames();
+	mAsteroidIncr++;
 
 	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
 		//mGameInfo.timeStamp = RakNet::GetTime();
 		//sendShipData();
 		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
+		
+		if (mAsteroidIncr > 200)
+		{
+			spawnAsteroid();
+			mAsteroidIncr = 0;
+		}
 	}
 }
 
+void Server::updateGames()
+{
+	for (unsigned int i = 0; i < mpGames.size(); i++)
+	{
+		mpGames[i]->update();
+	}
+}
+
+void Server::spawnAsteroid()
+{
+	for (unsigned int i = 0; i < mpGames.size(); i++)
+	{
+		if (mpGames[i] != NULL && mpGames[i]->getHasStarted())
+		{
+			int index = mpGames[i]->spawnAsteroid();
+
+			if (index != -1)
+			{
+				AsteroidData asteroid;
+				asteroid.index = index;
+				asteroid.position = position(mpGames[i]->getAsteroids()[index]->getBody()->GetPosition().x, mpGames[i]->getAsteroids()[index]->getBody()->GetPosition().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngle());
+				asteroid.velocity = velocity(mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().x, mpGames[i]->getAsteroids()[index]->getBody()->GetLinearVelocity().y, mpGames[i]->getAsteroids()[index]->getBody()->GetAngularVelocity());
+				asteroid.health = mpGames[i]->getAsteroids()[index]->getHealth();
+				asteroid.size = mpGames[i]->getAsteroids()[index]->getSize();
+				asteroid.type = rand() % 3;
+
+				asteroid.mID = ID_RECIEVE_NEW_ASTEROID;
+				mpServer->Send((const char*)&asteroid, sizeof(asteroid), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
+				mpServer->Send((const char*)&asteroid, sizeof(asteroid), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
+			}
+		}
+	}
+}
 
 void Server::getPackets()
 {
@@ -172,15 +216,19 @@ void Server::getPackets()
 			for (unsigned int i = 0; i < mGames.size(); i++)
 			{
 				BulletData bulletData = *reinterpret_cast<BulletData*>(p->data);
+				//bulletData.bullet.position.x += bulletData.bullet.velocity.x * (RakNet::GetTime() - bulletData.timeStamp);
+				//bulletData.bullet.position.y += bulletData.bullet.velocity.y * (RakNet::GetTime() - bulletData.timeStamp);
 
 				bulletData.mID = ID_RECIEVE_BULLET_INFO;
 
 				if (mGames[i][0] == p->guid)
 				{
+					//mpGames[i]->getFirstPlayerBullets()[bulletData.index]->getBody()->SetLinearVelocity(;
 					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
 				}
 				else if (mGames[i][1] == p->guid)
 				{
+					//mpGames[i]->fireBullet(false);
 					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				}
 			}
@@ -260,6 +308,8 @@ void Server::setConnection(RakNet::Packet* p)
 		mpServer->Send((const char*)&info, sizeof(info), HIGH_PRIORITY, RELIABLE_ORDERED, 0, p->guid, false);
 
 		mGameInfos[mCurrentNumberOfGames].started = true;
+
+		mpGames[mCurrentNumberOfGames]->setHasStarted(true);
 
 		//increase number of games
 		mCurrentNumberOfGames++;
