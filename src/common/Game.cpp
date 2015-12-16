@@ -39,6 +39,9 @@ void Game::init(bool isServer)
 
 void Game::cleanup()
 {
+	delete physicsWorld;
+	physicsWorld = NULL;
+
 	delete firstPlayer;
 	firstPlayer = NULL;
 

@@ -24,6 +24,7 @@ std::string mBuildType = "";	//to determine file paths of assets
 
 Client* mpClient;
 sf::Font mFont;
+std::array<sf::Sprite, 8> markers;
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
 			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
@@ -73,6 +74,12 @@ int main(int argc, char** argv)
 	TEXTURES::init(mBuildType);
 	mpClient->initGame();
 
+	
+	for (unsigned int i = 0; i < markers.size(); i++)
+	{
+		markers[i] = sf::Sprite(TEXTURES::mMarker);
+	}
+
 	while (!mpClient->getConnected()) { mpClient->update(); }
 
 	while (window.isOpen())
@@ -93,8 +100,10 @@ int main(int argc, char** argv)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) { window.close(); }
 	}
 
-	gMemoryTracker.reportAllocations(std::cout);
+	delete mpClient;
+	mpClient = NULL;
 
+	gMemoryTracker.reportAllocations(std::cout);
 	system("pause");
 
 	return 0;
@@ -176,25 +185,27 @@ void drawScreen(sf::RenderWindow &pWindow)
 			else
 			{
 				//draw marker at edge of screen.
-				sf::Sprite marker(TEXTURES::mMarker);
-				marker.setOrigin(marker.getLocalBounds().width / 2.0f, marker.getLocalBounds().height / 2.0f);
-				b2Vec2 position(mpClient->mpGame->getAsteroids()[i]->getBody()->GetPosition());
+				if (i < markers.size())
+				{
+					markers[i].setOrigin(markers[i].getLocalBounds().width / 2.0f, markers[i].getLocalBounds().height / 2.0f);
+					b2Vec2 position(mpClient->mpGame->getAsteroids()[i]->getBody()->GetPosition());
 
-				sf::Vector2f markerPosition;
-				markerPosition.x = position.x;
-				markerPosition.y = position.y;
+					sf::Vector2f markerPosition;
+					markerPosition.x = position.x;
+					markerPosition.y = position.y;
 
-				float markerWidth  = marker.getLocalBounds().width  / 2.0f + 10.0f;
-				float markerHeight = marker.getLocalBounds().height / 2.0f + 10.0f;
+					float markerWidth = markers[i].getLocalBounds().width / 2.0f + 10.0f;
+					float markerHeight = markers[i].getLocalBounds().height / 2.0f + 10.0f;
 
-				     if (position.x < 0)             { markerPosition.x = markerWidth; }
-				else if (position.x > SCREEN_WIDTH)  { markerPosition.x = SCREEN_WIDTH - markerWidth; }
-				     if (position.y < 0)             { markerPosition.y = markerHeight; }
-				else if (position.y > SCREEN_HEIGHT) { markerPosition.y = SCREEN_HEIGHT - markerHeight; }
+					if (position.x < 0)             { markerPosition.x = markerWidth; }
+					else if (position.x > SCREEN_WIDTH)  { markerPosition.x = SCREEN_WIDTH - markerWidth; }
+					if (position.y < 0)             { markerPosition.y = markerHeight; }
+					else if (position.y > SCREEN_HEIGHT) { markerPosition.y = SCREEN_HEIGHT - markerHeight; }
 
-				marker.setPosition(markerPosition);
+					markers[i].setPosition(markerPosition);
 
-				pWindow.draw(marker);
+					pWindow.draw(markers[i]);
+				}
 			}
 		}
 	}

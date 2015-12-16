@@ -66,6 +66,11 @@ void Client::cleanup()
 	mpClient->Shutdown(300);
 	//and end the connection
 	RakNet::RakPeerInterface::DestroyInstance(mpClient);
+
+	delete mpGame;
+	mpGame = NULL;
+	//delete mpPacket;
+	//mpPacket = nullptr;
 }
 
 unsigned char Client::GetPacketIdentifier(RakNet::Packet *p)
@@ -157,7 +162,7 @@ void Client::getPackets()
 				mTwoPacketsAgo = mOnePacketAgo;
 				mOnePacketAgo = shipData.timeStamp;
 			}
-			else if(mShipData.timeStamp > mShipStates.back().timeStamp)
+			else if(shipData.timeStamp > mShipStates.back().timeStamp)
 			{
 				mShipStates.push(shipData);
 				mTwoPacketsAgo = mOnePacketAgo;
