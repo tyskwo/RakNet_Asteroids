@@ -3,12 +3,14 @@
 
 //library includes
 #include <array>
+#include <queue>
 
 //RakNet includes
 #include "Gets.h"
 
 //game includes
 #include "../common/NetworkStructs.h"
+
 
 class Client
 {
@@ -22,6 +24,7 @@ public:
 
 	void update();
 
+	std::queue<BothShips> mShipStates;
 
 
 	//get/set flags for whether or not it was the first connected player
@@ -41,6 +44,11 @@ public:
 
 	void setJustRecieved(bool value) { mJustRecieved = value; };
 	bool getJustRecieved() { return mJustRecieved; };
+
+	BothShips getBestState();
+	inline bool hasStates() { return mShipStates.size() > 0 ? true : false; };
+	RakNet::Time mTwoPacketsAgo = 0;
+	RakNet::Time mOnePacketAgo = 0;
 
 private:
 	//pointer to client object
@@ -72,6 +80,9 @@ private:
 	bool mJustRecieved;
 
 	RakNet::Time mLastUpdateSent;
+
+	int delay = 50;
+	
 };
 
 #endif

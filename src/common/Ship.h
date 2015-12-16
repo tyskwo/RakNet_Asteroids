@@ -3,6 +3,9 @@
 
 //game includes
 #include "Object.h"
+#include "..\common\NetworkStructs.h"
+
+
 
 class Ship: public Object
 {
@@ -19,6 +22,11 @@ public:
 	inline int  getHealth()            { return health;    };
 	inline void loseHealth(int damage) { health -= damage; };
 
+	void interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakNet::Time twoPacketAgo);
+	void addInterpolation(RakNet::Time timeStamp, ShipObject data);
+	inline bool isFinishedInterpolating() { return isDoneInterpolating; };
+
+
 private:
 	void initPhysics(bool firstConnected);
 	void initSprite(bool  firstConnected);
@@ -34,8 +42,16 @@ private:
 	};
 
 	int health = 20;
-	//bool mIsVisible; //will this ship need a sprite, or is it simply data for the server to use for physics predictions?
-					 //technically doesn't need a sprite, but we're not drawing it anywhere, so it doesn't really matter.
+	
+
+
+	struct InterpolationObject
+	{
+		RakNet::Time timeStamp;
+		ShipObject   data;
+	};
+	InterpolationObject targetState, startState;
+	bool isDoneInterpolating = false;
 };
 
 #endif

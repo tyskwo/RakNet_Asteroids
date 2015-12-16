@@ -1,5 +1,5 @@
 #include "Client.h"
-
+#include "../common/Ship.h"
 #include "GetTime.h"
 
 Client::Client()
@@ -140,6 +140,20 @@ void Client::getPackets()
 			BothShips shipData = *reinterpret_cast<BothShips*>(mpPacket->data);
 			mShipData = shipData;
 
+			if (mShipStates.size() == 0)
+			{
+				mShipStates.push(shipData);
+				mTwoPacketsAgo = mOnePacketAgo;
+				mOnePacketAgo = mShipData.timeStamp;
+			}
+			else if(mShipData.timeStamp > mShipStates.back().timeStamp)
+			{
+				mShipStates.push(shipData);
+				mTwoPacketsAgo = mOnePacketAgo;
+				mOnePacketAgo = mShipData.timeStamp;
+			}
+			
+
 			mJustRecieved = true;
 			break;
 		}
@@ -156,5 +170,15 @@ void Client::getPackets()
 void Client::sendShipData()
 {
 	mShipData.mID = ID_SEND_SHIP_INFO;
-	mpClient->Send((const char*)&mShipData, sizeof(mShipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mServerGuid, false);
+	mShipData.timeStamp = RakNet::GetTime();
+	mpClient->Send((const char*)&mShipData, sizeof(mShipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
+}
+
+BothShips Client::getBestState()
+{
+	while (mShipStates.size() > 1 && RakNet::GetTime() - mShipStates.front().timeStamp > delay)
+	{
+		mShipStates.pop();
+	}
+	return mShipStates.front();
 }

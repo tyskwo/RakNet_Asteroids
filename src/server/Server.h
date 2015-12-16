@@ -53,9 +53,7 @@ private:
 
 	Timer* mpTimer;
 
-	//======BOX2D STUFF=======
-	//b2World* mpB2world;
-	//b2Body* mpOtherShip;
+	RakNet::Time mLastUpdateSent;
 };
 
 #endif

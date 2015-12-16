@@ -102,11 +102,12 @@ void Server::update()
 	//update GameInfos
 	updateGames();
 
-	//if enough time has passed (30fps), broadcast game states to clients
-	/*if (mpTimer->shouldUpdate())
+	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
-		broadcastGameInfo();
-	}*/
+		//mGameInfo.timeStamp = RakNet::GetTime();
+		//sendShipData();
+		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
+	}
 }
 
 
@@ -140,44 +141,25 @@ void Server::getPackets()
 		case ID_SEND_SHIP_INFO:
 		{
 			//find correct game and client
-			int j = 0;
 			for (unsigned int i = 0; i < mGames.size(); i++)
 			{
 				BothShips shipData = *reinterpret_cast<BothShips*>(p->data);
 
 				shipData.mID = ID_RECIEVE_GAME_INFO;
+				//shipData.timeStamp = RakNet::GetTime();
 
 				if (mGames[i][0] == p->guid)
 				{
-					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][1], false);
+					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
 				}
 				else if (mGames[i][1] == p->guid)
 				{
-					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_ORDERED, 0, mGames[i][0], false);
+					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				}
-
-				if (i % 2 == 1) j++;
 			}
 
 			break;
 		}
-/*
-		//the client sends over time to start game
-		case ID_START_GAME:
-		{
-			//find correct game and client
-			int j = 0;
-			for (unsigned int i = 0; i < mClientPairs.size(); i++)
-			{
-				if (mGuidPairs[i][0] == p->guid || mGuidPairs[i][1] == p->guid)
-				{
-					resetGame(j);
-				}
-				if (i % 2 == 1) j++;
-			}
-
-			break;
-		}*/
 		default:
 			//default handle packets in GameStructs
 			handlePackets(packetIdentifier, p);
@@ -214,8 +196,8 @@ void Server::resetGame(int index)
 	mGameInfos[index].firstPlayer.velocity  = velocity(0, 0, 0);
 	mGameInfos[index].secondPlayer.velocity = velocity(0, 0, 0);
 
-	mGameInfos[index].firstPlayer.position  = position(0, 0);
-	mGameInfos[index].secondPlayer.position = position(0, 0);
+	mGameInfos[index].firstPlayer.position  = position(0, 0, 0);
+	mGameInfos[index].secondPlayer.position = position(0, 0, 0);
 
 	mGameInfos[index].gameNumber = index;
 	mGameInfos[index].finished   = false;
