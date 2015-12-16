@@ -25,6 +25,7 @@ std::string mBuildType = "";	//to determine file paths of assets
 Client* mpClient;
 sf::Font mFont;
 std::array<sf::Sprite, 8> markers;
+std::array<sf::Sprite, 20> lives;
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
 			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
@@ -79,6 +80,12 @@ int main(int argc, char** argv)
 	for (unsigned int i = 0; i < markers.size(); i++)
 	{
 		markers[i] = sf::Sprite(TEXTURES::mMarker);
+	}
+
+	for (unsigned int i = 0; i < lives.size(); i++)
+	{
+		lives[i] = sf::Sprite(TEXTURES::mFirstShip);
+		lives[i].setPosition(10.0f * i, SCREEN_HEIGHT - 20.0f);
 	}
 
 	while (!mpClient->getConnected()) { mpClient->update(); }
@@ -163,6 +170,11 @@ void drawScreen(sf::RenderWindow &pWindow)
 
 	pWindow.draw(*mpClient->mpGame->getFirstPlayer()->getSprite());
 	pWindow.draw(*mpClient->mpGame->getSecondPlayer()->getSprite());
+
+	for (int i = 0; i < mpClient->mpGame->getFirstPlayer()->getHealth(); i++)
+	{
+		if (mpClient->mpGame->getFirstPlayer()->getHealth() > 0) pWindow.draw(lives[i]);
+	}
 
 	for (unsigned int i = 0; i < mpClient->mpGame->getFirstPlayerBullets().size(); i++)
 	{
