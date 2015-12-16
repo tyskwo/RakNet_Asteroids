@@ -45,7 +45,6 @@ bool isPPressed = false;
 	void drawScreen(sf::RenderWindow &pWindow);		//draw to window
 	void getInput();								//get keyboard input
 	void getInfoFromGame();
-	void interpolateOtherPlayer();
 
 	char* getPortNumber();							//generate random port number
 
@@ -61,7 +60,6 @@ int main(int argc, char** argv)
 	#else
 		mBuildType = "Release/";
 	#endif
-		if (argc == 4) mBuildType = "";
 
 	sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(SCREEN_WIDTH), 
 		                                  static_cast<unsigned int>(SCREEN_HEIGHT)), "Asteroids");
@@ -77,7 +75,37 @@ int main(int argc, char** argv)
 	{
 		mpClient->update();
 
-		interpolateOtherPlayer();
+		if (mpClient->hasStates())
+		{
+			if (mpClient->getFirstConnected())
+			{
+				if (mpGame->getSecondPlayer()->isFinishedInterpolating())
+				{
+					BothShips bestState = mpClient->getBestState();
+					mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
+					mpGame->getSecondPlayer()->setDoneInterpolated(false);
+				}
+				else
+				{
+					mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+				}
+			}
+			else
+			{
+				if (mpGame->getFirstPlayer()->isFinishedInterpolating())
+				{
+					//printf("ADD\n");
+					BothShips bestState = mpClient->getBestState();
+					mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
+					mpGame->getFirstPlayer()->setDoneInterpolated(false);
+				}
+				else
+				{
+					//printf("INTERPOLATING\n");
+					mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+				}
+			}
+		}
 
 		mpGame->update();
 		getInfoFromGame();
@@ -102,6 +130,8 @@ Client* initClient(int argc, char** argv)
 	//command line arguments
 	if (argc == 4) //serverIP serverPort clientPort
 	{
+		mBuildType = "";
+
 		const char* serverIP = argv[1];
 		const char* serverPort = argv[2];
 		const char* clientPort = argv[3];
@@ -210,14 +240,6 @@ void getInput()
 			if (!isSpacePressed)
 			{
 				mpGame->fireBullet(true);
-				for (unsigned int i = mpGame->getFirstPlayerBullets().size() - 1; i > 0; i--)
-				{
-					if (mpGame->getFirstPlayerBullets()[i] != NULL)
-					{
-						mpClient->setFireBullet(i);
-						break;
-					}
-				}
 				isSpacePressed = true;
 			}
 		}
@@ -255,14 +277,6 @@ void getInput()
 			if (!isSpacePressed)
 			{
 				mpGame->fireBullet(false);
-				for (unsigned int i = mpGame->getSecondPlayerBullets().size() - 1; i > 0; i--)
-				{
-					if (mpGame->getSecondPlayerBullets()[i] != NULL)
-					{
-						mpClient->setFireBullet(i);
-						break;
-					}
-				}
 				isSpacePressed = true;
 			}
 		}
@@ -372,37 +386,4 @@ void getInfoFromGame()
 	shipData.timeStamp = RakNet::GetTime();
 
 	mpClient->setShipData(shipData);
-}
-
-void interpolateOtherPlayer()
-{
-	if (mpClient->hasStates())
-	{
-		if (mpClient->getFirstConnected())
-		{
-			if (mpGame->getSecondPlayer()->isFinishedInterpolating())
-			{
-				BothShips bestState = mpClient->getBestState();
-				mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
-				mpGame->getSecondPlayer()->setDoneInterpolated(false);
-			}
-			else
-			{
-				mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-			}
-		}
-		else
-		{
-			if (mpGame->getFirstPlayer()->isFinishedInterpolating())
-			{
-				BothShips bestState = mpClient->getBestState();
-				mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
-				mpGame->getFirstPlayer()->setDoneInterpolated(false);
-			}
-			else
-			{
-				mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
-			}
-		}
-	}
 }

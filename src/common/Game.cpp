@@ -269,31 +269,3 @@ void Game::spawnAsteroid()
 		}
 	}
 }
-
-void Game::setFirstPlayer(ShipObject data)
-{
-	b2Vec2 position(data.position.x, data.position.y);
-	firstPlayer->getBody()->SetLinearVelocity(position);
-	firstPlayer->getBody()->SetAngularVelocity(data.velocity.rot);
-}
-
-void Game::setSecondPlayer(ShipObject data)
-{
-	b2Vec2 position(data.position.x, data.position.y);
-	secondPlayer->getBody()->SetLinearVelocity(position);
-	secondPlayer->getBody()->SetAngularVelocity(data.velocity.rot);
-}
-
-void Game::setFirstPlayerBullets(Bullets data)
-{
-	b2Vec2 position(data.bullet.position.x, data.bullet.position.y);
-	firstPlayerBullets[data.index]->getBody()->SetLinearVelocity(position);
-	firstPlayerBullets[data.index]->getBody()->SetAngularVelocity(data.bullet.velocity.rot);
-}
-
-void Game::setSecondPlayerBullets(Bullets data)
-{
-	b2Vec2 position(data.bullet.position.x, data.bullet.position.y);
-	secondPlayerBullets[data.index]->getBody()->SetLinearVelocity(position);
-	secondPlayerBullets[data.index]->getBody()->SetAngularVelocity(data.bullet.velocity.rot);
-}

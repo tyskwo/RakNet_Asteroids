@@ -42,12 +42,13 @@ public:
 	inline void setShipData(BothShips data) { mShipData = data; };
 	inline BothShips getShipData() { return mShipData; };
 
+	void setJustRecieved(bool value) { mJustRecieved = value; };
+	bool getJustRecieved() { return mJustRecieved; };
+
 	BothShips getBestState();
 	inline bool hasStates() { return mShipStates.size() > 0 ? true : false; };
 	RakNet::Time mTwoPacketsAgo = 0;
 	RakNet::Time mOnePacketAgo = 0;
-
-	inline void setFireBullet(int index) { mFiredBullet = index; };
 
 private:
 	//pointer to client object
@@ -67,9 +68,6 @@ private:
 	void getPackets();
 
 	void sendShipData();
-	void sendBullet(int index);
-
-	int mFiredBullet;
 
 	//flag for if client is connected, and if so, first player
 	bool mIsConnected;
@@ -79,8 +77,12 @@ private:
 	GameInfo mGameInfo;
 	BothShips mShipData;
 
+	bool mJustRecieved;
+
 	float mLastUpdateSent;
+
 	float delay = 20.0f;
+	
 };
 
 #endif

@@ -52,6 +52,9 @@ void Client::init(const char* clientPort, const char* serverAddress, const char*
 	RakNet::ConnectionAttemptResult car = mpClient->Connect(serverAddress, atoi(serverPort), "hello", (int)strlen("hello"));
 	RakAssert(car == RakNet::CONNECTION_ATTEMPT_STARTED);
 
+	//mShipData.firstPlayer.velocity = velocity(0.0f, 0.0f, 0.0f);
+	//mShipData.secondPlayer.velocity = velocity(0.0f, 0.0f, 0.0f);
+
 	mLastUpdateSent = float(RakNet::GetTimeMS());
 }
 
@@ -82,18 +85,14 @@ void Client::update()
 	// Get a packet from either the server or the client
 	getPackets();
 
+	printf("%f\n", float(RakNet::GetTimeMS()) - mLastUpdateSent);
+
 	//if enough time has passed (30fps), broadcast game states to clients
 	if (float(RakNet::GetTimeMS()) - mLastUpdateSent > 50.0f)
 	{
 		mGameInfo.timeStamp = RakNet::GetTime();
 		sendShipData();
-
-		if (mFiredBullet != NULL)
-		{
-			sendBullet(mFiredBullet);
-		}
-
-		mLastUpdateSent = float(RakNet::GetTimeMS());
+		mLastUpdateSent = RakNet::GetTimeMS();
 	}
 }
 
@@ -158,6 +157,8 @@ void Client::getPackets()
 				mOnePacketAgo = mShipData.timeStamp;
 			}
 			
+
+			mJustRecieved = true;
 			break;
 		}
 
@@ -185,14 +186,4 @@ BothShips Client::getBestState()
 	}
 
 	return mShipStates.front();
-}
-
-void Client::sendBullet(int index)
-{
-	Bullets bullet;
-	bullet.mID = ID_SEND_BULLET;
-	bullet.index = index;
-	bullet.isFirstPlayer = getFirstConnected();
-	bullet.timeStamp = RakNet::GetTime();
-	mpClient->Send((const char*)&bullet, sizeof(bullet), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
 }

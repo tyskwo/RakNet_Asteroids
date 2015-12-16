@@ -24,8 +24,6 @@ public:
 	void update();
 	void broadcastGames();
 
-	std::array<Game*, 8> mpGames;
-
 private:
 	//pointer to server object
 	RakNet::RakPeerInterface* mpServer;
@@ -53,7 +51,7 @@ private:
 	//set the connection with a client
 	void setConnection(RakNet::Packet* p);
 
-	void sendAsteroids();
+	Timer* mpTimer;
 
 	RakNet::Time mLastUpdateSent;
 };

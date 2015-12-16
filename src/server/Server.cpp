@@ -3,11 +3,11 @@
 #include "..\common\PhysicsStructs.h"
 
 #include "GetTime.h"
-#include "../common/Game.h"
 
 
 Server::Server()
 {
+	//create with port 200
 	init("200");
 }
 
@@ -69,8 +69,8 @@ void Server::init(const char* serverPort)
 
 	//initialize GameInfos
 	initializeGames();
-	for (unsigned int i = 0; i < mpGames.size(); i++) { mpGames[i] = new Game(true); }
 }
+
 
 void Server::cleanup()
 {
@@ -99,10 +99,26 @@ void Server::update()
 	//get packets from clients
 	getPackets();
 
+	//update GameInfos
+	updateGames();
+
 	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
-		sendAsteroids();
+		//mGameInfo.timeStamp = RakNet::GetTime();
+		//sendShipData();
 		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
+	}
+}
+
+
+void Server::updateGames()
+{
+	for (unsigned int i = 0; i < mGameInfos.size(); i++)
+	{
+		//if the game has started
+		if (mGameInfos[i].started)
+		{
+		}
 	}
 }
 
@@ -124,48 +140,21 @@ void Server::getPackets()
 		}
 		case ID_SEND_SHIP_INFO:
 		{
-			BothShips shipData = *reinterpret_cast<BothShips*>(p->data);
-
-			shipData.mID = ID_RECIEVE_GAME_INFO;
-			shipData.timeStamp = RakNet::GetTime();
-
 			//find correct game and client
 			for (unsigned int i = 0; i < mGames.size(); i++)
 			{
+				BothShips shipData = *reinterpret_cast<BothShips*>(p->data);
+
+				shipData.mID = ID_RECIEVE_GAME_INFO;
+				shipData.timeStamp = RakNet::GetTime();
+
 				if (mGames[i][0] == p->guid)
 				{
-					mpGames[i]->setFirstPlayer(shipData.firstPlayer);
 					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
 				}
 				else if (mGames[i][1] == p->guid)
 				{
-					mpGames[i]->setSecondPlayer(shipData.secondPlayer);
 					mpServer->Send((const char*)&shipData, sizeof(shipData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
-				}
-			}
-
-			break;
-		}
-
-		case ID_SEND_BULLET:
-		{
-			Bullets bullet = *reinterpret_cast<Bullets*>(p->data);
-
-			bullet.mID = ID_RECEIVE_BULLET;
-			bullet.timeStamp = RakNet::GetTime();
-
-			//find correct game and client
-			for (unsigned int i = 0; i < mGames.size(); i++)
-			{
-				if (mGames[i][0] == p->guid)
-				{
-					mpGames[i]->setFirstPlayerBullets(bullet);
-					mpServer->Send((const char*)&bullet, sizeof(bullet), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
-				}
-				else if (mGames[i][1] == p->guid)
-				{
-					mpGames[i]->setSecondPlayerBullets(bullet);
-					mpServer->Send((const char*)&bullet, sizeof(bullet), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				}
 			}
 
@@ -248,9 +237,4 @@ void Server::setConnection(RakNet::Packet* p)
 		//increase number of games
 		mCurrentNumberOfGames++;
 	}
-}
-
-void Server::sendAsteroids()
-{
-
 }
