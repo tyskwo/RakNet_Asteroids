@@ -32,6 +32,13 @@ public:
 
 	inline std::array<Asteroid*, 64> getAsteroids() { return asteroids; };
 
+	void setFirstPlayer(ShipObject data);
+	void setSecondPlayer(ShipObject data);
+
+	void setFirstPlayerBullets(Bullets data);
+	void setSecondPlayerBullets(Bullets data);
+
+
 
 
 private:

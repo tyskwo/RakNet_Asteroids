@@ -67,6 +67,18 @@ struct BulletObject
 	velocity velocity;
 };
 
+#pragma pack(push, 1)
+struct Bullets
+{
+	unsigned char mID;
+	unsigned char useTimeStamp = ID_TIMESTAMP;
+	RakNet::Time timeStamp;
+	unsigned char index;
+	bool isFirstPlayer;
+	BulletObject bullet;
+};
+#pragma pack(pop)
+
 //struct for player values
 struct ShipObject
 {
@@ -128,6 +140,8 @@ enum MessageTypes
 	ID_FIRST_CONNECTION,
 	ID_SECOND_CONNECTION,
 	ID_RECIEVE_GAME_INFO,
+	ID_SEND_BULLET,
+	ID_RECEIVE_BULLET,
 };
 
 
