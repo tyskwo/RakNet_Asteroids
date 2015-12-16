@@ -272,3 +272,13 @@ void Game::spawnAsteroid()
 		}
 	}
 }
+
+void Game::setFirstPlayerBullets(BulletData data)
+{
+	firstPlayerBullets[data.index] = new Bullet(true, firstPlayer, physicsWorld);
+}
+
+void Game::setSecondPlayerBullets(BulletData data)
+{
+	secondPlayerBullets[data.index] = new Bullet(false, secondPlayer, physicsWorld);
+}

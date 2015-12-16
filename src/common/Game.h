@@ -10,6 +10,7 @@ class b2World;
 
 #include <array>
 #include "..\common\Trackable.h"
+#include "NetworkStructs.h"
 
 class Game : public Trackable
 {
@@ -30,6 +31,10 @@ public:
 
 	inline std::array<Bullet*, 8> getFirstPlayerBullets()  { return firstPlayerBullets;  };
 	inline std::array<Bullet*, 8> getSecondPlayerBullets() { return secondPlayerBullets; };
+
+	void setFirstPlayerBullets(BulletData data);
+	void setSecondPlayerBullets(BulletData data);
+
 
 	inline std::array<Asteroid*, 64> getAsteroids() { return asteroids; };
 
