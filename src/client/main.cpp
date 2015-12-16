@@ -25,7 +25,7 @@ std::string mBuildType = "";	//to determine file paths of assets
 Client* mpClient;
 sf::Font mFont;
 std::array<sf::Sprite, 8> markers;
-std::array<sf::Sprite, 20> lives;
+std::array<sf::Sprite, 20> p1Lives, p2Lives;
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
 			TEXTURES::mSmallAsteroid1,  TEXTURES::mSmallAsteroid2,  TEXTURES::mSmallAsteroid3,
@@ -82,10 +82,12 @@ int main(int argc, char** argv)
 		markers[i] = sf::Sprite(TEXTURES::mMarker);
 	}
 
-	for (unsigned int i = 0; i < lives.size(); i++)
+	for (unsigned int i = 0; i < p1Lives.size(); i++)
 	{
-		lives[i] = sf::Sprite(TEXTURES::mFirstShip);
-		lives[i].setPosition(10.0f * i, SCREEN_HEIGHT - 20.0f);
+		p1Lives[i] = sf::Sprite(TEXTURES::mFirstShip);
+		p2Lives[i] = sf::Sprite(TEXTURES::mSecondShip);
+		p1Lives[i].setPosition(17.5f + 10.0f * i, SCREEN_HEIGHT - 100.0f);
+		p2Lives[i].setPosition(SCREEN_WIDTH - 250.0f + 10.0f * i, SCREEN_HEIGHT - 100.0f);
 	}
 
 	while (!mpClient->getConnected()) { mpClient->update(); }
@@ -167,13 +169,18 @@ void initWindow(sf::RenderWindow &pWindow)
 void drawScreen(sf::RenderWindow &pWindow)
 {
 	pWindow.clear(sf::Color(37, 37, 37));
+	pWindow.draw(sf::Text("ROUND 1\nSCORE 0", mFont, 60));
 
 	pWindow.draw(*mpClient->mpGame->getFirstPlayer()->getSprite());
 	pWindow.draw(*mpClient->mpGame->getSecondPlayer()->getSprite());
 
 	for (int i = 0; i < mpClient->mpGame->getFirstPlayer()->getHealth(); i++)
 	{
-		if (mpClient->mpGame->getFirstPlayer()->getHealth() > 0) pWindow.draw(lives[i]);
+		if (mpClient->mpGame->getFirstPlayer()->getHealth() > 0) pWindow.draw(p1Lives[i]);
+	}
+	for (int i = 0; i < mpClient->mpGame->getSecondPlayer()->getHealth(); i++)
+	{
+		if (mpClient->mpGame->getSecondPlayer()->getHealth() > 0) pWindow.draw(p2Lives[i]);
 	}
 
 	for (unsigned int i = 0; i < mpClient->mpGame->getFirstPlayerBullets().size(); i++)

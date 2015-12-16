@@ -20,8 +20,6 @@ public:
 	inline const float32 getLinearSpeed()  { return mPhysics::linearSpeed(); };
 
 private:
-	typedef float float32;
-
 	void initPhysics(bool firstConnected, Ship* player);
 	void initSprite(bool  firstConnected);
 

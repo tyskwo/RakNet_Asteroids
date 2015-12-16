@@ -20,7 +20,7 @@ public:
 	inline const float32 getAngularSpeed() { return mPhysics::rotateSpeed(); };
 
 	inline int  getHealth()            { return health;    };
-	inline void loseHealth(int damage) { health -= damage; };
+	void loseHealth(int damage);
 
 	void interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakNet::Time twoPacketAgo);
 	void addInterpolation(RakNet::Time timeStamp, ShipObject data);

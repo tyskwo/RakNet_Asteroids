@@ -105,3 +105,9 @@ void Ship::addInterpolation(RakNet::Time timeStamp, ShipObject data)
 	startTime  = float(RakNet::GetTime());
 	targetTime = float(RakNet::GetTime()) + 100.0f;
 }
+
+void Ship::loseHealth(int damage)
+{
+	health -= damage;
+	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
+}
