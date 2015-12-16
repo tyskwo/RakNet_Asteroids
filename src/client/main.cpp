@@ -187,18 +187,12 @@ void drawScreen(sf::RenderWindow &pWindow)
 				float markerWidth  = marker.getLocalBounds().width  / 2.0f + 10.0f;
 				float markerHeight = marker.getLocalBounds().height / 2.0f + 10.0f;
 
-				if (position.x < 0 && position.y < 0)                             { markerPosition.x = markerWidth, markerPosition.y = markerHeight; }
-				else if (position.x > SCREEN_WIDTH && position.y > SCREEN_HEIGHT) { markerPosition.x = SCREEN_WIDTH - markerWidth, markerPosition.y = SCREEN_HEIGHT - markerPosition.y; }
-				else if (position.x < 0 && position.y > SCREEN_HEIGHT)            { markerPosition.x = markerWidth, markerPosition.y = SCREEN_HEIGHT - markerPosition.y; }
-				else if (position.x > SCREEN_WIDTH && position.y < 0)             { markerPosition.x = SCREEN_WIDTH - markerWidth, markerPosition.y = markerHeight; }
-
-				else if (position.x < 0)             { markerPosition.x = markerWidth; }
+				     if (position.x < 0)             { markerPosition.x = markerWidth; }
 				else if (position.x > SCREEN_WIDTH)  { markerPosition.x = SCREEN_WIDTH - markerWidth; }
-				else if (position.y < 0)             { markerPosition.y = markerHeight; }
+				     if (position.y < 0)             { markerPosition.y = markerHeight; }
 				else if (position.y > SCREEN_HEIGHT) { markerPosition.y = SCREEN_HEIGHT - markerHeight; }
 
 				marker.setPosition(markerPosition);
-
 
 				pWindow.draw(marker);
 			}
