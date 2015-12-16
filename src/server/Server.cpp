@@ -1,6 +1,9 @@
 #include "Server.h"
+
 #include "..\common\PhysicsStructs.h"
-#include "..\common\Timer.h"
+
+#include "GetTime.h"
+
 
 Server::Server()
 {
@@ -99,7 +102,6 @@ void Server::update()
 	//update GameInfos
 	updateGames();
 
-	
 	//if enough time has passed (30fps), broadcast game states to clients
 	/*if (mpTimer->shouldUpdate())
 	{

@@ -23,17 +23,19 @@
 //struct for position values
 struct position
 {
-	float x, y;
+	float x, y, angle;
 
 	position()
 	{
 		x = 0;
 		y = 0;
+		angle = 0;
 	}
-	position(float x, float y)
+	position(float x, float y, float angle)
 	{
 		this->x = x;
 		this->y = y;
+		this->angle = angle;
 	}
 };
 
@@ -68,7 +70,6 @@ struct ShipObject
 {
 	position position;
 	velocity velocity;
-	float angle;
 	unsigned char health;
 
 	std::array<BulletObject, 8> bullets;
