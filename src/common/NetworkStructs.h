@@ -83,6 +83,7 @@ struct BulletData
 	unsigned char mID;
 	unsigned char useTimeStamp = ID_TIMESTAMP;
 	RakNet::Time timeStamp;
+	unsigned char index;
 	BulletObject bullet;
 };
 #pragma pack(pop)

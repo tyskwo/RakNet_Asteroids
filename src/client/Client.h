@@ -10,6 +10,7 @@
 
 //game includes
 #include "../common/NetworkStructs.h"
+#include "../common/Game.h"
 
 
 class Client
@@ -25,6 +26,8 @@ public:
 	void update();
 
 	std::queue<BothShips> mShipStates;
+	Game* mpGame;
+
 
 
 	//get/set flags for whether or not it was the first connected player
@@ -51,6 +54,8 @@ public:
 	RakNet::Time mOnePacketAgo = 0;
 
 	inline void addBulletData(BulletData data) { mBulletData.push(data); };
+
+	inline void initGame() { mpGame = new Game(false); }
 
 private:
 	//pointer to client object

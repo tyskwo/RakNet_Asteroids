@@ -172,6 +172,15 @@ void Client::getPackets()
 			//get the packet's GameInfo struct
 			BulletData bulletData = *reinterpret_cast<BulletData*>(mpPacket->data);
 
+			if (mWasFirstConnected)
+			{
+
+			}
+			else
+			{
+
+			}
+
 			break;
 		}
 

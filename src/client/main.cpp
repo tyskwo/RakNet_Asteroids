@@ -22,7 +22,6 @@
 std::string mBuildType = "";	//to determine file paths of assets
 
 Client* mpClient;
-Game* mpGame;
 sf::Font mFont;
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mFirstBullet,     TEXTURES::mSecondBullet,
@@ -70,7 +69,7 @@ int main(int argc, char** argv)
 
 	mpClient = initClient(argc, argv);
 	TEXTURES::init(mBuildType);
-	mpGame = new Game(false);
+	mpClient->initGame();
 
 	while (!mpClient->getConnected()) { mpClient->update(); }
 
@@ -80,7 +79,7 @@ int main(int argc, char** argv)
 
 		interpolateOtherPlayer();
 
-		mpGame->update();
+		mpClient->mpGame->update();
 		getInfoFromGame();
 
 		getInput();
@@ -145,28 +144,28 @@ void drawScreen(sf::RenderWindow &pWindow)
 {
 	pWindow.clear(sf::Color(37, 37, 37));
 
-	pWindow.draw(*mpGame->getFirstPlayer()->getSprite());
-	pWindow.draw(*mpGame->getSecondPlayer()->getSprite());
+	pWindow.draw(*mpClient->mpGame->getFirstPlayer()->getSprite());
+	pWindow.draw(*mpClient->mpGame->getSecondPlayer()->getSprite());
 
-	for (unsigned int i = 0; i < mpGame->getFirstPlayerBullets().size(); i++)
+	for (unsigned int i = 0; i < mpClient->mpGame->getFirstPlayerBullets().size(); i++)
 	{
-		if (mpGame->getFirstPlayerBullets()[i] != NULL)
+		if (mpClient->mpGame->getFirstPlayerBullets()[i] != NULL)
 		{
- 			pWindow.draw(*mpGame->getFirstPlayerBullets()[i]->getSprite());
+			pWindow.draw(*mpClient->mpGame->getFirstPlayerBullets()[i]->getSprite());
 		}
-		if (mpGame->getSecondPlayerBullets()[i] != NULL)
+		if (mpClient->mpGame->getSecondPlayerBullets()[i] != NULL)
 		{
-			pWindow.draw(*mpGame->getSecondPlayerBullets()[i]->getSprite());
+			pWindow.draw(*mpClient->mpGame->getSecondPlayerBullets()[i]->getSprite());
 		}
 	}
 
-	for (unsigned int i = 0; i < mpGame->getAsteroids().size(); i++)
+	for (unsigned int i = 0; i < mpClient->mpGame->getAsteroids().size(); i++)
 	{
-		if (mpGame->getAsteroids()[i] != NULL)
+		if (mpClient->mpGame->getAsteroids()[i] != NULL)
 		{
-			if (mpGame->getAsteroids()[i]->isOnScreen())
+			if (mpClient->mpGame->getAsteroids()[i]->isOnScreen())
 			{
-				pWindow.draw(*mpGame->getAsteroids()[i]->getSprite());
+				pWindow.draw(*mpClient->mpGame->getAsteroids()[i]->getSprite());
 			}
 			else
 			{
@@ -187,22 +186,22 @@ void getInput()
 		//up arrow key or W is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			mpGame->getFirstPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x + mpGame->getFirstPlayer()->getLinearSpeed()*cos(mpGame->getFirstPlayer()->getBody()->GetAngle()),
-				mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y + mpGame->getFirstPlayer()->getLinearSpeed()*sin(mpGame->getFirstPlayer()->getBody()->GetAngle())));
+			mpClient->mpGame->getFirstPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpClient->mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x + mpClient->mpGame->getFirstPlayer()->getLinearSpeed()*cos(mpClient->mpGame->getFirstPlayer()->getBody()->GetAngle()),
+				mpClient->mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y + mpClient->mpGame->getFirstPlayer()->getLinearSpeed()*sin(mpClient->mpGame->getFirstPlayer()->getBody()->GetAngle())));
 		}
 
 		//left arrow key or A is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpGame->getFirstPlayer()->getBody()->GetAngularVelocity() - mpGame->getFirstPlayer()->getAngularSpeed());
-			mpGame->getFirstPlayer()->getSprite()->setRotation(mpGame->getFirstPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+			mpClient->mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpClient->mpGame->getFirstPlayer()->getBody()->GetAngularVelocity() - mpClient->mpGame->getFirstPlayer()->getAngularSpeed());
+			mpClient->mpGame->getFirstPlayer()->getSprite()->setRotation(mpClient->mpGame->getFirstPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
 		}
 
 		//right arrow key or D is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpGame->getFirstPlayer()->getBody()->GetAngularVelocity() + mpGame->getFirstPlayer()->getAngularSpeed());
-			mpGame->getFirstPlayer()->getSprite()->setRotation(mpGame->getFirstPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+			mpClient->mpGame->getFirstPlayer()->getBody()->SetAngularVelocity(mpClient->mpGame->getFirstPlayer()->getBody()->GetAngularVelocity() + mpClient->mpGame->getFirstPlayer()->getAngularSpeed());
+			mpClient->mpGame->getFirstPlayer()->getSprite()->setRotation(mpClient->mpGame->getFirstPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
 		}
 
 		//space key is pressed down
@@ -210,7 +209,25 @@ void getInput()
 		{
 			if (!isSpacePressed)
 			{
-				mpGame->fireBullet(true);
+				int index = mpClient->mpGame->fireBullet(true);
+
+				if (index != -1)
+				{
+					BulletData bulletData;
+					bulletData.bullet.position.x = mpClient->mpGame->getFirstPlayerBullets()[index]->getBody()->GetPosition().x;
+					bulletData.bullet.position.y = mpClient->mpGame->getFirstPlayerBullets()[index]->getBody()->GetPosition().y;
+					bulletData.bullet.position.angle = mpClient->mpGame->getFirstPlayerBullets()[index]->getBody()->GetAngle();
+
+					bulletData.bullet.velocity.x = mpClient->mpGame->getFirstPlayerBullets()[index]->getBody()->GetLinearVelocity().x;
+					bulletData.bullet.velocity.y = mpClient->mpGame->getFirstPlayerBullets()[index]->getBody()->GetLinearVelocity().y;
+					bulletData.bullet.velocity.rot = mpClient->mpGame->getFirstPlayerBullets()[index]->getBody()->GetAngularVelocity();
+
+					bulletData.mID = ID_SEND_BULLET_INFO;
+					bulletData.index = index;
+					bulletData.timeStamp = RakNet::GetTime();
+
+					mpClient->addBulletData(bulletData);
+				}				
 				isSpacePressed = true;
 			}
 		}
@@ -224,22 +241,22 @@ void getInput()
 		//up arrow key or W is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			mpGame->getSecondPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x + mpGame->getSecondPlayer()->getLinearSpeed()*cos(mpGame->getSecondPlayer()->getBody()->GetAngle()),
-				mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y + mpGame->getSecondPlayer()->getLinearSpeed()*sin(mpGame->getSecondPlayer()->getBody()->GetAngle())));
+			mpClient->mpGame->getSecondPlayer()->getBody()->SetLinearVelocity(b2Vec2(mpClient->mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x + mpClient->mpGame->getSecondPlayer()->getLinearSpeed()*cos(mpClient->mpGame->getSecondPlayer()->getBody()->GetAngle()),
+				mpClient->mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y + mpClient->mpGame->getSecondPlayer()->getLinearSpeed()*sin(mpClient->mpGame->getSecondPlayer()->getBody()->GetAngle())));
 		}
 
 		//left arrow key or A is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpGame->getSecondPlayer()->getBody()->GetAngularVelocity() - mpGame->getSecondPlayer()->getAngularSpeed());
-			mpGame->getSecondPlayer()->getSprite()->setRotation(mpGame->getSecondPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+			mpClient->mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpClient->mpGame->getSecondPlayer()->getBody()->GetAngularVelocity() - mpClient->mpGame->getSecondPlayer()->getAngularSpeed());
+			mpClient->mpGame->getSecondPlayer()->getSprite()->setRotation(mpClient->mpGame->getSecondPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
 		}
 
 		//right arrow key or D is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpGame->getSecondPlayer()->getBody()->GetAngularVelocity() + mpGame->getSecondPlayer()->getAngularSpeed());
-			mpGame->getSecondPlayer()->getSprite()->setRotation(mpGame->getSecondPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
+			mpClient->mpGame->getSecondPlayer()->getBody()->SetAngularVelocity(mpClient->mpGame->getSecondPlayer()->getBody()->GetAngularVelocity() + mpClient->mpGame->getSecondPlayer()->getAngularSpeed());
+			mpClient->mpGame->getSecondPlayer()->getSprite()->setRotation(mpClient->mpGame->getSecondPlayer()->getBody()->GetAngle() * 180.0f / 3.14159f);
 		}
 
 		//space key is pressed down
@@ -247,20 +264,21 @@ void getInput()
 		{
 			if (!isSpacePressed)
 			{
-				int index = mpGame->fireBullet(false);
+				int index = mpClient->mpGame->fireBullet(false);
 
 				if (index != -1)
 				{
 					BulletData bulletData;
-					bulletData.bullet.position.x = mpGame->getSecondPlayerBullets()[index]->getBody()->GetPosition().x;
-					bulletData.bullet.position.y = mpGame->getSecondPlayerBullets()[index]->getBody()->GetPosition().y;
-					bulletData.bullet.position.angle = mpGame->getSecondPlayerBullets()[index]->getBody()->GetAngle();
+					bulletData.bullet.position.x = mpClient->mpGame->getSecondPlayerBullets()[index]->getBody()->GetPosition().x;
+					bulletData.bullet.position.y = mpClient->mpGame->getSecondPlayerBullets()[index]->getBody()->GetPosition().y;
+					bulletData.bullet.position.angle = mpClient->mpGame->getSecondPlayerBullets()[index]->getBody()->GetAngle();
 
-					bulletData.bullet.velocity.x = mpGame->getSecondPlayerBullets()[index]->getBody()->GetLinearVelocity().x;
-					bulletData.bullet.velocity.y = mpGame->getSecondPlayerBullets()[index]->getBody()->GetLinearVelocity().y;
-					bulletData.bullet.velocity.rot = mpGame->getSecondPlayerBullets()[index]->getBody()->GetAngularVelocity();
+					bulletData.bullet.velocity.x = mpClient->mpGame->getSecondPlayerBullets()[index]->getBody()->GetLinearVelocity().x;
+					bulletData.bullet.velocity.y = mpClient->mpGame->getSecondPlayerBullets()[index]->getBody()->GetLinearVelocity().y;
+					bulletData.bullet.velocity.rot = mpClient->mpGame->getSecondPlayerBullets()[index]->getBody()->GetAngularVelocity();
 
 					bulletData.mID = ID_SEND_BULLET_INFO;
+					bulletData.index = index;
 					bulletData.timeStamp = RakNet::GetTime();
 					
 					mpClient->addBulletData(bulletData);
@@ -279,7 +297,7 @@ void getInput()
 	{
 		if (!isPPressed)
 		{
-			mpGame->spawnAsteroid();
+			mpClient->mpGame->spawnAsteroid();
 			isPPressed = true;
 		}
 	}
@@ -355,21 +373,21 @@ void getInfoFromGame()
 		}
 	}*/
 
-	shipData.firstPlayer.health = mpGame->getFirstPlayer()->getHealth();
-	shipData.firstPlayer.position.x = mpGame->getFirstPlayer()->getBody()->GetPosition().x;
-	shipData.firstPlayer.position.y = mpGame->getFirstPlayer()->getBody()->GetPosition().y;
-	shipData.firstPlayer.velocity.x = mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x;
-	shipData.firstPlayer.velocity.y = mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y;
-	shipData.firstPlayer.velocity.rot = mpGame->getFirstPlayer()->getBody()->GetAngularVelocity();
-	shipData.firstPlayer.position.angle = mpGame->getFirstPlayer()->getBody()->GetAngle();
+	shipData.firstPlayer.health = mpClient->mpGame->getFirstPlayer()->getHealth();
+	shipData.firstPlayer.position.x = mpClient->mpGame->getFirstPlayer()->getBody()->GetPosition().x;
+	shipData.firstPlayer.position.y = mpClient->mpGame->getFirstPlayer()->getBody()->GetPosition().y;
+	shipData.firstPlayer.velocity.x = mpClient->mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().x;
+	shipData.firstPlayer.velocity.y = mpClient->mpGame->getFirstPlayer()->getBody()->GetLinearVelocity().y;
+	shipData.firstPlayer.velocity.rot = mpClient->mpGame->getFirstPlayer()->getBody()->GetAngularVelocity();
+	shipData.firstPlayer.position.angle = mpClient->mpGame->getFirstPlayer()->getBody()->GetAngle();
 
-	shipData.secondPlayer.health = mpGame->getSecondPlayer()->getHealth();
-	shipData.secondPlayer.position.x = mpGame->getSecondPlayer()->getBody()->GetPosition().x;
-	shipData.secondPlayer.position.y = mpGame->getSecondPlayer()->getBody()->GetPosition().y;
-	shipData.secondPlayer.velocity.x = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x;
-	shipData.secondPlayer.velocity.y = mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y;
-	shipData.secondPlayer.velocity.rot = mpGame->getSecondPlayer()->getBody()->GetAngularVelocity();
-	shipData.secondPlayer.position.angle = mpGame->getSecondPlayer()->getBody()->GetAngle();
+	shipData.secondPlayer.health = mpClient->mpGame->getSecondPlayer()->getHealth();
+	shipData.secondPlayer.position.x = mpClient->mpGame->getSecondPlayer()->getBody()->GetPosition().x;
+	shipData.secondPlayer.position.y = mpClient->mpGame->getSecondPlayer()->getBody()->GetPosition().y;
+	shipData.secondPlayer.velocity.x = mpClient->mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().x;
+	shipData.secondPlayer.velocity.y = mpClient->mpGame->getSecondPlayer()->getBody()->GetLinearVelocity().y;
+	shipData.secondPlayer.velocity.rot = mpClient->mpGame->getSecondPlayer()->getBody()->GetAngularVelocity();
+	shipData.secondPlayer.position.angle = mpClient->mpGame->getSecondPlayer()->getBody()->GetAngle();
 
 	shipData.timeStamp = RakNet::GetTime();
 
@@ -382,28 +400,28 @@ void interpolateOtherPlayer()
 	{
 		if (mpClient->getFirstConnected())
 		{
-			if (mpGame->getSecondPlayer()->isFinishedInterpolating())
+			if (mpClient->mpGame->getSecondPlayer()->isFinishedInterpolating())
 			{
 				BothShips bestState = mpClient->getBestState();
-				mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
-				mpGame->getSecondPlayer()->setDoneInterpolated(false);
+				mpClient->mpGame->getSecondPlayer()->addInterpolation(bestState.timeStamp, bestState.secondPlayer);
+				mpClient->mpGame->getSecondPlayer()->setDoneInterpolated(false);
 			}
 			else
 			{
-				mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+				mpClient->mpGame->getSecondPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
 			}
 		}
 		else
 		{
-			if (mpGame->getFirstPlayer()->isFinishedInterpolating())
+			if (mpClient->mpGame->getFirstPlayer()->isFinishedInterpolating())
 			{
 				BothShips bestState = mpClient->getBestState();
-				mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
-				mpGame->getFirstPlayer()->setDoneInterpolated(false);
+				mpClient->mpGame->getFirstPlayer()->addInterpolation(bestState.timeStamp, bestState.firstPlayer);
+				mpClient->mpGame->getFirstPlayer()->setDoneInterpolated(false);
 			}
 			else
 			{
-				mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
+				mpClient->mpGame->getFirstPlayer()->interpolate(RakNet::GetTime(), mpClient->mOnePacketAgo, mpClient->mTwoPacketsAgo);
 			}
 		}
 	}
