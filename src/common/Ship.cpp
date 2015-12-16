@@ -108,6 +108,6 @@ void Ship::addInterpolation(RakNet::Time timeStamp, ShipObject data)
 
 void Ship::loseHealth(int damage)
 {
-	health -= damage;
+	if (health > 0) health -= damage;
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
