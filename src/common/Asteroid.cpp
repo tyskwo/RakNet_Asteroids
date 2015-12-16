@@ -88,8 +88,8 @@ void Asteroid::initPhysics(b2Vec2 location)
 	fix.filter.maskBits     = PHYSICS::category::FIRST_SHIP    | 
 							  PHYSICS::category::SECOND_SHIP   | 
 							  PHYSICS::category::FIRST_BULLET  | 
-							  PHYSICS::category::SECOND_BULLET | 
-							  PHYSICS::category::ASTEROID;
+							  PHYSICS::category::SECOND_BULLET; 
+							  //PHYSICS::category::ASTEROID;
 	body->CreateFixture(&fix);
 
 
