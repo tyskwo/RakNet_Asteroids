@@ -246,12 +246,14 @@ void Game::checkAsteroidSpawn(Asteroid* asteroid)
 		if (asteroid->getSpawn().deleteSelf)
 		{
 			asteroid->setDelete(true);
+			score += 50;
 		}
 
 		if (asteroid->getSpawn().numberToSpawn > 0)
 		{
 			for (int i = 0; i < asteroid->getSpawn().numberToSpawn; i++)
 			{
+				score += 10;
 				for (unsigned int j = 0; j < mAsteroids.size(); j++)
 				{
 					if (mAsteroids[j] == NULL)
