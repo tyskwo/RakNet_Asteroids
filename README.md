@@ -7,7 +7,7 @@ Repository URL: https://tyskwo@bitbucket.org/tyskwo/egp405_finalproj_02_hartman_
 
 
 ### Controls: 
-Who knows?
+W/UP to thrust forward. A/LEFT and D/RIGHT to steer. SPACE to shoot.
 
 ### Unique Features:
-Who knows?
+Asteroids features Box2D for its physics simulation. Both the other player and the asteroids use temporal delay based off of the larger of the two latencies, providing smooth gameplay for both clients. The game features bullet-ship collision, bullet-asteroid collision, ship-asteroid collision, and asteroid-asteroid collision. The server can also handle up to 8 games at a time.
