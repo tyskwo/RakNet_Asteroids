@@ -382,10 +382,10 @@ int Game::getRoundNum()
 
 void Game::setFirstPlayerHealth(int health)
 {
-	firstPlayer->loseHealth(health);
+	firstPlayer->setHealth(health);
 }
 
 void Game::setSecondPlayerHealth(int health)
 {
-	secondPlayer->loseHealth(health);
+	secondPlayer->setHealth(health);
 }

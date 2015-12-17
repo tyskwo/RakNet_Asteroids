@@ -31,6 +31,8 @@ sf::Text p2Health;
 std::stringstream p1healthStream;
 std::stringstream p2healthStream;
 std::stringstream roundStream;
+std::stringstream scoreStream;
+
 
 std::array<sf::Sprite, 8> markers;
 std::array<sf::Sprite, 20> p1Lives, p2Lives;
@@ -182,7 +184,10 @@ void drawScreen(sf::RenderWindow &pWindow)
 
 	roundStream << mpClient->mpGame->getRoundNum();
 
-	HUDtext.setString("Round: " + roundStream.str());
+	scoreStream << mpClient->mpGame->getScoreText();
+
+
+	HUDtext.setString("Round: " + roundStream.str() + "\n" + scoreStream.str() + " pts");
 	HUDtext.setFont(mFont);
 	HUDtext.setColor(sf::Color(255, 255, 255, 60));
 
@@ -207,12 +212,14 @@ void drawScreen(sf::RenderWindow &pWindow)
 	p2Health.setOrigin(p2Health.getLocalBounds().width, p2Health.getLocalBounds().height);
 	p2Health.setPosition(SCREEN_WIDTH - 50.0f, SCREEN_HEIGHT - 50.0f);
 
+	scoreStream.str("");
 	roundStream.str("");
 	p1healthStream.str("");
 	p2healthStream.str("");
 	p1healthStream.clear();
 	p2healthStream.clear();
 	roundStream.clear();
+	scoreStream.clear();
 
 	pWindow.draw(p1Health);
 	pWindow.draw(p2Health);

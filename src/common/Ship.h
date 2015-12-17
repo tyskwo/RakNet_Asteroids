@@ -23,6 +23,7 @@ public:
 
 	inline int  getHealth()            { return health;    };
 	void loseHealth(int damage);
+	void setHealth(int health);
 
 	void interpolate(RakNet::Time currentTime, RakNet::Time onePacketAgo, RakNet::Time twoPacketAgo);
 	void addInterpolation(RakNet::Time timeStamp, ShipObject data);
