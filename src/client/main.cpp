@@ -132,9 +132,9 @@ Client* initClient(int argc, char** argv)
 	//command line arguments
 	if (argc == 4) //serverIP serverPort clientPort
 	{
-		const char* serverIP = argv[1];
-		const char* serverPort = argv[2];
-		const char* clientPort = argv[3];
+		const char* serverIP = argv[2];
+		const char* serverPort = argv[3];
+		const char* clientPort = argv[1];
 
 		return new Client(clientPort, serverIP, serverPort);
 	}
