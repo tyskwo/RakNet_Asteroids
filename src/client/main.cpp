@@ -365,7 +365,7 @@ void getInput()
 	{
 		if (!isPPressed)
 		{
-			mpClient->mpGame->spawnAsteroid();
+			//mpClient->mpGame->spawnAsteroid();
 			isPPressed = true;
 		}
 	}

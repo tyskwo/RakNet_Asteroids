@@ -6,6 +6,21 @@ Asteroid::Asteroid() { init(); };
 
 Asteroid::Asteroid(b2World* pWorld) :Object(pWorld) { init(); };
 
+Asteroid::Asteroid(int size, b2World* pWorld) :Object(pWorld) 
+{ 
+	mShouldDeleteBody = true;
+
+	this->size = static_cast<Size>(size);
+	health = (size + 1) * (size + 1);
+
+	b2Vec2 position;
+	int xRand = rand() % 2, yRand = rand() % 2;
+	xRand == 0 ? position.x = static_cast<float>(rand() % 150 - 300) : position.x = static_cast<float>(SCREEN_WIDTH + (rand() % 150 + 150));
+	yRand == 0 ? position.y = static_cast<float>(rand() % 150 - 300) : position.y = static_cast<float>(SCREEN_HEIGHT + (rand() % 150 + 150));
+	initPhysics(position);
+	initSprite(rand() % 3);
+};
+
 Asteroid::Asteroid(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type, b2World* pWorld)
 :Object(pWorld)
 {

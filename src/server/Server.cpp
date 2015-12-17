@@ -147,7 +147,7 @@ void Server::spawnAsteroid()
 	{
 		if (mpGames[i] != NULL && mpGames[i]->getHasStarted())
 		{
-			int index = mpGames[i]->spawnAsteroid();
+			//int index = mpGames[i]->spawnAsteroid();
 
 			/*if (index != -1)
 			{

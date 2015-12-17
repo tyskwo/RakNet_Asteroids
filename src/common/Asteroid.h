@@ -39,6 +39,7 @@ class Asteroid : public Object
 public:
 	Asteroid();
 	Asteroid(b2World* pWorld);
+	Asteroid(int size, b2World* pWorld);
 	Asteroid(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type, b2World* pWorld);
 	Asteroid(int size, b2Vec2 location, b2World* pWorld);
 	Asteroid(const Asteroid &other, b2World* pWorld);

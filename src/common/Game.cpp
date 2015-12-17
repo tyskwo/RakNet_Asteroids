@@ -92,6 +92,27 @@ void Game::update()
 	secondPlayer->getSprite()->setPosition(sf::Vector2f(secondPlayer->getBody()->GetPosition().x, secondPlayer->getBody()->GetPosition().y));
 	secondPlayer->getSprite()->setRotation(secondPlayer->getBody()->GetAngle()*180.0f / 3.14159f);
 
+	currentSmallTime++; currentMediumTime++; currentLargeTime++;
+
+	if (currentSmallTime >= smallTimer)
+	{
+		spawnAsteroid(0);
+		smallTimer -= 10;
+		if (smallTimer < 500) smallTimer = 500;
+	}
+	if (currentMediumTime >= mediumTimer)
+	{
+		spawnAsteroid(1);
+		mediumTimer -= 15;
+		if (mediumTimer < 1000) mediumTimer = 1000;
+	}
+	if (currentLargeTime >= largeTimer)
+	{
+		spawnAsteroid(2);
+		largeTimer -= 30;
+		if (largeTimer < 1500) largeTimer = 1500;
+	}
+
 
 	for (unsigned int i = 0; i < firstPlayerBullets.size(); i++)
 	{
@@ -274,13 +295,13 @@ int Game::fireBullet(bool isFirstPlayer)
 	return -1;
 }
 
-int Game::spawnAsteroid()
+int Game::spawnAsteroid(int size)
 {
 	for (unsigned int i = 0; i < mAsteroids.size(); i++)
 	{
 		if (mAsteroids[i] == NULL)
 		{
-			mAsteroids[i] = new Asteroid(physicsWorld);
+			mAsteroids[i] = new Asteroid(size, physicsWorld);
 			return i;
 		}
 	}
