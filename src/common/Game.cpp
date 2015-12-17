@@ -343,9 +343,13 @@ void Game::setAsteroid(int index, AsteroidObject data)
 
 void Game::cheater()
 {
+	std::cout << "more difficult round incoming" << std::endl;
+
 	smallTimer = 500;
 	mediumTimer = 2000;
 	largeTimer = 4000;
+
+
 }
 
 int Game::getRoundNum()
