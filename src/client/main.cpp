@@ -178,21 +178,26 @@ void drawScreen(sf::RenderWindow &pWindow)
 	pWindow.draw(*mpClient->mpGame->getFirstPlayer()->getSprite());
 	pWindow.draw(*mpClient->mpGame->getSecondPlayer()->getSprite());
 
-	if (mpClient->mpGame->getFirstPlayer()->getHealth() > 0)
-	{
-		for (int i = 0; i < mpClient->mpGame->getFirstPlayer()->getHealth(); i++)
-		{
-			pWindow.draw(p1Lives[i]);
-		}
-	}
+	sf::Text p1Health;
+	p1Health.setString(mpClient->mpGame->getFirstPlayer()->getHealth());
+	p1Health.setCharacterSize(60);
+	p1Health.setFont(mFont);
+	p1Health.setColor(sf::Color(255, 255, 255, 100));
+	p1Health.setOrigin(0.0f, p1Health.getLocalBounds().height);
+	p1Health.setPosition(10.0f, SCREEN_HEIGHT - 10.0f);
 
-	if  (mpClient->mpGame->getSecondPlayer()->getHealth() > 0)
-	{
-		for (int i = 0; i < mpClient->mpGame->getSecondPlayer()->getHealth(); i++)
-		{
-			pWindow.draw(p2Lives[i]);
-		}
-	}
+	sf::Text p2Health;
+	p2Health.setString(mpClient->mpGame->getSecondPlayer()->getHealth());
+	p2Health.setCharacterSize(60);
+	p2Health.setFont(mFont);
+	p2Health.setColor(sf::Color(255, 255, 255, 100));
+	p2Health.setOrigin(p2Health.getLocalBounds().height, p2Health.getLocalBounds().height);
+	p2Health.setPosition(SCREEN_WIDTH - 10.0f, SCREEN_HEIGHT - 10.0f);
+
+	pWindow.draw(p1Health);
+	pWindow.draw(p2Health);
+
+
 
 	for (unsigned int i = 0; i < mpClient->mpGame->getFirstPlayerBullets().size(); i++)
 	{
