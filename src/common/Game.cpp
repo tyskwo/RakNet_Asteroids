@@ -343,38 +343,9 @@ void Game::setAsteroid(int index, AsteroidObject data)
 
 void Game::cheater()
 {
-	if (largeTimer <= 8000 && largeTimer >= 6666)
-	{
-		smallTimer = 833;
-		mediumTimer = 3232;
-		largeTimer = 6666;
-
-		round = 2;
-	}
-	else if (largeTimer < 6666 && largeTimer >= 5333)
-	{
-		smallTimer = 666;
-		mediumTimer = 2666;
-		largeTimer = 5333;
-
-		round = 3;
-	}
-	else if (largeTimer < 5333 && largeTimer > 4000)
-	{
-		smallTimer = 500;
-		mediumTimer = 2000;
-		largeTimer = 4000;
-
-		round = 4;
-	}
-	else
-	{
-		smallTimer = 1000;
-		mediumTimer = 4000;
-		largeTimer = 8000;
-
-		round = 1;
-	}
+	smallTimer = 500;
+	mediumTimer = 2000;
+	largeTimer = 4000;
 }
 
 int Game::getRoundNum()
