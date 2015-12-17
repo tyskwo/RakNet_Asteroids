@@ -456,7 +456,7 @@ void interpolateAsteroids()
 {
 	for (unsigned int i = 0; i < mpClient->mAsteroidStates.size(); i++)
 	{
-		if (mpClient->hasAsteroidStates(i))
+		if (mpClient->hasAsteroidStates(i) && mpClient->mpGame->getAsteroid(i) != NULL)
 		{
 			if (mpClient->mpGame->getAsteroid(i)->isFinishedInterpolating())
 			{
