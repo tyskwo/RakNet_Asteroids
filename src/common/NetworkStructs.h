@@ -166,6 +166,16 @@ struct Delay
 };
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+struct HUD
+{
+	unsigned char mID;
+	unsigned char p1Health, p2Health;
+	unsigned short score;
+	unsigned char round;
+};
+#pragma pack(pop)
+
 //enum for the packet IDs
 enum MessageTypes
 {
@@ -179,6 +189,7 @@ enum MessageTypes
 	ID_RECIEVE_ASTEROID_INFO,
 	ID_RECIEVE_LAG,
 	ID_SEND_CHEAT_CODE,
+	ID_RECEIVE_HUD
 };
 
 

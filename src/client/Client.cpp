@@ -254,6 +254,13 @@ void Client::getPackets()
 			break;
 		}
 
+		case ID_RECEIVE_HUD:
+		{
+			HUD data = *reinterpret_cast<HUD*>(mpPacket->data);
+
+			break;
+		}
+
 		default:
 			//default handle packets in GameStructs
 			handlePackets(mPacketIdentifier, mpPacket);
