@@ -60,7 +60,7 @@ private:
 	bool checkDelete(Object* object);
 	void checkAsteroidSpawn(Asteroid* asteroid);
 
-	int smallTimer = 10000, mediumTimer = 40000, largeTimer = 80000;
+	int smallTimer = 1000, mediumTimer = 4000, largeTimer = 8000;
 	int currentSmallTime = 0, currentMediumTime = 500, currentLargeTime = 2000;
 };
 

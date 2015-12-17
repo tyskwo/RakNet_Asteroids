@@ -104,7 +104,7 @@ void Game::update()
 		smallTimer -= 10;
 
 		currentSmallTime = 0;
-		//if (smallTimer < 5000) smallTimer = 5000;
+		if (smallTimer < 500) smallTimer = 500;
 	}
 	if (currentMediumTime >= mediumTimer)
 	{
@@ -112,6 +112,7 @@ void Game::update()
 		mediumTimer -= 15;
 		
 		currentMediumTime = 0;
+		if (mediumTimer < 2000) mediumTimer = 2000;
 	}
 	if (currentLargeTime >= largeTimer)
 	{
@@ -119,6 +120,7 @@ void Game::update()
 		largeTimer -= 30;
 		
 		currentLargeTime = 0;
+		if (largeTimer < 4000) largeTimer = 4000;
 	}
 
 
