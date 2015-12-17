@@ -42,6 +42,7 @@ public:
 	inline bool getHasStarted() { return mHasStarted; };
 	inline void setHasStarted(bool value) { mHasStarted = value; };
 
+	inline int getRoundNum();
 
 	inline std::array<Asteroid*, 64> getAsteroids() { return mAsteroids; };
 

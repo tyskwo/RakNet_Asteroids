@@ -30,6 +30,7 @@ sf::Text p1Health;
 sf::Text p2Health;
 std::stringstream p1healthStream;
 std::stringstream p2healthStream;
+std::stringstream roundStream;
 
 std::array<sf::Sprite, 8> markers;
 std::array<sf::Sprite, 20> p1Lives, p2Lives;
@@ -179,6 +180,10 @@ void drawScreen(sf::RenderWindow &pWindow)
 	pWindow.clear(sf::Color(37, 37, 37));
 	pWindow.draw(HUDtext);
 
+	roundStream << mpClient->mpGame->getRoundNum();
+
+	HUDtext.setString("Round: " + roundStream.str());
+
 	pWindow.draw(*mpClient->mpGame->getFirstPlayer()->getSprite());
 	pWindow.draw(*mpClient->mpGame->getSecondPlayer()->getSprite());
 
@@ -189,21 +194,21 @@ void drawScreen(sf::RenderWindow &pWindow)
 	p1Health.setString(p1healthStream.str());
 	p1Health.setCharacterSize(60);
 	p1Health.setFont(mFont);
-	p1Health.setColor(sf::Color(234, 103, 103, 100));
+	p1Health.setColor(sf::Color(255, 255, 255, 100));
 	p1Health.setOrigin(0.0f, p1Health.getLocalBounds().height);
-	p1Health.setPosition(50.0f, SCREEN_HEIGHT - 50.0f);
+	p1Health.setPosition(10.0f, SCREEN_HEIGHT - 10.0f);
 
 	p2Health.setString(p2healthStream.str());
 	p2Health.setCharacterSize(60);
 	p2Health.setFont(mFont);
-	p2Health.setColor(sf::Color(103, 143, 234, 100));
-	p2Health.setOrigin(p2Health.getLocalBounds().width, p2Health.getLocalBounds().height);
-	p2Health.setPosition(SCREEN_WIDTH - 50.0f, SCREEN_HEIGHT - 50.0f);
+	p2Health.setColor(sf::Color(255, 255, 255, 100));
+	p2Health.setOrigin(p2Health.getLocalBounds().height, p2Health.getLocalBounds().height);
+	p2Health.setPosition(SCREEN_WIDTH - 10.0f, SCREEN_HEIGHT - 10.0f);
 
-	p1healthStream.str("");
-	p2healthStream.str("");
+	roundStream.str("");
 	p1healthStream.clear();
 	p2healthStream.clear();
+	roundStream.clear();
 
 	pWindow.draw(p1Health);
 	pWindow.draw(p2Health);

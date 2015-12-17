@@ -347,3 +347,14 @@ void Game::cheater()
 	mediumTimer = 2000;
 	largeTimer = 4000;
 }
+
+int Game::getRoundNum()
+{
+	int round = 0;
+
+	if (largeTimer <= 8000 && largeTimer >= 6666) round = 1;
+	else if (largeTimer < 6666 && largeTimer >= 5333) round = 2;
+	else round = 3;
+
+	return round;
+}
