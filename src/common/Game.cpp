@@ -45,9 +45,6 @@ void Game::cleanup()
 	delete secondPlayer;
 	secondPlayer = NULL;
 
-	delete physicsWorld;
-	physicsWorld = NULL;
-
 	for (unsigned int i = 0; i < firstPlayerBullets.size(); i++)
 	{
 		if (firstPlayerBullets[i] != NULL)
@@ -77,6 +74,9 @@ void Game::cleanup()
 			mAsteroids[i] = NULL;
 		}
 	}
+
+	delete physicsWorld;
+	physicsWorld = NULL;
 }
 
 void Game::update()
