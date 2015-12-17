@@ -92,25 +92,33 @@ void Game::update()
 	secondPlayer->getSprite()->setPosition(sf::Vector2f(secondPlayer->getBody()->GetPosition().x, secondPlayer->getBody()->GetPosition().y));
 	secondPlayer->getSprite()->setRotation(secondPlayer->getBody()->GetAngle()*180.0f / 3.14159f);
 
-	currentSmallTime++; currentMediumTime++; currentLargeTime++;
+	if (mHasStarted)
+	{
+		currentSmallTime++; currentMediumTime++; currentLargeTime++;
+	}
+	
 
 	if (currentSmallTime >= smallTimer)
 	{
 		spawnAsteroid(0);
 		smallTimer -= 10;
-		if (smallTimer < 500) smallTimer = 500;
+
+		currentSmallTime = 0;
+		//if (smallTimer < 5000) smallTimer = 5000;
 	}
 	if (currentMediumTime >= mediumTimer)
 	{
 		spawnAsteroid(1);
 		mediumTimer -= 15;
-		if (mediumTimer < 1000) mediumTimer = 1000;
+		
+		currentMediumTime = 0;
 	}
 	if (currentLargeTime >= largeTimer)
 	{
 		spawnAsteroid(2);
 		largeTimer -= 30;
-		if (largeTimer < 1500) largeTimer = 1500;
+		
+		currentLargeTime = 0;
 	}
 
 
