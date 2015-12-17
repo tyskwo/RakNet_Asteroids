@@ -54,6 +54,8 @@ private:
 	//spawn asteroid
 	void spawnAsteroid();
 	void sendAsteroids();
+	
+	void sendHUD();
 
 	//set the connection with a client
 	void setConnection(RakNet::Packet* p);
