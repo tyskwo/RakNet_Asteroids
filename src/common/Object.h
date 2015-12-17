@@ -19,7 +19,7 @@ public:
 	~Object();
 
 	void init();
-	void cleanup();
+	virtual void cleanup();
 
 	inline bool        shouldDelete() { return mShouldDelete; };
 	inline sf::Sprite* getSprite()    { return sprite; };

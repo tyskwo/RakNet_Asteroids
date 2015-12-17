@@ -75,7 +75,7 @@ void Asteroid::initPhysics(b2Vec2 location)
 	float32 angle = (static_cast <float32> (rand()) / static_cast <float32> (RAND_MAX)) * PI * 2;
 
 	b2BodyDef bodyDefinition;
-	bodyDefinition.type = b2_dynamicBody;
+	bodyDefinition.type = b2_kinematicBody;
 	bodyDefinition.position.Set(location.x, location.y);
 
 	body = mpWorld->CreateBody(&bodyDefinition);
@@ -86,11 +86,11 @@ void Asteroid::initPhysics(b2Vec2 location)
 	fix.shape = &circleShape;
 	fix.density = mPhysics::density();
 	fix.filter.categoryBits = PHYSICS::category::ASTEROID;
-	fix.filter.maskBits     = PHYSICS::category::FIRST_SHIP    | 
-							  PHYSICS::category::SECOND_SHIP   | 
-							  PHYSICS::category::FIRST_BULLET  | 
-							  PHYSICS::category::SECOND_BULLET |
-							  PHYSICS::category::ASTEROID;
+	fix.filter.maskBits = PHYSICS::category::FIRST_SHIP |
+		PHYSICS::category::SECOND_SHIP |
+		PHYSICS::category::FIRST_BULLET |
+		PHYSICS::category::SECOND_BULLET;
+							  //PHYSICS::category::ASTEROID;
 	body->CreateFixture(&fix);
 
 
@@ -254,4 +254,17 @@ position Asteroid::getPosition()
 	pos.angle = body->GetAngle();
 
 	return pos;
+}
+
+void Asteroid::cleanup()
+{
+	mShouldDelete = true;
+
+	if (body != NULL)
+	{
+		mpWorld->DestroyBody(body);
+	}
+
+	delete(sprite);
+	sprite = NULL;
 }

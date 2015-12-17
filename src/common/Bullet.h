@@ -15,6 +15,8 @@ public:
 	Bullet(bool firstConnected, Ship* player, b2World* pWorld);
 	~Bullet();
 
+	virtual void cleanup();
+
 	void init(bool firstConnected, Ship* player);
 
 	inline const float32 getLinearSpeed()  { return mPhysics::linearSpeed(); };

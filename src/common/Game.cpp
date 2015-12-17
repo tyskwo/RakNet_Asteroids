@@ -39,14 +39,14 @@ void Game::init(bool isServer)
 
 void Game::cleanup()
 {
-	delete physicsWorld;
-	physicsWorld = NULL;
-
 	delete firstPlayer;
 	firstPlayer = NULL;
 
 	delete secondPlayer;
 	secondPlayer = NULL;
+
+	delete physicsWorld;
+	physicsWorld = NULL;
 
 	for (unsigned int i = 0; i < firstPlayerBullets.size(); i++)
 	{
@@ -302,7 +302,5 @@ void Game::setAsteroids(AsteroidData data)
 
 void Game::setAsteroid(int index, AsteroidObject data)
 {
-	b2Vec2 position(data.position.x, data.position.y);
-	b2Vec2 velocity(data.velocity.x, data.velocity.y);
-	mAsteroids[index] = new Asteroid(data.size, position, velocity, data.velocity.rot, data.position.angle, data.type, physicsWorld);
+	mAsteroids[index] = new Asteroid(data.size, b2Vec2(data.position.x, data.position.y), b2Vec2(data.velocity.x, data.velocity.y), data.velocity.rot, data.position.angle, data.type, physicsWorld);
 }

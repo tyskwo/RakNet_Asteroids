@@ -14,6 +14,8 @@ public:
 	Ship(bool firstConnected, b2World* pWorld);
 	~Ship();
 
+	virtual void cleanup();
+
 	void init(bool firstConnected);
 
 	inline const float32 getLinearSpeed()  { return mPhysics::linearSpeed(); };

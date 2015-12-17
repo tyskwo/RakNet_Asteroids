@@ -111,3 +111,11 @@ void Ship::loseHealth(int damage)
 	if (health > 0) health -= damage;
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
+
+void Ship::cleanup()
+{
+	mShouldDelete = true;
+
+	delete(sprite);
+	sprite = NULL;
+}

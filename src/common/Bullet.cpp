@@ -72,3 +72,16 @@ void Bullet::initSprite(bool firstConnected)
 	sprite->setPosition(sf::Vector2f(body->GetPosition().x, body->GetPosition().y));
 	sprite->setRotation(body->GetAngle()*180.0f / 3.14159f);
 }
+
+void Bullet::cleanup()
+{
+	mShouldDelete = true;
+
+	if (body != NULL)
+	{
+		mpWorld->DestroyBody(body);
+	}
+
+	delete(sprite);
+	sprite = NULL;
+}
