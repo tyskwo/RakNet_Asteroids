@@ -227,16 +227,17 @@ void Server::getPackets()
 				//bulletData.bullet.position.x += bulletData.bullet.velocity.x * (RakNet::GetTime() - bulletData.timeStamp);
 				//bulletData.bullet.position.y += bulletData.bullet.velocity.y * (RakNet::GetTime() - bulletData.timeStamp);
 
+
 				bulletData.mID = ID_RECIEVE_BULLET_INFO;
 
 				if (mGames[i][0] == p->guid)
 				{
-					//mpGames[i]->getFirstPlayerBullets()[bulletData.index]->getBody()->SetLinearVelocity(;
+					mpGames[i]->fireBullet(true);
 					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
 				}
 				else if (mGames[i][1] == p->guid)
 				{
-					//mpGames[i]->fireBullet(false);
+					mpGames[i]->fireBullet(false);
 					mpServer->Send((const char*)&bulletData, sizeof(bulletData), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				}
 			}
