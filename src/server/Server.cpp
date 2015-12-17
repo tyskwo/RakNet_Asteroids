@@ -146,7 +146,7 @@ void Server::spawnAsteroid()
 		{
 			int index = mpGames[i]->spawnAsteroid();
 
-			if (index != -1)
+			/*if (index != -1)
 			{
 				AsteroidData asteroid;
 				asteroid.asteroid.index = index;
@@ -159,7 +159,7 @@ void Server::spawnAsteroid()
 				asteroid.mID = ID_RECIEVE_NEW_ASTEROID;
 				mpServer->Send((const char*)&asteroid, sizeof(asteroid), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
 				mpServer->Send((const char*)&asteroid, sizeof(asteroid), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
-			}
+			}*/
 		}
 	}
 }

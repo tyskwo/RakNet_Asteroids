@@ -299,3 +299,10 @@ void Game::setAsteroids(AsteroidData data)
 {
 	mAsteroids[data.asteroid.index] = new Asteroid(data.asteroid.size, b2Vec2(data.asteroid.position.x, data.asteroid.position.y), b2Vec2(data.asteroid.velocity.x, data.asteroid.velocity.y), data.asteroid.velocity.rot, data.asteroid.position.angle, data.asteroid.type, physicsWorld);
 }
+
+void Game::setAsteroid(int index, AsteroidObject data)
+{
+	b2Vec2 position(data.position.x, data.position.y);
+	b2Vec2 velocity(data.velocity.x, data.velocity.y);
+	mAsteroids[index] = new Asteroid(data.size, position, velocity, data.velocity.rot, data.position.angle, data.type, physicsWorld);
+}

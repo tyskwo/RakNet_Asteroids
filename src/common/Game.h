@@ -25,6 +25,7 @@ public:
 
 	int fireBullet(bool isFirstPlayer);
 	int spawnAsteroid();
+	void setAsteroid(int index, AsteroidObject data);
 
 	inline Ship* getFirstPlayer()  { return firstPlayer;  };
 	inline Ship* getSecondPlayer() { return secondPlayer; };

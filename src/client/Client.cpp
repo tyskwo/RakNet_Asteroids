@@ -219,7 +219,12 @@ void Client::getPackets()
 
 			for (unsigned int i = 0; i < mAsteroidStates.size(); i++)
 			{
-				if (data.asteroids[i].isNULL == false)
+				if (data.asteroids[i].isNULL && mpGame->getAsteroid(i) != NULL)
+				{
+					mpGame->getAsteroid(i)->setDelete(true);
+				}
+
+				else if (data.asteroids[i].isNULL == false && mpGame->getAsteroid(i) != NULL)
 				{
 					if (mAsteroidStates[i].size() == 0)
 					{
@@ -235,6 +240,12 @@ void Client::getPackets()
 						mOnePacketAgo = data.timeStamp;
 					}
 				}
+
+				else if (mpGame->getAsteroid(i) == NULL && data.asteroids[i].isNULL == false)
+				{
+					mpGame->setAsteroid(i, data.asteroids[i]);
+				}
+
 			}
 			break;
 		}

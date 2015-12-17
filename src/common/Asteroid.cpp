@@ -18,7 +18,7 @@ void Asteroid::initAlreadyCreated(int size, b2Vec2 position, b2Vec2 velocity, fl
 	health = (size + 1) * (size + 1);
 
 	initPhysics(position);
-	initSprite();
+	initSprite(type);
 
 	body->SetLinearVelocity(velocity);
 	body->SetAngularVelocity(rotVel);
@@ -74,7 +74,7 @@ void Asteroid::initPhysics(b2Vec2 location)
 	float32 angle = (static_cast <float32> (rand()) / static_cast <float32> (RAND_MAX)) * PI * 2;
 
 	b2BodyDef bodyDefinition;
-	bodyDefinition.type = b2_kinematicBody;
+	bodyDefinition.type = b2_dynamicBody;
 	bodyDefinition.position.Set(location.x, location.y);
 
 	body = mpWorld->CreateBody(&bodyDefinition);
@@ -88,8 +88,8 @@ void Asteroid::initPhysics(b2Vec2 location)
 	fix.filter.maskBits     = PHYSICS::category::FIRST_SHIP    | 
 							  PHYSICS::category::SECOND_SHIP   | 
 							  PHYSICS::category::FIRST_BULLET  | 
-							  PHYSICS::category::SECOND_BULLET; 
-							  //PHYSICS::category::ASTEROID;
+							  PHYSICS::category::SECOND_BULLET |
+							  PHYSICS::category::ASTEROID;
 	body->CreateFixture(&fix);
 
 
