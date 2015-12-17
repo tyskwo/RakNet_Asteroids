@@ -20,8 +20,9 @@ void Object::init() {}
 void Object::cleanup()
 {
 	mShouldDelete = true;
-
-	//mpWorld->DestroyBody(body);
+ 
+	if (body != NULL)
+		mpWorld->DestroyBody(body);
 
 	delete(sprite);
 	sprite = NULL;

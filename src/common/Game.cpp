@@ -92,12 +92,14 @@ void Game::update()
 
 	for (unsigned int i = 0; i < firstPlayerBullets.size(); i++)
 	{
-		if (firstPlayerBullets[i] != NULL && firstPlayerBullets[i]->shouldDelete())
+		bool shouldDelete = false;
+		if (firstPlayerBullets[i] != NULL) shouldDelete = firstPlayerBullets[i]->shouldDelete();
+		if (firstPlayerBullets[i] != NULL && shouldDelete)
 		{
 			delete(firstPlayerBullets[i]);
 			firstPlayerBullets[i] = NULL;
 		}
-		if (firstPlayerBullets[i] != NULL)
+		else if (firstPlayerBullets[i] != NULL && !shouldDelete)
 		{
 			firstPlayerBullets[i]->getSprite()->setPosition(sf::Vector2f(firstPlayerBullets[i]->getBody()->GetPosition().x, firstPlayerBullets[i]->getBody()->GetPosition().y));
 			firstPlayerBullets[i]->getSprite()->setRotation(firstPlayerBullets[i]->getBody()->GetAngle()*180.0f / 3.14159f);
@@ -112,12 +114,15 @@ void Game::update()
 
 	for (unsigned int i = 0; i < secondPlayerBullets.size(); i++)
 	{
-		if (secondPlayerBullets[i] != NULL && secondPlayerBullets[i]->shouldDelete())
+		bool shouldDelete = false;
+		
+		if (secondPlayerBullets[i] != NULL) shouldDelete = secondPlayerBullets[i]->shouldDelete();
+		if (secondPlayerBullets[i] != NULL && shouldDelete)
 		{
 			delete(secondPlayerBullets[i]);
 			secondPlayerBullets[i] = NULL;
 		}
-		if (secondPlayerBullets[i] != NULL)
+		else if (secondPlayerBullets[i] != NULL && !shouldDelete)
 		{
 			secondPlayerBullets[i]->getSprite()->setPosition(sf::Vector2f(secondPlayerBullets[i]->getBody()->GetPosition().x, secondPlayerBullets[i]->getBody()->GetPosition().y));
 			secondPlayerBullets[i]->getSprite()->setRotation(secondPlayerBullets[i]->getBody()->GetAngle()*180.0f / 3.14159f);
