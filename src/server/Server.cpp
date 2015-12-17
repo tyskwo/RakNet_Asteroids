@@ -278,7 +278,7 @@ void Server::getPackets()
 			break;
 		}
 
-		case ID_RECIEVE_LAG:
+		case ID_SEND_CHEAT_CODE:
 		{
 			//find correct game and client
 			for (unsigned int i = 0; i < mGames.size(); i++)
