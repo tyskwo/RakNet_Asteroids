@@ -123,12 +123,32 @@ void Server::update()
 		//printf("%d\n", (RakNet::GetTime() - mLastUpdateSent));
 
 		sendAsteroids();
+		sendHUD();
 		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
 		
 		if (mAsteroidIncr > 500)
 		{
 			spawnAsteroid();
 			mAsteroidIncr = 0;
+		}
+	}
+}
+
+void Server::sendHUD()
+{
+	for (unsigned int i = 0; i < mpGames.size(); i++)
+	{
+		if (mpGames[i] != NULL)
+		{
+			HUD theHUD;
+			theHUD.mID = ID_RECEIVE_HUD;
+			theHUD.p1Health = mpGames[i]->getFirstPlayer()->getHealth();
+			theHUD.p2Health = mpGames[i]->getSecondPlayer()->getHealth();
+			theHUD.round = mpGames[i]->getRoundNum();
+			theHUD.score = mpGames[i]->getScore();
+
+			mpServer->Send((const char*)&theHUD, sizeof(theHUD), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);
+			mpServer->Send((const char*)&theHUD, sizeof(theHUD), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][1], false);
 		}
 	}
 }
