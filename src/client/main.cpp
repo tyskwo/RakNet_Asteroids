@@ -280,7 +280,7 @@ void drawScreen(sf::RenderWindow &pWindow)
 //get keyboard/mouse input
 void getInput()
 {
-	if (mpClient->getFirstConnected())
+	if (mpClient->getFirstConnected() && mpClient->mpGame->getFirstPlayer()->getHealth() > 0)
 	{
 		//up arrow key or W is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -335,7 +335,7 @@ void getInput()
 			isSpacePressed = false;
 		}
 	}
-	else
+	else if (mpClient->mpGame->getSecondPlayer()->getHealth() > 0)
 	{
 		//up arrow key or W is pressed down
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
