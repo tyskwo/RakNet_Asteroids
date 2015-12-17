@@ -182,8 +182,7 @@ void drawScreen(sf::RenderWindow &pWindow)
 	pWindow.clear(sf::Color(37, 37, 37));
 	pWindow.draw(HUDtext);
 
-	roundStream << mpClient->mpGame->getRoundNum();
-
+	roundStream << mpClient->mpGame->getRoundText();
 	scoreStream << mpClient->mpGame->getScoreText();
 
 

@@ -144,7 +144,7 @@ void Server::sendHUD()
 			theHUD.mID = ID_RECEIVE_HUD;
 			theHUD.p1Health = mpGames[i]->getFirstPlayer()->getHealth();
 			theHUD.p2Health = mpGames[i]->getSecondPlayer()->getHealth();
-			theHUD.round = mpGames[i]->getRoundText();
+			theHUD.round = mpGames[i]->getRoundNum();
 			theHUD.score = mpGames[i]->getScoreText();
 
 			mpServer->Send((const char*)&theHUD, sizeof(theHUD), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mGames[i][0], false);

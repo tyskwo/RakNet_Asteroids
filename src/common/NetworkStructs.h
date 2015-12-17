@@ -170,9 +170,9 @@ struct Delay
 struct HUD
 {
 	unsigned char mID;
-	unsigned char p1Health, p2Health;
-	unsigned short score;
-	unsigned char round;
+	int p1Health, p2Health;
+	int score;
+	int round;
 };
 #pragma pack(pop)
 
