@@ -183,7 +183,7 @@ void drawScreen(sf::RenderWindow &pWindow)
 	scoreStream << mpClient->mpGame->getScoreText();
 
 
-	HUDtext.setString("Round: " + roundStream.str() + "\n" + scoreStream.str() + " pts");
+	HUDtext.setString(scoreStream.str() + " pts");
 	HUDtext.setFont(mFont);
 	HUDtext.setColor(sf::Color(255, 255, 255, 60));
 
