@@ -212,6 +212,8 @@ void drawScreen(sf::RenderWindow &pWindow)
 		{
 			if (mpClient->mpGame->getAsteroids()[i]->isOnScreen())
 			{
+				printf("%f\n", mpClient->mpGame->getAsteroids()[i]->getSprite()->getPosition().x);
+
 				pWindow.draw(*mpClient->mpGame->getAsteroids()[i]->getSprite());
 			}
 			else

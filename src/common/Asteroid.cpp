@@ -18,11 +18,12 @@ void Asteroid::initAlreadyCreated(int size, b2Vec2 position, b2Vec2 velocity, fl
 	health = (size + 1) * (size + 1);
 
 	initPhysics(position);
-	initSprite(type);
 
 	body->SetLinearVelocity(velocity);
 	body->SetAngularVelocity(rotVel);
 	body->SetTransform(position, angle);
+
+	initSprite(type);
 }
 
 Asteroid::Asteroid(int size, b2Vec2 location, b2World* pWorld)

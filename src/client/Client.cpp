@@ -138,7 +138,6 @@ void Client::getPackets()
 
 			mpClient->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
 
-			printf("%d", gameInfo.gameNumber);
 			break;
 		}
 		case ID_SECOND_CONNECTION:
@@ -156,14 +155,12 @@ void Client::getPackets()
 
 			RakNet::Time currentTime = RakNet::GetTimeMS();
 			delay = 200.0f - (currentTime - gameInfo.timeStamp);
-			printf("%f\n", delay);
 			gameInfo.secondPlayerLag = delay;
 			gameInfo.mID = ID_RECIEVE_LAG;
 
 			mpClient->Send((const char*)&gameInfo, sizeof(gameInfo), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
 
 
-			printf("%d", gameInfo.gameNumber);
 			break;
 		}
 
@@ -221,10 +218,17 @@ void Client::getPackets()
 			{
 				if (data.asteroids[i].isNULL && mpGame->getAsteroid(i) != NULL)
 				{
+					printf("DIE!\n");
 					mpGame->getAsteroid(i)->setDelete(true);
 				}
+				if (mpGame->getAsteroid(i) == NULL && data.asteroids[i].isNULL == false)
+				{
+					mpGame->setAsteroid(i, data.asteroids[i]);
 
-				else if (data.asteroids[i].isNULL == false && mpGame->getAsteroid(i) != NULL)
+					printf("%f\n", mpGame->getAsteroid(i)->getPosition().x);
+				}
+
+				if (data.asteroids[i].isNULL == false && mpGame->getAsteroid(i) != NULL)
 				{
 					if (mAsteroidStates[i].size() == 0)
 					{
@@ -239,11 +243,6 @@ void Client::getPackets()
 						mTwoPacketsAgo = mOnePacketAgo;
 						mOnePacketAgo = data.timeStamp;
 					}
-				}
-
-				else if (mpGame->getAsteroid(i) == NULL && data.asteroids[i].isNULL == false)
-				{
-					mpGame->setAsteroid(i, data.asteroids[i]);
 				}
 
 			}

@@ -371,6 +371,9 @@ void Server::sendAsteroids()
 			{
 				asteroids.asteroids[j].health = mpGames[i]->getAsteroids()[j]->getHealth();
 				asteroids.asteroids[j].position = mpGames[i]->getAsteroids()[j]->getPosition();
+				asteroids.asteroids[j].velocity = velocity(mpGames[i]->getAsteroids()[j]->getBody()->GetLinearVelocity().x, mpGames[i]->getAsteroids()[j]->getBody()->GetLinearVelocity().y, mpGames[i]->getAsteroids()[j]->getBody()->GetAngularVelocity());
+				asteroids.asteroids[j].size = mpGames[i]->getAsteroids()[j]->getSize();
+				asteroids.asteroids[j].type = mpGames[i]->getAsteroids()[j]->getSize();
 
 				asteroids.asteroids[j].timeStamp = RakNet::GetTime();
 
