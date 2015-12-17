@@ -218,14 +218,11 @@ void Client::getPackets()
 			{
 				if (data.asteroids[i].isNULL && mpGame->getAsteroid(i) != NULL)
 				{
-					printf("DIE!\n");
 					mpGame->getAsteroid(i)->setDelete(true);
 				}
 				if (mpGame->getAsteroid(i) == NULL && data.asteroids[i].isNULL == false)
 				{
 					mpGame->setAsteroid(i, data.asteroids[i]);
-
-					printf("%f\n", mpGame->getAsteroid(i)->getPosition().x);
 				}
 
 				if (data.asteroids[i].isNULL == false && mpGame->getAsteroid(i) != NULL)

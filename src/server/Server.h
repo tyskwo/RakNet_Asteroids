@@ -63,6 +63,7 @@ private:
 	RakNet::Time mLastUpdateSent;
 
 	int mAsteroidIncr;
+	int mSmallTimer, mMediumTimer, mLargeTimer;
 };
 
 #endif

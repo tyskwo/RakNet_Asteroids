@@ -115,10 +115,13 @@ void Server::update()
 	//get packets from clients
 	getPackets();
 	//updateGames();
-	mAsteroidIncr++;
 
 	if ((RakNet::GetTime() - mLastUpdateSent) > 50.0f)
 	{
+		//mAsteroidIncr += (RakNet::GetTimeMS() - mLastUpdateSent);
+		mAsteroidIncr++;
+		//printf("%d\n", (RakNet::GetTime() - mLastUpdateSent));
+
 		sendAsteroids();
 		mLastUpdateSent = (RakNet::GetTime() - mLastUpdateSent);
 		

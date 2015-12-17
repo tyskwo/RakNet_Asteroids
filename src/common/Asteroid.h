@@ -44,7 +44,7 @@ public:
 	Asteroid(const Asteroid &other, b2World* pWorld);
 	~Asteroid();
 
-	virtual void cleanup();
+	virtual void cleanup(bool shouldDelete = true);
 
 	void init();
 	void initAlreadyCreated(int size, b2Vec2 position, b2Vec2 velocity, float rotVel, float angle, int type);

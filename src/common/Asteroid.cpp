@@ -24,11 +24,15 @@ void Asteroid::initAlreadyCreated(int size, b2Vec2 position, b2Vec2 velocity, fl
 	body->SetTransform(position, angle);
 
 	initSprite(type);
+
+	mShouldDeleteBody = true;
 }
 
 Asteroid::Asteroid(int size, b2Vec2 location, b2World* pWorld)
 :Object(pWorld)
 {  
+	mShouldDeleteBody = true;
+
 	this->size = static_cast<Size>(size);
 	health = (size + 1) * (size + 1);
 
@@ -39,14 +43,18 @@ Asteroid::Asteroid(int size, b2Vec2 location, b2World* pWorld)
 Asteroid::Asteroid(const Asteroid &other, b2World* pWorld)
 :Object(pWorld)
 {
+	mShouldDeleteBody = true;
+
 	body = other.body;
 	sprite = other.sprite;
 }
 
-Asteroid::~Asteroid() {};
+Asteroid::~Asteroid() { cleanup(); };
 
 void Asteroid::init()
 {
+	mShouldDeleteBody = true;
+
 	initSize();
 
 	b2Vec2 position;
@@ -256,11 +264,11 @@ position Asteroid::getPosition()
 	return pos;
 }
 
-void Asteroid::cleanup()
+void Asteroid::cleanup(bool shouldDelete)
 {
 	mShouldDelete = true;
 
-	if (body != NULL)
+	if (body != NULL && mShouldDeleteBody)
 	{
 		mpWorld->DestroyBody(body);
 	}

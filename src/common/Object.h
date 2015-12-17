@@ -28,6 +28,8 @@ public:
 
 	inline void setDelete(bool trash) { mShouldDelete = trash; };
 
+	inline void setShouldDeleteBody(bool value) { mShouldDeleteBody = value; };
+
 protected:
 	void initPhysics();
 	void initSprite();
@@ -38,6 +40,7 @@ protected:
 
 	b2World* mpWorld;
 
+	bool mShouldDeleteBody;
 	bool mShouldDelete = false;
 };
 

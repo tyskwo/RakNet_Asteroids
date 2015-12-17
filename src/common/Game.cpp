@@ -52,6 +52,7 @@ void Game::cleanup()
 	{
 		if (firstPlayerBullets[i] != NULL)
 		{
+			firstPlayerBullets[i]->setShouldDeleteBody(false);
 			delete firstPlayerBullets[i];
 			firstPlayerBullets[i] = NULL;
 		}
@@ -61,6 +62,7 @@ void Game::cleanup()
 	{
 		if (secondPlayerBullets[i] != NULL)
 		{
+			secondPlayerBullets[i]->setShouldDeleteBody(false);
 			delete secondPlayerBullets[i];
 			secondPlayerBullets[i] = NULL;
 		}
@@ -70,6 +72,7 @@ void Game::cleanup()
 	{
 		if (mAsteroids[i] != NULL)
 		{
+			mAsteroids[i]->setShouldDeleteBody(false);
 			delete mAsteroids[i];
 			mAsteroids[i] = NULL;
 		}

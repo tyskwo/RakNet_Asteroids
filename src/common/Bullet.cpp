@@ -3,7 +3,7 @@
 
 #include "..\common\PhysicsStructs.h"
 
-Bullet::Bullet() {};
+Bullet::Bullet() { };
 
 Bullet::Bullet(bool firstConnected, Ship* player, b2World* pWorld) : Object(pWorld) { init(firstConnected, player); };
 
@@ -11,12 +11,14 @@ Bullet::Bullet(const Bullet &other, b2World* pWorld) : Object(pWorld)
 {
 	body = other.body;
 	sprite = other.sprite;
+	mShouldDeleteBody = true;
 }
 
-Bullet::~Bullet() {};
+Bullet::~Bullet() { cleanup(); };
 
 void Bullet::init(bool firstConnected, Ship* player)
 {
+	mShouldDeleteBody = true;
 	initPhysics(firstConnected, player);
 	initSprite(firstConnected);
 }
@@ -73,11 +75,11 @@ void Bullet::initSprite(bool firstConnected)
 	sprite->setRotation(body->GetAngle()*180.0f / 3.14159f);
 }
 
-void Bullet::cleanup()
+void Bullet::cleanup(bool shouldDelete)
 {
 	mShouldDelete = true;
 
-	if (body != NULL)
+	if (body != NULL && mShouldDeleteBody)
 	{
 		mpWorld->DestroyBody(body);
 	}

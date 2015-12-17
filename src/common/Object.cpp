@@ -11,20 +11,21 @@ Object::Object(const Object &other)
 {
 	body = other.body;
 	sprite = other.sprite;
+	mShouldDeleteBody = true;
 }
 
-Object::~Object() { cleanup(); };
+Object::~Object() { };//cleanup(); };
 
-void Object::init() {}
+void Object::init() { mShouldDeleteBody = false; }
 
 void Object::cleanup()
 {
 	mShouldDelete = true;
  
-	if (body != NULL)
+	/*if (body != NULL)
 	{
 		mpWorld->DestroyBody(body);
-	}
+	}*/
 
 	delete(sprite);
 	sprite = NULL;

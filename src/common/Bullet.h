@@ -15,7 +15,7 @@ public:
 	Bullet(bool firstConnected, Ship* player, b2World* pWorld);
 	~Bullet();
 
-	virtual void cleanup();
+	virtual void cleanup(bool shouldDelete = true);
 
 	void init(bool firstConnected, Ship* player);
 
