@@ -379,3 +379,13 @@ int Game::getRoundNum()
 
 	return round;
 }
+
+void Game::setFirstPlayerHealth(int health)
+{
+	firstPlayer->loseHealth(health);
+}
+
+void Game::setSecondPlayerHealth(int health)
+{
+	secondPlayer->loseHealth(health);
+}

@@ -49,7 +49,15 @@ public:
 	inline b2World* getWorld() { return physicsWorld; };
 
 	void cheater();
-	inline int getScore() { return score; };
+	inline int getScoreText() { return score; };
+	inline int getRoundText() { return round; };
+
+
+	inline void setRound(int round) { this->round = round; };
+	inline void setScore(int score) { this->score = score; };
+	void setFirstPlayerHealth(int health); 
+	void setSecondPlayerHealth(int health);
+
 
 private:
 	b2World* physicsWorld;
@@ -68,6 +76,7 @@ private:
 	int currentSmallTime = 0, currentMediumTime = 500, currentLargeTime = 2000;
 
 	int score = 0;
+	int round = 0;
 };
 
 #endif

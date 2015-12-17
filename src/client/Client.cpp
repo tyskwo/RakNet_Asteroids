@@ -258,6 +258,11 @@ void Client::getPackets()
 		{
 			HUD data = *reinterpret_cast<HUD*>(mpPacket->data);
 
+			mpGame->setFirstPlayerHealth(data.p1Health);
+			mpGame->setSecondPlayerHealth(data.p2Health);
+			mpGame->setScore(data.score);
+			mpGame->setRound(data.round);
+
 			break;
 		}
 
