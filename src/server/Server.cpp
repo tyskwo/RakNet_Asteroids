@@ -278,6 +278,21 @@ void Server::getPackets()
 			break;
 		}
 
+		case ID_RECIEVE_LAG:
+		{
+			//find correct game and client
+			for (unsigned int i = 0; i < mGames.size(); i++)
+			{
+				if (mGames[i][0] == p->guid || mGames[i][1] == p->guid)
+				{
+					mpGames[i]->cheater();
+				}
+
+			}
+
+			break;
+		}
+
 		default:
 			//default handle packets in GameStructs
 			handlePackets(packetIdentifier, p);

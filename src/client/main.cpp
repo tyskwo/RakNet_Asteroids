@@ -365,7 +365,7 @@ void getInput()
 	{
 		if (!isPPressed)
 		{
-			//mpClient->mpGame->spawnAsteroid();
+			mpClient->sendCheatCode();
 			isPPressed = true;
 		}
 	}

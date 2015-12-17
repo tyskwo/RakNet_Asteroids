@@ -43,7 +43,7 @@ private:
 		static const float32 friction()	       { return 0.3f; };
 	};
 
-	int health = 20;
+	int health = 300;
 	
 
 

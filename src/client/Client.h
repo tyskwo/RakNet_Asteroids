@@ -61,6 +61,8 @@ public:
 
 	inline void initGame() { mpGame = new Game(false); }
 
+	void sendCheatCode();
+
 private:
 	//pointer to client object
 	RakNet::RakPeerInterface* mpClient;

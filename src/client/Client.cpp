@@ -289,3 +289,9 @@ AsteroidObject Client::getBestAsteroidState(int index)
 
 	return mAsteroidStates[index].front();
 }
+
+void Client::sendCheatCode()
+{
+	unsigned char mID = ID_SEND_CHEAT_CODE;
+	mpClient->Send((const char*)&mID, sizeof(mID), HIGH_PRIORITY, RELIABLE_SEQUENCED, 0, mServerGuid, false);
+}

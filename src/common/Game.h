@@ -47,6 +47,8 @@ public:
 
 	inline b2World* getWorld() { return physicsWorld; };
 
+	void cheater();
+
 private:
 	b2World* physicsWorld;
 

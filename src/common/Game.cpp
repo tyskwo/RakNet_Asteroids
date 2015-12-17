@@ -338,3 +338,10 @@ void Game::setAsteroid(int index, AsteroidObject data)
 {
 	mAsteroids[index] = new Asteroid(data.size, b2Vec2(data.position.x, data.position.y), b2Vec2(data.velocity.x, data.velocity.y), data.velocity.rot, data.position.angle, data.type, physicsWorld);
 }
+
+void Game::cheater()
+{
+	smallTimer = 500;
+	mediumTimer = 2000;
+	largeTimer = 4000;
+}
