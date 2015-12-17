@@ -125,9 +125,6 @@ int main(int argc, char** argv)
 	delete mpClient;
 	mpClient = NULL;
 
-	gMemoryTracker.reportAllocations(std::cout);
-	system("pause");
-
 	return 0;
 };
 

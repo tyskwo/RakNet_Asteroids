@@ -45,8 +45,5 @@ int main(int argc, char** argv)
 	delete mpServer;
 	mpServer = NULL;
 
-	gMemoryTracker.reportAllocations(std::cout);
-	system("pause");
-
 	return 0;
 }
