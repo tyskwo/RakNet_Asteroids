@@ -42,13 +42,14 @@ public:
 	inline bool getHasStarted() { return mHasStarted; };
 	inline void setHasStarted(bool value) { mHasStarted = value; };
 
-	inline int getRoundNum();
+	int getRoundNum();
 
 	inline std::array<Asteroid*, 64> getAsteroids() { return mAsteroids; };
 
 	inline b2World* getWorld() { return physicsWorld; };
 
 	void cheater();
+	inline int getScore() { return score; };
 
 private:
 	b2World* physicsWorld;
@@ -65,6 +66,8 @@ private:
 
 	int smallTimer = 1000, mediumTimer = 4000, largeTimer = 8000;
 	int currentSmallTime = 0, currentMediumTime = 500, currentLargeTime = 2000;
+
+	int score = 0;
 };
 
 #endif
