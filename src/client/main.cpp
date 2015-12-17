@@ -189,14 +189,14 @@ void drawScreen(sf::RenderWindow &pWindow)
 	p1Health.setString(p1healthStream.str());
 	p1Health.setCharacterSize(60);
 	p1Health.setFont(mFont);
-	p1Health.setColor(sf::Color(255, 255, 255, 100));
+	p1Health.setColor(sf::Color(168, 74, 74, 100));
 	p1Health.setOrigin(0.0f, p1Health.getLocalBounds().height);
 	p1Health.setPosition(10.0f, SCREEN_HEIGHT - 10.0f);
 
 	p2Health.setString(p2healthStream.str());
 	p2Health.setCharacterSize(60);
 	p2Health.setFont(mFont);
-	p2Health.setColor(sf::Color(255, 255, 255, 100));
+	p2Health.setColor(sf::Color(74, 102, 168, 100));
 	p2Health.setOrigin(p2Health.getLocalBounds().height, p2Health.getLocalBounds().height);
 	p2Health.setPosition(SCREEN_WIDTH - 10.0f, SCREEN_HEIGHT - 10.0f);
 
