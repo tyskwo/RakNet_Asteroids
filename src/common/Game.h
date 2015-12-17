@@ -52,6 +52,8 @@ public:
 	inline int getScoreText() { return score; };
 	inline int getRoundText() { return round; };
 
+	inline int getLargeTimer() { return currentLargeTime; };
+
 
 	inline void setRound(int round) { this->round = round; };
 	inline void setScore(int score) { this->score = score; };

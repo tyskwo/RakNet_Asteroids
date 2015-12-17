@@ -348,36 +348,44 @@ void Game::cheater()
 		smallTimer = 833;
 		mediumTimer = 3232;
 		largeTimer = 6666;
+
+		round = 2;
 	}
 	else if (largeTimer < 6666 && largeTimer >= 5333)
 	{
 		smallTimer = 666;
 		mediumTimer = 2666;
 		largeTimer = 5333;
+
+		round = 3;
 	}
 	else if (largeTimer < 5333 && largeTimer > 4000)
 	{
 		smallTimer = 500;
 		mediumTimer = 2000;
 		largeTimer = 4000;
+
+		round = 4;
 	}
 	else
 	{
 		smallTimer = 1000;
 		mediumTimer = 4000;
 		largeTimer = 8000;
+
+		round = 1;
 	}
 }
 
 int Game::getRoundNum()
 {
-	int round = 0;
+	int roundNum = 0;
 
-	if (largeTimer <= 8000 && largeTimer >= 6666) round = 1;
-	else if (largeTimer < 6666 && largeTimer >= 5333) round = 2;
-	else round = 3;
+	if (largeTimer <= 8000 && largeTimer >= 6666) roundNum = 1;
+	else if (largeTimer < 6666 && largeTimer >= 5333) roundNum = 2;
+	else roundNum = 3;
 
-	return round;
+	return roundNum;
 }
 
 void Game::setFirstPlayerHealth(int health)
