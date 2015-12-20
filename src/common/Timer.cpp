@@ -3,7 +3,7 @@
 
 Timer::Timer()
 {
-	mRakNetFrameTime = 1000.0 / 30.0; //30 fps
+	mRakNetFrameTime = 1000.0 / 60.0; //30 fps
 	mDeltaT = 0.0; //no time has elapsed yet
 
 	QueryPerformanceFrequency(&mFrequency); //get frequency

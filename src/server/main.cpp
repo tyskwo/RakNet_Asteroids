@@ -5,6 +5,7 @@
 #include "..\common\MemoryTracker.h"
 #include "..\common\PhysicsStructs.h"
 #include "..\common\Game.h"
+#include "..\common\Timer.h"
 #include <array>
 
 sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
@@ -15,6 +16,8 @@ sf::Texture TEXTURES::mFirstShip,       TEXTURES::mSecondShip,
 			TEXTURES::mMarker;
 
 std::string mBuildType;
+
+Timer* timer;
 
 int main(int argc, char** argv)
 {
@@ -34,10 +37,16 @@ int main(int argc, char** argv)
 	if (argc == 2) { mpServer = new Server(argv[1]); } //create server with input port number
 	else		   { mpServer = new Server("200");   } //create server with port number of 200
 
+	timer = new Timer();
+
 	while (shouldUpdate) //run the program as long as the server is running
 	{
-		mpServer->update();
-		for (unsigned int i = 0; i < mpServer->mpGames.size(); i++) { mpServer->mpGames[i]->update(); }
+		if (timer->shouldUpdate())
+		{
+			mpServer->update();
+		
+			for (unsigned int i = 0; i < mpServer->mpGames.size(); i++) { mpServer->mpGames[i]->update(); }
+		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) shouldUpdate = false;
 	}
