@@ -2,7 +2,8 @@
 ##### Cooperative, asteroid-smashing fun. #####
 
 [David Hartman](https://twitter.com/wednesdayscones) and [Ty Wood](http://tyskwo.com)
-Repository URL: https://tyskwo@bitbucket.org/tyskwo/egp405_finalproj_02_hartman_wood.git
+
+[Repository URL](https://tyskwo@bitbucket.org/tyskwo/asteroids_hartman_wood.git)
 
 * * * 
 
